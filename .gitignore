@@ -12,10 +12,15 @@
 # root> npm install --savedev
 node_modules
 jspm_packages
+build
 
 # internal notes - last change
-# dome resources
+# dome resources, notes, printer-versions, hide from transpile, etc.
 ~*
+*.txt
+*.pr   
+*-pr   
+*-hide
 
 # NOTE: ./app/build can be re-built by:
 # root> gulp build
