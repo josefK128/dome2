@@ -1,0 +1,12 @@
+<!-- axes.i3d -->
+<!-- can be used in test to see orientation changes of objects -->
+<script type="text/ng-template" id="axes.i3d">
+<i3d:axes ng-repeat="(id,node) in i3d.actors.axes"
+       id={{id}}
+       length={{node.form.length}}
+       transform={{node.transform}}
+       children={{node.children}} >
+       <ng-include src="'children.i3d'"> 
+  </i3d:axes>
+</script>
+

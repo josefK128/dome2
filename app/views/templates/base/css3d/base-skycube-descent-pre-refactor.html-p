@@ -1,0 +1,90 @@
+<!-- base-skycube-descent.html -->
+<script type="text/ng-template" id="base-skycube-descent.html">
+<div>
+<style>
+@keyframes anim {
+  0% { transform: perspective(1800px) translateX(-290px) translateY(500px) translateZ(100px) rotateY(20deg) rotateX(45deg); }
+  40% { transform: perspective(450px) translateX(-450px) translateY(50px) translateZ(200px)  rotateY(15deg) rotateX(30deg);}
+  60% { transform: perspective(620px) translateX(-300px) translateY(-168px) translateZ(300px) rotateY(10deg) rotateX(25deg);}
+  100% { transform: perspective(1800px) translateX(-290px) translateY(500px) translateZ(100px) rotateY(20deg) rotateX(45deg);}
+}
+</style>
+<div id='base-bg' style="width:100%; height:100%; 
+                         position: absolute; 
+                         display: block;
+                         background:{{base.cube.bg || '#000000'}};
+                         background-size: 100% 100%;
+                         background-position: '50% 50%';
+                         background-repeat: no-repeat;" >
+
+  <div class="g"
+       style="padding: 20% 30% 20% 35%; top: 50%; left: 50%">
+    <div class="cube"
+         style="perspective: {{base.cube.perspective || '300px' }};
+                perspective-origin: {{base.cube.perspective_origin || '200px 200px' }};
+                transform-origin: '0px 0px 0px'; 
+                transform: 'rotateX(20deg)'; 
+                transform-style: preserve-3d; 
+                position: absolute; 
+                display: block;
+                animation: anim {{base.animation.dur || '90s'}} {{base.animation.repeat || 'infinite'}} ease-in-out;" >
+
+      <div id="front" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform-origin: 0px 0px 0px;
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.front}}" >
+      </div>
+      <div id="back" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform-origin: 0px 0px 0px;
+                  transform: translateZ(400px);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.back}}" >
+      </div>
+      
+      <div id="left" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform-origin: 201px 0px 200px;
+                  transform: rotateY(90deg);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.back}}" >
+      </div>
+      <div id="right" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform-origin: 200px 0px 200px;
+                  transform: rotateY(-90deg);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.right}}" >
+      </div>
+
+      <div id="sky" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform-origin: 0px -200px 0px;
+                  transform: rotateX(-90deg) translateZ(-600px) translateZ(200px);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.sky}}" >
+      </div>
+      <div id="ground" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform-origin: 0px -200px 0px;
+                  transform: rotateX(-90deg) translateY(-600px) translateZ(600px);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.ground}}" >
+      </div>
+    </div>
+  </div>    
+</div>>
+</script>

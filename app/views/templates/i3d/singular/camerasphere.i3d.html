@@ -1,0 +1,52 @@
+<!-- camersphere.i3d -->
+<!-- NOTE: camerasphere default is visible='FALSE'!!. -->
+<!-- NOTE: These are all the defaults for form attrs: --> 
+<!--              r="50.0",
+                  visible="false" 
+                  wireframe="true"
+                  color="red" 
+                  transparent="true" 
+                  opacity="1.0" >-->
+<!-- for debug/test set visible='true' and whatever other 
+     non-defaults are desired, exp: red wireframe - template -->
+<script type="text/ng-template" id="camerasphere.i3d">
+<i3d:camerasphere ng-repeat="(id,node) in i3d.actors.camerasphere"  
+        id={{id}}
+        form={{node.form}}
+        transform={{node.transform}}
+        children={{node.children}}  >
+        <ng-include src="'children.i3d'">
+   </i3d:camerasphere>
+</script>
+
+<!-- NOTE: models using camerasphere should have the following structure: 
+i3d: <template>:<model> = {
+
+      actors: {
+        camerasphere: {
+          csphere0: {
+            form : {},
+            transform: {},
+            children: {
+              key:  {form: {type: "'spotlight.i3d'",
+                           },
+                     transform: {t: []}
+              },
+              fill: {form: {type: "'spotlight.i3d'",
+                           }, 
+                     transform: {t: []}
+              },
+              back: {form: {type: "'pointlight'",
+                           }, 
+                     transform: {t: []}
+              },
+              set:  {form: {type: "'pointlight'",
+                          }, 
+                     transform: {t: []}
+              },
+            }//children
+          }//csphere0
+        }//camerasphere
+        //...
+      }//actors
+-->

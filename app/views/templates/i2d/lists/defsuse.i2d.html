@@ -1,0 +1,10 @@
+<!-- defsuse.i2d -->
+<script type="text/ng-template" id="defsuse.i2d">
+<g ng-repeat="(id,node) in i2d.actors.defsuse" >
+  <use id={{id}} xlink:href = {{node.form.id}}
+       ng-attr-x = {{node.form.x}}
+       ng-attr-y = {{node.form.y}}
+       ng-attr-style = {{node.form.style}} 
+       ng-attr-transform = {{node.transform}} />
+</g> 
+</script>

@@ -1,0 +1,11 @@
+<!-- spheres.i3d -->
+<script type="text/ng-template" id="spheres.i3d">
+  <i3d:sphere ng-repeat="(id,node) in i3d.actors.spheres"
+       id={{id}} 
+       form={{node.form}}
+       transform={{node.transform}}
+       children={{node.children}}>
+       <ng-include src="'children.i3d'">
+  </i3d:sphere> 
+</script>
+

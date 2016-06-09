@@ -1,0 +1,81 @@
+<!-- base-skycube_rotate.html -->
+<script type="text/ng-template" id="base-skycube-rotate.html">
+<style>
+@keyframes anim {
+  0% { transform: rotateX(0deg)  rotateY(0deg) }
+  25% { transform:  rotateX(0deg)  rotateY(90deg) }
+  50% { transform:  rotateX(0deg)  rotateY(180deg) }
+  75% { transform:  rotateX(0deg)  rotateY(270deg) }
+  100% { transform:  rotateX(0deg)  rotateY(360deg) }
+}
+.cube {
+  width:100%; height:100%; 
+  position: absolute; 
+  display: block;
+}  
+.face {
+  width:806px; height:800px;
+  position:absolute; 
+  display:block;
+}
+.background {
+  background-size: 100% 100%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+.transform {
+  transform-style: preserve-3d; 
+  transform-origin: 50% 50% 0;
+}
+</style> 
+<div id='base-bg' 
+     style="background: {{base.cube.bg || '#000000'}};" 
+     class="cube background" >
+
+    <div id="camera"
+         style= "perspective: {{base.cube.perspective || '100px'}};  
+                perspective-origin: {{base.cube.perspective_origin || '50% 50%'}}" 
+         class="cube" >; 
+
+      <div id="cube"
+           style="animation: anim {{base.animation.dur || '90s'}} 
+                  {{base.animation.repeat || 'infinite'}} ease-in-out;"
+           class="cube transform" >
+        
+        <div id="front" 
+             style="transform: translateZ(-400px); 
+                    background-image: {{base.faces.front}}" 
+             class="face transform background" >
+
+        </div>
+        <div id="back" 
+             style="transform: rotateY(180deg) translateZ(-400px);
+                    background-image: {{base.faces.back}}" 
+             class="face transform background" >
+        </div>
+        <div id="left" 
+             style="transform-origin: 50% 50% 0;
+                    transform: rotateY(90deg) translateZ(-400px);
+                    background-image: {{base.faces.left}}" 
+             class="face transform background" >
+        </div>
+        <div id="right" 
+             style="transform: rotateY(-90deg) translateZ(-400px);
+                    background-image: {{base.faces.right}}" 
+             class="face transform background" >
+        </div>
+        <div id="sky" 
+             style="transform: rotateX(-90deg) translateZ(-400px);
+                    background-image: {{base.faces.sky}}" 
+             class="face transform background" >
+        </div>
+        <div id="ground" 
+             style="transform: rotateX(90deg) translateZ(-400px);
+                    background-image: {{base.faces.ground}}" 
+             class="face transform background" >
+        </div>
+      </div>
+    </div>
+  </div>    
+</div>
+</script>

@@ -1,0 +1,12 @@
+<!-- directionallights.i3d -->
+<script type="text/ng-template" id="directionallights.i3d">
+  <i3d:directionallight ng-repeat="(id,node) in i3d.actors.dlights"
+       id={{id}} 
+       color={{node.form.color}} 
+       directionx={{node.form.directionx}} 
+       directiony={{node.form.directiony}} 
+       directionz={{node.form.directionz}}
+       transform={{node.transform}} >
+  </i3d:directionallight>
+</script>
+

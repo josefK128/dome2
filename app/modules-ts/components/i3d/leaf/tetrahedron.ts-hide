@@ -1,0 +1,97 @@
+// Tetrahedron leaf-component
+// NOTE: leaf-components have empty-string template - NOT undefined! 
+// input-property attribute values used by the leaf-component are declared 
+// in <sphere ...></sphere> element(s) in the templates of composite 
+// components (for exp. scenes)
+// NOTE: the purpose of i3d leaf-components are to create webGL objects
+// and via CameraVR add them to the webGL scene rendered in the '3D' canvas,
+// and register the object as a scene 'actor' via CameraVR.addActorToScene(...)
+
+import {Component, Input} from '@angular/core';
+import {CameraVR} from 'app/modules-ts/services';
+
+@Component({
+  selector: 'tetrahedron',
+  template: '',
+  providers: [
+    CameraVR
+  ]
+})
+export class Tetrahedron {
+  @Input() id: string;
+  @Input() radius: number;
+  @Input() textureUrl: string;
+  @Input() color;
+  @Input() opacity;
+  @Input() transparent; 
+  @Input() wireframe;
+  @Input() transform: Object;
+  material: THREE.Material;
+  geometry: THREE.Geometry;
+  tetrahedron: THREE.Object3D;
+  pid: string;
+
+  constructor(cameraVR: CameraVR) {
+    this.id = this.is || Math.random().toString();
+    this.radius = this.radius || 1;
+    this.transform = this.transform || {};
+    if(this.textureUrl){
+      texture_material();
+    else{
+      basic_material();
+    }
+    realize(this.id, this.pid, this.transform);
+  }
+  
+  basic_material() {
+
+    this.material = new THREE.MeshBasicMaterial({color: color, 
+       transparent: transparent, opacity: opacity, wireframe:wireframe});
+    // three.js blending<br>
+    // * NOTE! - brightening of opaque image intersections 
+    //   sometimes occurs (?!)<br>
+    //   This should NOT occur with the following:<br>
+    //   tetrahedronMaterial.blendDst = THREE.OneMinusSrcAlphaFactor;
+    // * NOTE! brightening does occur with:<br>
+    //   tetrahedronMaterial.blendDst = THREE.DstAlphaFactor;
+    this.material.depthTest = false;
+    this.material.blending = THREE.CustomBlending;
+    this.material.blendSrc = THREE.SrcAlphaFactor;
+    //this.material.blendDst = THREE.DstAlphaFactor;
+    this.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+    this.material.blendEquation = THREE.AddEquation; // default
+  }
+
+
+
+
+  texture_material() {
+    basic_material();
+  }
+
+  realize(id, pid, transform) {
+    // create a webgl tetrahedron-node
+    var node = new THREE.Mesh(this.geometry, this.material);
+    node.material.side = THREE.DoubleSide;
+  
+    // add the Object3d to the scene and store in Camera3d actors by id
+    cameraVR.addActorToScene(id, node, pid);
+  
+    // transform tetrahedron - relative to parent in THREE.js scene !!!
+    //transform3d.apply(transform, node);
+  }
+
+      
+  // ordered sequence of component lifecycle phase-transitions:
+//  ngOnChanges() { console.log(`Tetrahedron ngOnChanges`); }
+  ngOnInit() { 
+    console.log(`%%%% Tetrahedron ngOnInit: wrote sphere to CameraVR`); 
+    console.log(`%%%% Tetrahedron ngOnInit: sphere.radius = ${this.radius}`); 
+  }
+//  ngDoCheck() { console.log(`Tetrahedron ngDoCheck`); }
+//  ngAfterContentInit() { console.log(`Tetrahedron ngAfterContentInit`); }
+//  ngAfterContentChecked() { console.log(`Tetrahedron ngAfterContentChecked`); }
+//  ngAfterViewInit() { console.log(`Tetrahedron ngAfterViewInit`); }
+//  ngAfterViewChecked() { console.log(`Tetrahedron ngAfterViewChecked`); }
+//  ngOnDestroy() { console.log(`Tetrahedron ngOnDestroy`); }
+}

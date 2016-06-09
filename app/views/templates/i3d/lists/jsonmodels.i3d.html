@@ -1,0 +1,11 @@
+<!-- jsonmodels.i3d -->
+<script type="text/ng-template" id="jsonmodels.i3d">
+  <i3d:jsonmodel ng-repeat="(id,node) in i3d.actors.jsonmodels"
+       id={{id}} 
+       form={{node.form}}
+       transform={{node.transform}}
+       children={{node.children}}>
+       <ng-include src="'children.i3d'">
+  </i3d:jsonmodel> 
+</script>
+

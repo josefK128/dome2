@@ -1,0 +1,47 @@
+System.register(['@angular/core', '../leaf/rect', '../leaf/circle'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, rect_1, circle_1;
+    var Stage;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (rect_1_1) {
+                rect_1 = rect_1_1;
+            },
+            function (circle_1_1) {
+                circle_1 = circle_1_1;
+            }],
+        execute: function() {
+            /*
+                 xmlns:i3d="http://www.i3Dmedia.org/2014/i3d"
+                 xmlns:i2d="http://www.i3Dmedia.org/2014/i2d"
+            */
+            Stage = (function () {
+                function Stage() {
+                }
+                Stage = __decorate([
+                    core_1.Component({
+                        selector: '[stage]',
+                        directives: [rect_1.Rect, circle_1.Circle],
+                        template: "\n<svg xmlns=\"http://www.w3.org/2000/svg\" \n     xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n     preserveAspectRatio=\"none\" \n     id=\"s\" \n     width=\"100%\" height=\"100%\" \n     viewBox=\"-50, -50, 100, 100\"> \n\n\n  <!-- plane is stage& axes vector space - used for scaling/translating -->\n  <g id=\"plane\" >\n  <g id=\"zoom_plane\" >\n\n    <g id=\"i2d\">\n    </g>\n\n\n    <!-- i3d-svg-webgl templates are inserted into 'space' at i3d ui-view  -->\n    <g id=\"i3d\" >\n    </g><!-- 'i3d' -->\n\n  </g><!-- zoom_plane -->    \n  </g><!-- plane -->    \n</svg><!-- s -->\n "
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], Stage);
+                return Stage;
+            }());
+            exports_1("Stage", Stage);
+        }
+    }
+});

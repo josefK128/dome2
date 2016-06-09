@@ -1,0 +1,35 @@
+<!-- shot-graft.svg -->
+<script type="text/ng-template" id="shot-graft.svg">
+<g ng-repeat="(p,root) in shot.delta.branches" >
+  <i3d:metaform ng-repeat="(id, node) in root.children" 
+     id={{id}} pid={{p}}
+     <g ng-switch on="node.form.type">
+        <g ng-switch-when="'tetrahedron.i3d'">
+          <ng-include src="'tetrahedron.i3d'"  i3d-replace>
+          <ng-include src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'cube.i3d'">
+          <ng-include id='cube.i3d' src="'cube.i3d'" i3d-replace>
+          <ng-include id='cube-graft' src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'sphere.i3d'">
+          <ng-include id='sphere.i3d' src="'sphere.i3d'"  i3d-replace>
+          <ng-include id=sphere-graft' src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'billboard.i3d'">
+          <ng-include src="'billboard.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'ground.i3d'">
+          <ng-include src="'ground.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'axesnode.i3d'">
+          <ng-include src="'axesnode.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'pointlight.i3d'">
+          <ng-include src="'pointlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'spotlight.i3d'">
+          <ng-include src="'spotlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'"  i3d-replace></g>
+        <g ng-switch-default></g>
+     </g>
+  </i3d:metaform>
+<g/>
+</script>

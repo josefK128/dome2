@@ -1,0 +1,10 @@
+<!-- metaforms.i2d -->
+<script type="text/ng-template" id="metaforms.i2d">
+<g ng-repeat = "(id,node) in i2d.actors.metaforms" >
+  <g id={id}} ng-attr-transform = {{node.transform}}
+     ng-include="'children.i2d'" >
+     <use xlink:href = {{node.form.id}} />
+  </g>
+</g> 
+</script>
+

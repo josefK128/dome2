@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner v2.4.1</title>
+  <base href=".."/> 
+
+  <link rel="shortcut icon" type="image/png" href="../node_modules/jasmine-core/images/jasmine_favicon.png">
+  <link rel="stylesheet" href="node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
+
+  <script src="node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+  <script src="node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script> 
+  <script src="node_modules/jasmine-core/lib/jasmine-core/boot.js"></script> 
+
+  <!-- system.js import -->
+  <script src="jspm_packages/system.js"></script>
+
+  <!-- system-jspm import -->
+  <script src="config.js"></script>
+
+</head>
+
+<body>
+  <narrative style="display:none"></narrative>
+  <div><h2 id='display_g' style="display:none">mf genotype...</h2></div>    
+  <div><h2 id='display_p' style="display:none">mf phenotype...</h2></div>    
+
+  <!-- import test-spec modules -->
+  <script>
+    "use strict";
+
+    System.import('jspm_packages/npm/reflect-metadata@0.1.3/Reflect.js')
+      .then((M) => {
+        console.log(`M = ${M}`);
+      })
+      .catch((e) => {
+        console.log(`import of reflect-metadata caused error: ${e}`);
+      });
+
+    // load all test-modules
+    Promise.all(
+    [
+      'test/modules/unit/mf-config.spec.js', 
+      'test/modules/unit/narrative.spec.js', 
+      'test/modules/unit/components/producer-component.spec.js', 
+      'test/modules/e2e/producer-component-e2e.spec.js' 
+    ].map(x => System.import(x)))
+    .then((modules) => {
+      var p,q;
+      console.log('test modules loaded and running...');
+      console.log(`modules is array? = ${Array.isArray(modules)}`);
+      console.log(`running main test-function in each module`);
+      for(var p in modules){
+        console.log(`modules has property ${p}`);
+        for(var q in modules[p]){
+          console.log(`modules[${p}] has property ${q}`);
+        }
+        modules[p][q]();
+      }
+      // manually trigger jasmine tests
+      window.onload();
+     })
+    .catch((e) => {
+        console.log(`import of test modules caused error: ${e}`);
+    });
+  </script>
+
+</body>
+</html>

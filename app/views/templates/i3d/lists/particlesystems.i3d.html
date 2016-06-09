@@ -1,0 +1,11 @@
+<!-- particlesystems.i3d -->
+<script type="text/ng-template" id="particlesystems.i3d">
+  <i3d:particlesystem ng-repeat="(id,node) in i3d.actors.particlesystems"
+       id={{id}} 
+       form={{node.form}}
+       transform={{node.transform}}
+       children={{node.children}}>
+       <ng-include src="'children.i3d'">
+  </i3d:particlesystem> 
+</script>
+

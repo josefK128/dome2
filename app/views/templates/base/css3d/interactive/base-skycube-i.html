@@ -1,0 +1,157 @@
+<!-- base-skycube_i.html -->
+<script type="text/ng-template" id="base-skycube-i.html">
+<div id='base-bg' style="width:100%; height:100%; 
+                         position: absolute;
+                         display: block;
+                         background:{{base.cube.bg || '#000000'}};
+                         background-size: 100% 100%;
+                         background-position: '50% 50%';
+                         background-repeat: no-repeat;" >
+
+  <div class="g"
+       style="padding: 25% 25% 25% 25%; top: 50%; left: 50%">
+    <div class="camera"
+         style="perspective: {{base.cube.perspective || '100px' }}; 
+                perspective-origin: {{base.cube.perspective_origin || '200px 200px' }};
+                transform-origin: '50% 50% 0%';
+                transform: 'translateZ(200px)'; 
+                position: absolute;
+                display: block;" >          
+
+         <div class="cube"
+           style="transform-style: preserve-3d; 
+                  transform-origin: 200px 800px 0px;  
+                  position: absolute; 
+                  display: block;" >
+
+           <div id="front" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.front}}" >
+        </div>
+        <div id="back" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateY(180deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.back}}" >
+        </div>
+        
+        <div id="left" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateY(90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.left}}" >
+        </div>
+        <div id="right" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateY(-90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.right}}" >
+        </div>
+
+        <div id="sky" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateX(-90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.sky}}" >
+        </div>
+        <div id="ground" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateX(90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.ground}}" >
+        </div>
+      </div>
+    </div>
+  </div>    
+</div>
+<!-- interactive rotate and dolly-z of skycube -->
+<script>
+setTimeout(function(){
+  var active = false;
+  var cx = Math.ceil($('body').width() / 2.0);
+  var cy = Math.ceil($('body').height() / 2.0);
+  var dx = 0.0;
+  var dy = 0.0;
+  var rx = 0.0;
+  var ry = 0.0;
+  var scaleX = 10.0;
+  var scaleY = 100.0;
+  var transform = "";
+  var translate = false;
+
+
+  $('body').mouseleave(function(e){
+    //console.log("# mouseleave");
+    // save angles 
+    rx = dx;  
+    ry = dy;
+  });
+
+  $('body').mouseenter(function(e){
+    console.log("# mouseenter");
+    // set mouse-vector origin
+    cx = e.pageX + 0.01; // hack for rendering bug?
+    cy = e.pageY;
+  });
+
+  // cx = e.pageX + 0.01;  is hack for rendering bug?
+  // cx = e.pageX causes left and sky faces to not render ?! 
+  $('body').mouseup(function(e){
+    //console.log("# mouseup");
+    // set mouse-vector origin
+    cx = e.pageX + 0.01; // hack for rendering bug?
+    cy = e.pageY;
+  });
+  
+  $('body').mousedown(function(e){
+    //console.log("# mousedown");
+    active = true;
+  });
+  
+  $('body').mousemove(function(e){
+    if(active){
+      if(translate){
+        dx = -2*(e.pageX - cx);
+        dy = -2*(e.pageY - cy);
+        if(dx < -100) dx = -100;
+        if(dx > 100) dx = 100; 
+        if(dy < 10) dy = 10;
+        if(dy > 360) dy = 360;
+        // short translation animation in XZ plane
+        transform = 'translateX(' + dx + 'px) translateZ(' + dy + 'px)';
+        //console.log(transform);
+      }else{  
+        dx = e.pageX - cx;
+        dy = e.pageY - cy;
+        dx = rx + dx/scaleX;    // default 10.0;
+        dy = ry + dy/scaleY;     // default 100.0;
+        dx *= 7;
+        dy *= 10;
+        if(dy < -25) dy = -25;
+        if(dy > 0) dy = 0;
+        // short no easing camera animation
+        transform = 'rotateX(' + dy + 'deg) rotateY(' + dx + 'deg)';
+        //console.log(transform);
+      }
+      $('.cube').css('-webkit-transform', transform);
+    //}else{
+    //  console.log("mousemove but NOT active");
+    }
+  });
+  },500); // hack to avoid possible image load messages - images load anyway
+</script>
+</script>

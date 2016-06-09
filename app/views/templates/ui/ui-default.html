@@ -1,0 +1,35 @@
+<!-- ui-default.html -->
+<script type="text/ng-template" id="ui-default.html">
+  <span><input type="checkbox"
+        value=""
+        ng-model="narrative.control_state.ui"         
+        ng-change="narrative.change_control('ui')"
+        ng-cloak />
+        ui</span><br/>
+
+
+  <div id="ui" ng-show="narrative.control_state.ui" class="ng-show" style="position:fixed">
+
+    scenes:<br/>
+    <label ng-repeat="scene in narrative.scenes" >
+      <input type="radio"
+          value={{scene}}
+          ng-model="narrative.scene"         
+          ng-change="narrative.change_scene()"
+          ng-cloak />
+          {{scene}}<br/>
+    </label><br/>
+  
+    controls:<br/>
+    <label ng-repeat="control in narrative.controls.slice(1)" >
+      <input type="checkbox"
+          value={{control}}
+          ng-model="narrative.control_state[control]"         
+          ng-change="narrative.change_control(control)"
+          ng-cloak />
+          {{control}}<br/>
+    </label><br/><br/>
+
+  </div><!-- #ui --><br/>
+</script>
+

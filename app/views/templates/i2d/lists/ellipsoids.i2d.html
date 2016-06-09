@@ -1,0 +1,20 @@
+<!-- ellipsoids.i2d -->
+<script type="text/ng-template" id="ellipsoids.i2d">
+<g ng-repeat="(id, node) in i2d.actors.ellipsoids">
+  <g ng-attr-transform = "{{node.transform}}">
+    <ellipse ng-attr-id = "{{id}}"
+        ng-attr-cx = "{{node.form.cx}}" 
+        ng-attr-cy = "{{node.form.cy}}"
+        ng-attr-rx = "{{node.form.rx}}"
+        ng-attr-ry = "{{node.form.ry}}"
+        ng-attr-fill = "{{node.form.fill}}"
+        ng-attr-fill-opacity = "{{node.form.fill-opacity}}"
+        ng-attr-stroke = "{{node.form.stroke}}"
+        ng-attr-stroke-width = "{{node.form.stroke-width}}"
+        ng-attr-stroke-opacity = "{{node.form.stroke-opacity}}"
+        ng-style= "{{node.form.style}}" >
+    </ellipse>
+  </g>  
+</g>
+</script>
+

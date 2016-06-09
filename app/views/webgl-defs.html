@@ -1,0 +1,77 @@
+<!-- fragment-shader: fsh.glsl -->
+<script id="fsh.glsl" type="shader" >
+precision highp float;
+varying vec2 vUv;
+uniform float color;
+uniform sampler2D map;
+void main(void){
+  gl_FragColor = texture2D(map, vUv);
+  //gl_FragColor = vec4(vec3(color), 1.0);   // rgb, alpha
+}
+</script>
+
+<!-- fragment-shader: fsh_filter.glsl -->
+<script id="fsh_filter.glsl" type="shader" >
+precision highp float;
+varying vec2 vUv;
+uniform float color;
+uniform sampler2D map;
+void main(void){
+  if(vUv[0] >= vUv[1]){
+    gl_FragColor = texture2D(map, vUv);
+  }else{
+    gl_FragColor = texture2D(map, vUv).bgra;
+  }
+  //gl_FragColor = vec4(vec3(color), 1.0);   // rgb, alpha
+}
+</script>
+
+
+
+
+<!-- vertex-shader: vsh.glsl -->
+<script id="vsh.glsl" type="shader" >
+varying vec2 vUv;
+void main(){
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}  
+</script>
+
+
+
+<!-- Escher.png.html -->
+<script id="Escher.png">
+var Escher_png;
+(new THREE.TextureLoader()).load('./images/Escher.png', function(texture){
+  Escher_png = texture;
+});
+</script>
+
+
+<!-- glad.png.html -->
+<script id="glad.png">
+var glad_png;
+(new THREE.TextureLoader()).load('./images/glad.png', function(texture){
+  glad_png = texture;
+});
+</script>
+
+
+<!-- p2.jpg.html -->
+<script id="p2.jpg">
+var p2_jpg;
+(new THREE.TextureLoader()).load('./images/p2.jpg', function(texture){
+  p2_jpg = texture;
+});
+</script>
+
+
+<!-- sky.jpg.html -->
+<script id="sky.jpg">
+var sky_jpg;
+(new THREE.TextureLoader()).load('./images/sky.jpg', function(texture){
+  sky_jpg = texture;
+});
+</script>
+

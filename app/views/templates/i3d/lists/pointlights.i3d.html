@@ -1,0 +1,14 @@
+<!-- pointlights.i3d -->
+<!-- intensity default = 1.0 -->
+<!-- distance default = 0.0 => no attenuation -->
+<!-- position default = 0,0,0 but can be moved by transform -->
+<script type="text/ng-template" id="pointlights.i3d">
+  <i3d:pointlight ng-repeat="(id,node) in i3d.actors.pointlights"
+       id={{id}} 
+       color={{node.form.color}} 
+       intensity={{node.form.intensity}} 
+       distance={{node.form.distance}} 
+       transform={{node.transform}} >
+  </i3d:pointlight>
+</script>
+

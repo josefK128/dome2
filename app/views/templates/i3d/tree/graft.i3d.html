@@ -1,0 +1,41 @@
+<!-- graft.i3d - for ng-include recursion by metaforms.i3d/meteform.id -->
+<!-- NOTE: each graft instance uses ng-include 'graft.i3d'
+           This is to recursively render children -->
+<!-- NOTE: graft template does NOT itself create a directive and scope
+     Only the node-form creates a directive so the metaform tree is as lean
+     as possible -->
+<script type="text/ng-template" id="graft.i3d">
+  <g ng-if="node.children" >
+    <g ng-repeat="(id,node) in node.children" 
+      id={{id}} 
+      <g ng-switch on="node.form.type">
+        <g ng-switch-when="'tetrahedron.i3d'">
+          <ng-include src="'tetrahedron.i3d'"  i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'cube.i3d'">
+          <ng-include src="'cube.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'sphere.i3d'">
+          <ng-include src="'sphere.i3d'"  i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'billboard.i3d'">
+          <ng-include src="'billboard.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'ground.i3d'">
+          <ng-include src="'ground.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'axesnode.i3d'">
+          <ng-include src="'axesnode.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'pointlight.i3d'">
+          <ng-include src="'pointlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'spotlight.i3d'">
+          <ng-include src="'spotlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-default></g>
+      </g>
+    </g>
+  </g>
+</script> 
+

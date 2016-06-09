@@ -1,0 +1,43 @@
+// systemjs.config.js
+System.config({
+  //use typescript for compilation
+  transpiler: 'typescript',
+  //typescript compiler options
+  typescriptOptions: {
+    emitDecoratorMetadata: true
+  },
+  //map tells the System loader where to look for things
+  map: {
+    app: "./src"
+  },
+  //packages defines our app package
+  packages: {
+    app: {
+      main: './main.ts',
+      defaultExtension: 'ts'
+    }
+  }
+});
+
+
+//main entry point
+import {bootstrap} from 'angular2/angular2'
+import {App} from './app'
+
+bootstrap(App)
+  .catch(err => console.error(err));
+
+
+This example maintains a list of randomly generated letters and numbers. They can be added, removed, or reordered. Each item also displays a generation counter, which updates when the list changes in any way, allowing Angular's updates to the DOM to be visualized.
+
+i0, g:0 - F4  
+  Down  Remove
+i1, g:0 - J8  
+  Up  Down  Remove
+i2, g:0 - E0  
+  Up  Down  Remove
+i3, g:0 - F3  
+  Up  Down  Remove
+i4, g:0 - D9  
+  Up  Remove
+Add Item in Random Position

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>mf-config.spec.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="..\docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>mf-config.spec.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>System.register([<span class="hljs-string">'angular2/testing'</span>, <span class="hljs-string">'../../../app/modules/mf-config.js'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">exports_1, context_1</span>) </span>{
+<span class="hljs-meta">    "use strict"</span>;
+    <span class="hljs-keyword">var</span> __moduleName = context_1 &amp;&amp; context_1.id;
+    <span class="hljs-keyword">var</span> testing_1, mf_config_js_1;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">main</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'describe configuration-component mf-config'</span>);
+        testing_1.describe(<span class="hljs-string">'mf-config-spec'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+            testing_1.beforeEachProviders(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> []; });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>test</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            testing_1.it(<span class="hljs-string">'should define property test'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'test'</span>]).toBeDefined();
+            });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Genotype</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            testing_1.it(<span class="hljs-string">'should define property hostG'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'hostG'</span>]).toBeDefined();
+            });
+            testing_1.it(<span class="hljs-string">'CONFIG["hostG"] value should be type string'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(<span class="hljs-keyword">typeof</span> mf_config_js_1.CONFIG[<span class="hljs-string">'hostG'</span>]).toEqual(<span class="hljs-string">'string'</span>);
+            });
+            testing_1.it(<span class="hljs-string">'should define property portG'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'portG'</span>]).toBeDefined();
+            });
+            testing_1.it(<span class="hljs-string">'CONFIG["portG"] value should be type number'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(<span class="hljs-keyword">typeof</span> mf_config_js_1.CONFIG[<span class="hljs-string">'portG'</span>]).toEqual(<span class="hljs-string">'number'</span>);
+            });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Phenotype</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            testing_1.it(<span class="hljs-string">'should define property hostP'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'hostP'</span>]).toBeDefined();
+            });
+            testing_1.it(<span class="hljs-string">'CONFIG["hostP"] value should be type string'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(<span class="hljs-keyword">typeof</span> mf_config_js_1.CONFIG[<span class="hljs-string">'hostP'</span>]).toEqual(<span class="hljs-string">'string'</span>);
+            });
+            testing_1.it(<span class="hljs-string">'should define property portP'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'portP'</span>]).toBeDefined();
+            });
+            testing_1.it(<span class="hljs-string">'CONFIG["portP"] value should be type number'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(<span class="hljs-keyword">typeof</span> mf_config_js_1.CONFIG[<span class="hljs-string">'portP'</span>]).toEqual(<span class="hljs-string">'number'</span>);
+            });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Log</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            testing_1.it(<span class="hljs-string">'should define property hostL'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'hostL'</span>]).toBeDefined();
+            });
+            testing_1.it(<span class="hljs-string">'CONFIG["hostL"] value should be type string'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(<span class="hljs-keyword">typeof</span> mf_config_js_1.CONFIG[<span class="hljs-string">'hostL'</span>]).toEqual(<span class="hljs-string">'string'</span>);
+            });
+            testing_1.it(<span class="hljs-string">'should define property portL'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'portL'</span>]).toBeDefined();
+            });
+            testing_1.it(<span class="hljs-string">'CONFIG["portL"] value should be type number'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(<span class="hljs-keyword">typeof</span> mf_config_js_1.CONFIG[<span class="hljs-string">'portL'</span>]).toEqual(<span class="hljs-string">'number'</span>);
+            });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>period</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            testing_1.it(<span class="hljs-string">'should define property period'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'period'</span>]).toBeDefined();
+            });
+            testing_1.it(<span class="hljs-string">'CONFIG["period"] value should be type number'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(<span class="hljs-keyword">typeof</span> mf_config_js_1.CONFIG[<span class="hljs-string">'period'</span>]).toEqual(<span class="hljs-string">'number'</span>);
+            });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>callback-g</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            testing_1.it(<span class="hljs-string">'should define property cbg'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'cbg'</span>]).toBeDefined();
+            });
+            testing_1.it(<span class="hljs-string">'CONFIG["cbg"] value should be type function'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(<span class="hljs-keyword">typeof</span> mf_config_js_1.CONFIG[<span class="hljs-string">'cbg'</span>]).toEqual(<span class="hljs-string">'function'</span>);
+            });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>callback-p</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            testing_1.it(<span class="hljs-string">'should define property cbp'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(mf_config_js_1.CONFIG[<span class="hljs-string">'cbp'</span>]).toBeDefined();
+            });
+            testing_1.it(<span class="hljs-string">'CONFIG["cbp"] value should be type function'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+                testing_1.expect(<span class="hljs-keyword">typeof</span> mf_config_js_1.CONFIG[<span class="hljs-string">'cbp'</span>]).toEqual(<span class="hljs-string">'function'</span>);
+            });
+        }); <span class="hljs-comment">//describe</span>
+    }
+    exports_1(<span class="hljs-string">"main"</span>, main);
+    <span class="hljs-keyword">return</span> {
+        setters:[
+            <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">testing_1_1</span>) </span>{
+                testing_1 = testing_1_1;
+            },
+            <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">mf_config_js_1_1</span>) </span>{
+                mf_config_js_1 = mf_config_js_1_1;
+            }],
+        execute: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        }
+    }
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>export interface Config {
+ hostG: string,
+ portG: number,
+ hostP: string,
+ portP: number,
+ hostL: string,
+ portL: number,
+ period: number,
+ cbg: Function,
+ cbp: Function
+};</p>
+
+            </div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

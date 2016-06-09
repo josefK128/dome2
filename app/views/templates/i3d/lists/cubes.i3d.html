@@ -1,0 +1,11 @@
+<!-- cubes.i3d -->
+<script type="text/ng-template" id="cubes.i3d">
+  <i3d:cube ng-repeat="(id,node) in i3d.actors.cubes"
+       id={{id}} 
+       form={{node.form}}
+       transform={{node.transform}}
+       children={{node.children}}>
+       <ng-include src="'children.i3d'">
+  </i3d:cube> 
+</script>
+

@@ -1,0 +1,1395 @@
+<!-- ui-default.html -->
+<script type="text/ng-template" id="ui-default.html">
+  <span><input type="checkbox"
+        value=""
+        ng-model="narrative.control_state.ui"         
+        ng-change="narrative.change_control('ui')"
+        ng-cloak />
+        ui</span><br/>
+
+
+  <div id="ui" ng-show="narrative.control_state.ui" class="ng-show" style="position:fixed">
+
+    scenes:<br/>
+    <label ng-repeat="scene in narrative.scenes" >
+      <input type="radio"
+          value={{scene}}
+          ng-model="narrative.scene"         
+          ng-change="narrative.change_scene()"
+          ng-cloak />
+          {{scene}}<br/>
+    </label><br/>
+  
+    controls:<br/>
+    <label ng-repeat="control in narrative.controls.slice(1)" >
+      <input type="checkbox"
+          value={{control}}
+          ng-model="narrative.control_state[control]"         
+          ng-change="narrative.change_control(control)"
+          ng-cloak />
+          {{control}}<br/>
+    </label><br/><br/>
+
+  </div><!-- #ui --><br/>
+</script>
+
+
+<!-- ui-msgbg.html -->
+<script type="text/ng-template" id="ui-msgbg.html">
+  <span><input type="checkbox"
+        value=""
+        ng-model="narrative.control_state.ui"         
+        ng-change="narrative.change_control('ui')"
+        ng-cloak />
+        ui</span><br/>
+
+
+  <div id="controls" ng-show="narrative.control_state.ui" class="ng-show" style="position:fixed">
+  <span><input type="checkbox"
+        value=""
+        ng-model="narrative.control_state.scene"         
+        ng-change="narrative.change_control('scene')"
+        ng-cloak />
+        scene</span><br/>
+
+    <ui-msgbg id="msgbg7" msg='ui.scene' bgcolor='ui.bgcolor' ></ui-msgbg><br/>
+
+    scenes:<br/>
+    <label ng-repeat="scene in narrative.scenes" >
+      <input type="radio"
+          value={{scene}}
+          ng-model="narrative.scene"         
+          ng-change="narrative.change_scene()"
+          ng-cloak />
+          {{scene}}<br/>
+    </label><br/>
+  
+    controls:<br/>
+    <label ng-repeat="control in narrative.controls.slice(1)" >
+      <input type="checkbox"
+          value={{control}}
+          ng-model="narrative.control_state[control]"         
+          ng-change="narrative.change_control(control)"
+          ng-cloak />
+          {{control}}<br/>
+    </label><br/><br/>
+
+  </div><!-- #controls --><br/>
+</script>
+
+
+<!-- black.html -->
+<script type="text/ng-template" id="black.html">
+<div style="background-color:black; width:100%; height:100%"> </div>
+</script>
+
+<!-- empty.html -->
+<script type="text/ng-template" id="empty.html">
+<div></div>
+</script>
+
+<!-- escher.html -->
+<script type="text/ng-template" id="escher.html">
+<div style="background: url('./images/Escher.png'); background-repeat:no-repeat; background-size:100% 100%; width:100%; height:100%"> </div>
+</script>
+
+<!-- gladiolus.html -->
+<script type="text/ng-template" id="gladiolus.html">
+  <div style="background: url('./images/1.png'); background-repeat:no-repeat; background-size:100% 100%; width:100%; height:100%"> </div>
+</script>
+
+<!-- glass_smoke.html -->
+<script type="text/ng-template" id="glass_smoke.html">
+<div style="background: url('./images/chaos2/glass_smoke.png'); background-repeat:no-repeat; background-size:100% 100%; width:100%; height:100%"> </div>
+</script>
+
+<!-- green.html -->
+<script type="text/ng-template" id="green.html">
+<div style="background-color:green; width:100%; height:100%"> </div>
+</script>
+
+<!-- grid.html -->
+<script type="text/ng-template" id="grid.html">
+  <div ui-grid="{data: [
+      {'a':'data1','b':'data2','c':'data3'},
+      {'a':'data4','b':'data5','c':'data6'},
+      {'a':'data7','b':'data8','c':'data9'},
+      {'a':'data10','b':'data11','c':'data12'}
+    ]}"
+    style="transform:translate(22%,0%); width:82%; height:100%"></div>
+</script>
+
+<!-- yellow.html -->
+<script type="text/ng-template" id="yellow.html">
+<div style="background-color:yellow; width:100%; height:100%"> </div>
+</script>
+
+<!-- videocam.html -->
+<script type="text/ng-template" id="videocam.html">
+  <video id="video" base-videocam  
+         style="position:absolute; width:100%; height:100%; z-index:0"
+         controls="false" autoplay>
+  </video>
+</script>
+
+<!-- i2d-empty.svg -->
+<script type="text/ng-template" id="i2d-empty.svg">
+<g></g>
+</script>
+
+<!-- i2d-reflect.svg -->
+<script type="text/ng-template" id="i2d-reflect.svg">
+<g id="top" >
+  <rect x="-50" y="-50" width="100" height="49" fill="#DDF" fill-opacity="0.5" />
+  <circle cx="-35" cy="-10" r="5" fill="#ff1000" /> 
+  <text x="-28" y="-7" font-size="11.5px" font-family="neuropol" fill="#AAF">metaweb</text>
+
+  <g id="vtext" font-family="neuropol" font-size="6.3pt" stroke="white" stroke-width="0.5">
+    <text x="-.3" y="-44.2" style="writing-mode: tb; glyph-orientation-vertical: 0;">
+      i3Dmedia  
+    </text> 
+  </g>
+
+  <g id="vtext" font-family="neuropol" font-size="6.3pt" stroke="white" stroke-width="0.5">
+    <text x="-.3" y="-44.2" style="writing-mode: tb; glyph-orientation-vertical: 0;">
+      media  
+    </text> 
+  </g>  
+</g>
+
+<g transform="translate(0 0) scale(1 -1)" mask="url(#mask)">
+  <use xlink:href="#top" x="0" y="0" />
+</g>
+</script>
+
+<!-- i2d-scene.svg -->
+<script type="text/ng-template" id="i2d-scene.svg">
+
+        <!-- metaforms -->
+        <i2d-form i2d-template="metaforms.i2d" ></i2d-form>
+
+        <!-- lists -->
+        <i2d-form i2d-template="defsuse.i2d" ></i2d-form>
+        <i2d-form i2d-template="disks.i2d" ></i2d-form> 
+        <i2d-form i2d-template="ellipsoids.i2d" ></i2d-form> 
+
+</script>
+
+<!-- children.i2d -->
+<script type="text/ng-template" id="children.i2d">
+<g ng-if="node.children">
+  <g ng-repeat="(id,node) in node.children" 
+     ng-attr-transform = "{{node.transform}}"
+     ng-include="'children.i2d'" />
+       <use id="{{id}}" xlink:href="{{node.form.id}}" 
+  </g>
+</g>
+</script>
+
+<!-- metaforms.i2d -->
+<script type="text/ng-template" id="metaforms.i2d">
+<g ng-repeat = "(id,node) in i2d.actors.metaforms" >
+  <g id={id}} ng-attr-transform = {{node.transform}}
+     ng-include="'children.i2d'" >
+     <use xlink:href = {{node.form.id}} />
+  </g>
+</g> 
+</script>
+
+
+<!-- defsuse.i2d -->
+<script type="text/ng-template" id="defsuse.i2d">
+<g ng-repeat="(id,node) in i2d.actors.defsuse" >
+  <use id={{id}} xlink:href = {{node.form.id}}
+       ng-attr-x = {{node.form.x}}
+       ng-attr-y = {{node.form.y}}
+       ng-attr-style = {{node.form.style}} 
+       ng-attr-transform = {{node.transform}} />
+</g> 
+</script>
+
+<!-- disks.i2d -->
+<script type="text/ng-template" id="disks.i2d">
+<g ng-repeat="(id, node) in i2d.actors.disks">
+    <circle ng-attr-id = {{id}} 
+        ng-attr-x = {{node.form.x}} 
+        ng-attr-y = {{node.form.y}}
+        ng-attr-r = {{node.form.r}}
+        ng-attr-fill = {{node.form.fill}}
+        ng-attr-fill-opacity = {{node.form.fill_opacity}}
+        ng-attr-stroke = {{node.form.stroke}}
+        ng-attr-stroke-width = {{node.form.stroke_width}}
+        ng-attr-stroke-opacity = {{node.form.stroke_opacity}}
+        ng-attr-stroke-dasharray = {{node.form.stroke_dasharray}}
+        ng-attr-style= {{node.form.style}}
+        ng-attr-transform= {{node.transform}}>
+    </circle>
+</g>
+</script>
+
+<!-- ellipsoids.i2d -->
+<script type="text/ng-template" id="ellipsoids.i2d">
+<g ng-repeat="(id, node) in i2d.actors.ellipsoids">
+  <g ng-attr-transform = "{{node.transform}}">
+    <ellipse ng-attr-id = "{{id}}"
+        ng-attr-cx = "{{node.form.cx}}" 
+        ng-attr-cy = "{{node.form.cy}}"
+        ng-attr-rx = "{{node.form.rx}}"
+        ng-attr-ry = "{{node.form.ry}}"
+        ng-attr-fill = "{{node.form.fill}}"
+        ng-attr-fill-opacity = "{{node.form.fill-opacity}}"
+        ng-attr-stroke = "{{node.form.stroke}}"
+        ng-attr-stroke-width = "{{node.form.stroke-width}}"
+        ng-attr-stroke-opacity = "{{node.form.stroke-opacity}}"
+        ng-style= "{{node.form.style}}" >
+    </ellipse>
+  </g>  
+</g>
+</script>
+
+
+<!-- base-skycube-descent.html -->
+<script type="text/ng-template" id="base-skycube-descent.html">
+<div>
+<style>
+@keyframes anim {
+  0% { transform: perspective(1800px) translateX(-290px) translateY(500px) translateZ(100px) rotateY(20deg) rotateX(45deg); }
+  40% { transform: perspective(450px) translateX(-450px) translateY(50px) translateZ(200px)  rotateY(15deg) rotateX(30deg);}
+  60% { transform: perspective(620px) translateX(-300px) translateY(-168px) translateZ(300px) rotateY(10deg) rotateX(25deg);}
+  100% { transform: perspective(1800px) translateX(-290px) translateY(500px) translateZ(100px) rotateY(20deg) rotateX(45deg);}
+}
+.cube {
+  width:100%; height:100%; 
+  position: absolute; 
+  display: block;
+}  
+.face {
+  width:806px; height:800px;
+  position:absolute; 
+  display:block;
+}
+.background {
+  background-size: 100% 100%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+.transform {
+  transform-style: preserve-3d; 
+  transform-origin: 50% 50% 0;
+}
+</style> 
+<div id='base-bg' 
+     style="background: {{base.cube.bg || '#000000'}};" 
+     class="cube background" >
+
+    <div id="camera"
+         style= "perspective: {{base.cube.perspective || '100px'}};  
+                perspective-origin: {{base.cube.perspective_origin || '50% 50%'}}" 
+         class="cube" >; 
+
+      <div id="cube"
+           style="animation: anim {{base.animation.dur || '90s'}} 
+                  {{base.animation.repeat || 'infinite'}} ease-in-out;"
+           class="cube transform" >
+        
+        <div id="front" 
+             style="transform: translateZ(-400px); 
+                    background-image: {{base.faces.front}}" 
+             class="face transform background" >
+
+        </div>
+        <div id="back" 
+             style="transform: rotateY(180deg) translateZ(-400px);
+                    background-image: {{base.faces.back}}" 
+             class="face transform background" >
+        </div>
+        <div id="left" 
+             style="transform-origin: 50% 50% 0;
+                    transform: rotateY(90deg) translateZ(-400px);
+                    background-image: {{base.faces.left}}" 
+             class="face transform background" >
+        </div>
+        <div id="right" 
+             style="transform: rotateY(-90deg) translateZ(-400px);
+                    background-image: {{base.faces.right}}" 
+             class="face transform background" >
+        </div>
+        <div id="sky" 
+             style="transform: rotateX(-90deg) translateZ(-400px);
+                    background-image: {{base.faces.sky}}" 
+             class="face transform background" >
+        </div>
+        <div id="ground" 
+             style="transform: rotateX(90deg) translateZ(-400px);
+                    background-image: {{base.faces.ground}}" 
+             class="face transform background" >
+        </div>
+      </div>
+    </div>
+  </div>    
+</div>
+</script>
+
+<!-- base-skycube_rotate.html -->
+<script type="text/ng-template" id="base-skycube-rotate.html">
+<style>
+@keyframes anim {
+  0% { transform: rotateX(0deg)  rotateY(0deg) }
+  25% { transform:  rotateX(0deg)  rotateY(90deg) }
+  50% { transform:  rotateX(0deg)  rotateY(180deg) }
+  75% { transform:  rotateX(0deg)  rotateY(270deg) }
+  100% { transform:  rotateX(0deg)  rotateY(360deg) }
+}
+.cube {
+  width:100%; height:100%; 
+  position: absolute; 
+  display: block;
+}  
+.face {
+  width:806px; height:800px;
+  position:absolute; 
+  display:block;
+}
+.background {
+  background-size: 100% 100%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+.transform {
+  transform-style: preserve-3d; 
+  transform-origin: 50% 50% 0;
+}
+</style> 
+<div id='base-bg' 
+     style="background: {{base.cube.bg || '#000000'}};" 
+     class="cube background" >
+
+    <div id="camera"
+         style= "perspective: {{base.cube.perspective || '100px'}};  
+                perspective-origin: {{base.cube.perspective_origin || '50% 50%'}}" 
+         class="cube" >; 
+
+      <div id="cube"
+           style="animation: anim {{base.animation.dur || '90s'}} 
+                  {{base.animation.repeat || 'infinite'}} ease-in-out;"
+           class="cube transform" >
+        
+        <div id="front" 
+             style="transform: translateZ(-400px); 
+                    background-image: {{base.faces.front}}" 
+             class="face transform background" >
+
+        </div>
+        <div id="back" 
+             style="transform: rotateY(180deg) translateZ(-400px);
+                    background-image: {{base.faces.back}}" 
+             class="face transform background" >
+        </div>
+        <div id="left" 
+             style="transform-origin: 50% 50% 0;
+                    transform: rotateY(90deg) translateZ(-400px);
+                    background-image: {{base.faces.left}}" 
+             class="face transform background" >
+        </div>
+        <div id="right" 
+             style="transform: rotateY(-90deg) translateZ(-400px);
+                    background-image: {{base.faces.right}}" 
+             class="face transform background" >
+        </div>
+        <div id="sky" 
+             style="transform: rotateX(-90deg) translateZ(-400px);
+                    background-image: {{base.faces.sky}}" 
+             class="face transform background" >
+        </div>
+        <div id="ground" 
+             style="transform: rotateX(90deg) translateZ(-400px);
+                    background-image: {{base.faces.ground}}" 
+             class="face transform background" >
+        </div>
+      </div>
+    </div>
+  </div>    
+</div>
+</script>
+
+<!-- base-skycube_rotatewarp.html -->
+<script type="text/ng-template" id="base-skycube-rotatewarp.html">
+<style>
+@keyframes anim {
+  0% { transform: rotateX(0deg)  rotateY(200deg) }
+  25% { transform:  rotateX(-5deg)  rotateY(270deg) }
+  50% { transform:  rotateX(0deg)  rotateY(340deg) }
+  75% { transform:  rotateX(5deg)  rotateY(270deg) }
+  100% { transform:  rotateX(0deg)  rotateY(200deg) }
+}
+</style>
+<div id='base-bg' style="width:100%; height:100%; 
+                         position: absolute;
+                         display: block;
+                         background:{{base.cube.bg || '#000000'}};
+                         background-size: 100% 100%;
+                         background-position: '50% 50%';
+                         background-repeat: no-repeat;" >
+  
+  <div class="g"
+       style="padding: 25% 25% 25% 25%; top: 50%; left: 50%">
+    <div class="camera"
+         style="perspective: {{base.cube.perspective || '100px'}}; 
+             perspective-origin: {{base.cube.perspective_origin || '50% 60%'}}; 
+             transform-origin: 50% 50% 0%; 
+             transform: translateX(-50%) translateY(-50%) translateZ(100%);
+             position: absolute;
+             display: block;" >          
+         <div class="cube"
+              style="transform-style: preserve-3d; 
+                  transform-origin: 50% 50% 0%;
+                  position: absolute; 
+                  display: block;
+                  animation: anim {{base.animation.dur}} {{base.animation.repeat}} ease-in-out;" > 
+
+         <div id="front" 
+              style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.front}})" >
+        </div>
+        <div id="back" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateY(180deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.back}}" >
+        </div>
+        
+        <div id="left" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateY(90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.left}}" >
+        </div>
+        <div id="right" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateY(-90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.right}}" >
+        </div>
+
+        <div id="sky" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateX(-90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.sky}}" >
+        </div>
+        <div id="ground" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateX(90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.ground}}" >
+        </div>
+      </div>
+    </div>
+  </div>    
+</div>
+</script>
+
+<!-- base-skycube_stratos.html -->
+<script type="text/ng-template" id="base-skycube-stratos.html">
+<div>
+<style>
+@keyframes anim {
+  0% { transform: perspective(900px) translateX(-990px) translateY(-50px) translateZ(100px) rotateY(20deg) rotateX(45deg); }
+  20% { transform: perspective(900px) translateX(-990px) translateY(-50px) translateZ(100px) rotateY(20deg) rotateX(45deg); }
+  40% { transform: perspective(342px) translateX(-550px) translateY(72px) translateZ(200px)  rotateY(5deg) rotateX(30deg); }
+  60% { transform: perspective(600px) translateX(-450px) translateY(72px) translateZ(300px) rotateY(0deg) rotateX(25deg); } 
+  100% { transform: perspective(900px) translateX(-990px) translateY(-50px) translateZ(100px) rotateY(20deg) rotateX(45deg); }
+}
+</style>
+<div id='base-bg' style="width:100%; height:100%; 
+                         position: absolute; 
+                         display: block;
+                         background:{{base.cube.bg || '#000000'}};
+                         background-size: 100% 100%;
+                         background-position: '50% 50%';
+                         background-repeat: no-repeat;" >
+
+  <div class="g"
+       style="padding: 20% 30% 20% 35%; top: 50%; left: 50%">
+    <div class="cube"
+         style="perspective: {{base.cube.perspective || '129px' }}; 
+                perspective-origin: {{base.cube.perspective_origin || '30px 40px' }};
+                transform-origin: '25px 60px -100px'};
+                transform-style: preserve-3d; 
+                position: absolute; 
+                display: block;
+                animation: anim {{base.animation.dur || '120s'}} 
+                  {{base.animation.repeat || 'infinite'}} ease-in-out;" >
+
+      <div id="front" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform: translateZ(-200px);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background: {{base.faces.front}}" >
+      </div>
+      <div id="back" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform: rotateY(180deg) translateZ(-200px);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background: {{base.faces.back}}" >
+      </div>
+      
+      <div id="left" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform: rotateY(90deg) translateZ(-200px);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.left}}" >
+      </div>
+      <div id="right" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform: rotateY(-90deg) translateZ(-200px);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.right}}" >
+      </div>
+
+      <div id="sky" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform: rotateX(-90deg) translateZ(-200px);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.sky}}" >
+      </div>
+      <div id="ground" 
+           style="width:402px; height:402px;
+                  position:absolute; display:block;
+                  transform: rotateX(90deg) translateZ(-200px);
+                  background-position:50% 50%; 
+                  background-size:100% 100%; 
+                  background-image: {{base.faces.ground}}" >
+      </div>
+    </div>
+  </div>    
+</div>
+</script>
+
+<!-- base-skycube.html -->
+<!-- template for JS-GSAP css3d animation
+     test independently with model 'test_bg' adding (uncomment) the 
+     style property of id 'cube':
+     style="animation: anim {{base.animation.dur || '90s'}} 
+       {{base.animation.repeat || 'infinite'}} ease-in-out;"> --> 
+<!-- NOTE! classes (background) must follow style 
+     to override style defaults!  -->
+
+<script type="text/ng-template" id="base-skycube.html">
+<style>
+@keyframes anim {
+  0% { transform:   rotateY(0deg) }
+  25% { transform:   rotateY(90deg) }
+  50% { transform:  rotateY(180deg) }
+  75% { transform:  rotateY(270deg) }
+  100% { transform:  rotateY(360deg) }
+}
+.cube {
+  width:100%; height:100%; 
+  position: absolute; 
+  display: block;
+}  
+.face {
+  width:806px; height:800px;
+  position:absolute; 
+  display:block;
+}
+.background {
+  background-size: 100% 100%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+.transform {
+  transform-style: preserve-3d; 
+  transform-origin: 50% 50% 0;
+}
+</style> 
+<div id='base-bg' 
+     style="background: {{base.cube.bg || '#000000'}};" 
+     class="cube background" >
+
+    <div id="camera"
+         style= "perspective: {{base.cube.perspective || '100px'}};  
+                perspective-origin: {{base.cube.perspective_origin || '50% 50%'}}" 
+         class="cube" >; 
+
+      <div id="cube"
+           style="animation: anim {{base.animation.dur || '90s'}} 
+                  {{base.animation.repeat || 'infinite'}} ease-in-out;"
+           class="cube transform" >
+        
+        <div id="front" 
+             style="transform: translateZ(-400px); 
+                    background-image: {{base.faces.front}}" 
+             class="face transform background" >
+
+        </div>
+        <div id="back" 
+             style="transform: rotateY(180deg) translateZ(-400px);
+                    background-image: {{base.faces.back}}" 
+             class="face transform background" >
+        </div>
+        <div id="left" 
+             style="transform: rotateY(90deg) translateZ(-400px);
+                    background-image: {{base.faces.left}}" 
+             class="face transform background" >
+        </div>
+        <div id="right" 
+             style="transform: rotateY(-90deg) translateZ(-400px);
+                    background-image: {{base.faces.right}}" 
+             class="face transform background" >
+        </div>
+        <div id="sky" 
+             style="transform: rotateX(-90deg) translateZ(-400px);
+                    background-image: {{base.faces.sky}}" 
+             class="face transform background" >
+        </div>
+        <div id="ground" 
+             style="transform: rotateX(90deg) translateZ(-400px);
+                    background-image: {{base.faces.ground}}" 
+             class="face transform background" >
+        </div>
+      </div>
+    </div>
+  </div>    
+</div>
+</script>
+
+<!-- base-skycube_i.html -->
+<script type="text/ng-template" id="base-skycube-i.html">
+<div id='base-bg' style="width:100%; height:100%; 
+                         position: absolute;
+                         display: block;
+                         background:{{base.cube.bg || '#000000'}};
+                         background-size: 100% 100%;
+                         background-position: '50% 50%';
+                         background-repeat: no-repeat;" >
+
+  <div class="g"
+       style="padding: 25% 25% 25% 25%; top: 50%; left: 50%">
+    <div class="camera"
+         style="perspective: {{base.cube.perspective || '100px' }}; 
+                perspective-origin: {{base.cube.perspective_origin || '200px 200px' }};
+                transform-origin: '50% 50% 0%';
+                transform: 'translateZ(200px)'; 
+                position: absolute;
+                display: block;" >          
+
+         <div class="cube"
+           style="transform-style: preserve-3d; 
+                  transform-origin: 200px 800px 0px;  
+                  position: absolute; 
+                  display: block;" >
+
+           <div id="front" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.front}}" >
+        </div>
+        <div id="back" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateY(180deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.back}}" >
+        </div>
+        
+        <div id="left" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateY(90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.left}}" >
+        </div>
+        <div id="right" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateY(-90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.right}}" >
+        </div>
+
+        <div id="sky" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateX(-90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.sky}}" >
+        </div>
+        <div id="ground" 
+             style="width:402px; height:402px;
+                    position:absolute; display:block;
+                    transform: rotateX(90deg) translateZ(-200px);
+                    background-position:50% 50%; 
+                    background-size:100% 100%; 
+                    background-image: {{base.faces.ground}}" >
+        </div>
+      </div>
+    </div>
+  </div>    
+</div>
+<!-- interactive rotate and dolly-z of skycube -->
+<script>
+setTimeout(function(){
+  var active = false;
+  var cx = Math.ceil($('body').width() / 2.0);
+  var cy = Math.ceil($('body').height() / 2.0);
+  var dx = 0.0;
+  var dy = 0.0;
+  var rx = 0.0;
+  var ry = 0.0;
+  var scaleX = 10.0;
+  var scaleY = 100.0;
+  var transform = "";
+  var translate = false;
+
+
+  $('body').mouseleave(function(e){
+    //console.log("# mouseleave");
+    // save angles 
+    rx = dx;  
+    ry = dy;
+  });
+
+  $('body').mouseenter(function(e){
+    console.log("# mouseenter");
+    // set mouse-vector origin
+    cx = e.pageX + 0.01; // hack for rendering bug?
+    cy = e.pageY;
+  });
+
+  // cx = e.pageX + 0.01;  is hack for rendering bug?
+  // cx = e.pageX causes left and sky faces to not render ?! 
+  $('body').mouseup(function(e){
+    //console.log("# mouseup");
+    // set mouse-vector origin
+    cx = e.pageX + 0.01; // hack for rendering bug?
+    cy = e.pageY;
+  });
+  
+  $('body').mousedown(function(e){
+    //console.log("# mousedown");
+    active = true;
+  });
+  
+  $('body').mousemove(function(e){
+    if(active){
+      if(translate){
+        dx = -2*(e.pageX - cx);
+        dy = -2*(e.pageY - cy);
+        if(dx < -100) dx = -100;
+        if(dx > 100) dx = 100; 
+        if(dy < 10) dy = 10;
+        if(dy > 360) dy = 360;
+        // short translation animation in XZ plane
+        transform = 'translateX(' + dx + 'px) translateZ(' + dy + 'px)';
+        //console.log(transform);
+      }else{  
+        dx = e.pageX - cx;
+        dy = e.pageY - cy;
+        dx = rx + dx/scaleX;    // default 10.0;
+        dy = ry + dy/scaleY;     // default 100.0;
+        dx *= 7;
+        dy *= 10;
+        if(dy < -25) dy = -25;
+        if(dy > 0) dy = 0;
+        // short no easing camera animation
+        transform = 'rotateX(' + dy + 'deg) rotateY(' + dx + 'deg)';
+        //console.log(transform);
+      }
+      $('.cube').css('-webkit-transform', transform);
+    //}else{
+    //  console.log("mousemove but NOT active");
+    }
+  });
+  },500); // hack to avoid possible image load messages - images load anyway
+</script>
+</script>
+
+<!-- i3d-empty.svg -->
+<script type="text/ng-template" id="i3d-empty.svg">
+<g></g>
+</script>
+
+
+<!-- i3d-jsonmodels.svg -->
+<script type="text/ng-template" id="i3d-jsonmodels.svg">
+
+  <!-- singular - camerasphere -->
+  <i3d-form i3d-template="camerasphere.i3d" ></i3d-form> 
+
+  <!-- lists -->
+  <i3d-form i3d-template="jsonmodels.i3d" ></i3d-form> 
+  <i3d-form i3d-template="axes.i3d" ></i3d-form> 
+  <i3d-form i3d-template="billboards.i3d" ></i3d-form>
+  <i3d-form i3d-template="directionallights.i3d" ></i3d-form> 
+  <i3d-form i3d-template="ambientlights.i3d" ></i3d-form> 
+</script>
+
+
+<!-- i3d-scene.svg -->
+<script type="text/ng-template" id="i3d-scene.svg">
+
+        <!-- singular - camerasphere -->
+        <i3d-form i3d-template="camerasphere.i3d" ></i3d-form>
+
+        <!-- metaforms -->
+        <i3d-form i3d-template="metaforms.i3d" ></i3d-form>
+
+        <!-- lists -->
+        <i3d-form i3d-template="spheres.i3d" ></i3d-form>
+        <i3d-form i3d-template="cubes.i3d" ></i3d-form> 
+        <i3d-form i3d-template="tetrahedra.i3d" ></i3d-form> 
+        <i3d-form i3d-template="grounds.i3d" ></i3d-form> 
+        <i3d-form i3d-template="billboards.i3d" ></i3d-form> 
+        <i3d-form i3d-template="ambientlights.i3d" ></i3d-form> 
+        <i3d-form i3d-template="directionallights.i3d" ></i3d-form> 
+        <i3d-form i3d-template="pointlights.i3d" ></i3d-form> 
+        <i3d-form i3d-template="spotlights.i3d" ></i3d-form> 
+        <i3d-form i3d-template="axes.i3d" ></i3d-form> 
+
+</script>
+
+<!-- i3d-simple.svg -->
+<script type="text/ng-template" id="i3d-simple.svg">
+
+  <!-- singular - camerasphere -->
+  <i3d-form i3d-template="camerasphere.i3d" ></i3d-form> 
+
+  <!-- lists -->
+  <i3d-form i3d-template="axes.i3d" ></i3d-form> 
+  <i3d-form i3d-template="jsonmodels.i3d" ></i3d-form> 
+  <i3d-form i3d-template="cubes.i3d" ></i3d-form> 
+  <i3d-form i3d-template="tetrahedra.i3d" ></i3d-form> 
+  <i3d-form i3d-template="spheres.i3d" ></i3d-form> 
+  <i3d-form i3d-template="billboards.i3d" ></i3d-form>
+  <i3d-form i3d-template="directionallights.i3d" ></i3d-form> 
+  <i3d-form i3d-template="ambientlights.i3d" ></i3d-form> 
+</script>
+
+
+<!-- shot-graft.svg -->
+<script type="text/ng-template" id="shot-graft.svg">
+<g ng-repeat="(p,root) in shot.delta.branches" >
+  <i3d:metaform ng-repeat="(id, node) in root.children" 
+     id={{id}} pid={{p}}
+     <g ng-switch on="node.form.type">
+        <g ng-switch-when="'tetrahedron.i3d'">
+          <ng-include src="'tetrahedron.i3d'"  i3d-replace>
+          <ng-include src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'cube.i3d'">
+          <ng-include id='cube.i3d' src="'cube.i3d'" i3d-replace>
+          <ng-include id='cube-graft' src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'sphere.i3d'">
+          <ng-include id='sphere.i3d' src="'sphere.i3d'"  i3d-replace>
+          <ng-include id=sphere-graft' src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'billboard.i3d'">
+          <ng-include src="'billboard.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'ground.i3d'">
+          <ng-include src="'ground.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'axesnode.i3d'">
+          <ng-include src="'axesnode.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'pointlight.i3d'">
+          <ng-include src="'pointlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'"  i3d-replace></g>
+        <g ng-switch-when="'spotlight.i3d'">
+          <ng-include src="'spotlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'"  i3d-replace></g>
+        <g ng-switch-default></g>
+     </g>
+  </i3d:metaform>
+<g/>
+</script>
+
+<!-- camersphere.i3d -->
+<!-- NOTE: camerasphere default is visible='FALSE'!!. -->
+<!-- NOTE: These are all the defaults for form attrs: --> 
+<!--              r="50.0",
+                  visible="false" 
+                  wireframe="true"
+                  color="red" 
+                  transparent="true" 
+                  opacity="1.0" >-->
+<!-- for debug/test set visible='true' and whatever other 
+     non-defaults are desired, exp: red wireframe - template -->
+<script type="text/ng-template" id="camerasphere.i3d">
+<i3d:camerasphere ng-repeat="(id,node) in i3d.actors.camerasphere"  
+        id={{id}}
+        form={{node.form}}
+        transform={{node.transform}}
+        children={{node.children}}  >
+        <ng-include src="'children.i3d'">
+   </i3d:camerasphere>
+</script>
+
+<!-- NOTE: models using camerasphere should have the following structure: 
+i3d: <template>:<model> = {
+
+      actors: {
+        camerasphere: {
+          csphere0: {
+            form : {},
+            transform: {},
+            children: {
+              key:  {form: {type: "'spotlight.i3d'",
+                           },
+                     transform: {t: []}
+              },
+              fill: {form: {type: "'spotlight.i3d'",
+                           }, 
+                     transform: {t: []}
+              },
+              back: {form: {type: "'pointlight'",
+                           }, 
+                     transform: {t: []}
+              },
+              set:  {form: {type: "'pointlight'",
+                          }, 
+                     transform: {t: []}
+              },
+            }//children
+          }//csphere0
+        }//camerasphere
+        //...
+      }//actors
+-->
+
+<!-- children.i3d - for ng-include recursion by metaforms.i3d/meteform.id -->
+<!-- NOTE: each children instance uses ng-include 'children.i3d'
+           This is to recursively render children -->
+<!-- NOTE: children template does NOT itself create a directive and scope
+     Only the node-form creates a directive so the metaform tree is as lean
+     as possible -->
+<script type="text/ng-template" id="children.i3d">
+  <g ng-if="node.children" >
+    <g ng-repeat="(id,node) in node.children"> 
+      id="{{id}}" 
+      <g ng-switch on="node.form.type">
+        <g ng-switch-when="'tetrahedron.i3d'">
+          <ng-include src="'tetrahedron.i3d'"  i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'cube.i3d'">
+          <ng-include src="'cube.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'sphere.i3d'">
+          <ng-include src="'sphere.i3d'"  i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'billboard.i3d'">
+          <ng-include src="'billboard.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'ground.i3d'">
+          <ng-include src="'ground.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'axesnode.i3d'">
+          <ng-include src="'axesnode.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'pointlight.i3d'">
+          <ng-include src="'pointlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'spotlight.i3d'">
+          <ng-include src="'spotlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-default></g>
+      </g>
+    </g>
+  </g>
+</script> 
+
+
+<!-- graft.i3d - for ng-include recursion by metaforms.i3d/meteform.id -->
+<!-- NOTE: each graft instance uses ng-include 'graft.i3d'
+           This is to recursively render children -->
+<!-- NOTE: graft template does NOT itself create a directive and scope
+     Only the node-form creates a directive so the metaform tree is as lean
+     as possible -->
+<script type="text/ng-template" id="graft.i3d">
+  <g ng-if="node.children" >
+    <g ng-repeat="(id,node) in node.children" 
+      id={{id}} 
+      <g ng-switch on="node.form.type">
+        <g ng-switch-when="'tetrahedron.i3d'">
+          <ng-include src="'tetrahedron.i3d'"  i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'cube.i3d'">
+          <ng-include src="'cube.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'sphere.i3d'">
+          <ng-include src="'sphere.i3d'"  i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'billboard.i3d'">
+          <ng-include src="'billboard.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'ground.i3d'">
+          <ng-include src="'ground.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'axesnode.i3d'">
+          <ng-include src="'axesnode.i3d'" i3d-replace>
+          <ng-include src="'graft.i3d'" i3d-replace></g>
+        <g ng-switch-when="'pointlight.i3d'">
+          <ng-include src="'pointlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'spotlight.i3d'">
+          <ng-include src="'spotlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-default></g>
+      </g>
+    </g>
+  </g>
+</script> 
+
+
+<!-- metaforms.i3d - roots of metaforms for use in index.html-->
+<!-- NOTE: each metaform instance uses ng-include 'children.i3d'
+           This is to recursively render children -->
+<script type="text/ng-template" id="metaforms.i3d">
+  <i3d:metaform ng-repeat="(id, node) in i3d.actors.metaforms" 
+     id={{id}}
+     <g ng-switch on="node.form.type">
+       <g ng-switch-when="'tetrahedron.i3d'">
+         <ng-include src="'tetrahedron.i3d'" i3d-replace>
+         <ng-include src="'children.i3d'" i3d-replace></g>
+       <g ng-switch-when="'cube.i3d'">
+         <ng-include src="'cube.i3d'" i3d-replace>
+         <ng-include src="'children.i3d'" i3d-replace></g>
+       <g ng-switch-when="'sphere.i3d'">
+         <ng-include src="'sphere.i3d'" i3d-replace>
+         <ng-include src="'children.i3d'" i3d-replace></g>
+       <g ng-switch-when="'billboard.i3d'">
+         <ng-include src="'billboard.i3d'" i3d-replace>
+         <ng-include src="'children.i3d'" i3d-replace></g>
+       <g ng-switch-when="'ground.i3d'">
+         <ng-include src="'ground.i3d'" i3d-replace>
+         <ng-include src="'children.i3d'" i3d-replace></g>
+       <g ng-switch-when="'axesnode.i3d'">
+         <ng-include src="'axesnode.i3d'" i3d-replace>
+         <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'pointlight.i3d'">
+          <ng-include src="'pointlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+        <g ng-switch-when="'spotlight.i3d'">
+          <ng-include src="'spotlight.i3d'" i3d-replace>
+          <ng-include src="'children.i3d'" i3d-replace></g>
+       <g ng-switch-default></g>
+     </g>
+  </i3d:metaform> 
+</script>
+
+
+<!-- axesnode.i3d -->
+<!-- can be used in test to see orientation changes of objects -->
+<script type="text/ng-template" id="axesnode.i3d">
+  <i3d-axesnode
+       id={{id}}
+       length="{{form.length}}"
+       transform="{{transform}}">
+  </i3d:axesnode>
+</script>
+
+
+<!-- billboard.i3d -->
+<script type="text/ng-template" id="billboard.i3d">
+<i3d:billboard id={{id}}  
+       form={{node.form}} 
+       transform={{node.transform}} 
+       children={{node.children}} >
+</i3D:billboard> 
+</script> 
+
+
+<!-- cube.i3d -->
+<script type="text/ng-template" id="cube.i3d">
+<i3d:cube id={{id}}  
+          form={{node.form}}
+          transform={{node.transform}}
+          children={{node.children}}>
+</i3d:cube> 
+</script>
+
+
+<!-- ground.i3d -->
+<script type="text/ng-template" id="ground.i3d">
+<i3d:ground id={{id}}   
+       form = {{node.form}}
+       transform = {{node.transform}}
+       children = {{node.children}} >
+</i3d:ground> 
+</script>
+
+
+<!-- pointlight.i3d -->
+<!-- intensity default = 1.0 -->
+<!-- distance default = 0.0 => no attenuation -->
+<!-- position default = 0,0,0 but can be moved by transform -->
+<script type="text/ng-template" id="pointlight.i3d">
+  <i3d:pointlight  id={{id}} 
+       color={{node.form.color}} 
+       intensity={{node.form.intensity}} 
+       distance={{node.form.distance}} 
+       transform={{node.transform}} 
+       children={{node.children}} >
+  </i3d:pointlight>
+</script>
+
+
+<!-- sphere.i3d -->
+<script type="text/ng-template" id="sphere.i3d">
+<i3d:sphere id={{id}}  
+          form={{node.form}}
+          transform={{node.transform}}
+          children={{node.children}}>
+</i3d:sphere> 
+</script>
+
+
+<!-- spotlight.i3d -->
+
+<!-- intensity default = 1.0 -->
+<!-- distance default = 0.0 => no attenuation -->
+<!-- angle default = PI/3.0 (cone beam angle) -->
+<!-- exponential default = 10.0 => fadeout radius outside cone-angle -->
+<!-- position default = 0,0,0 but can be moved by transform -->
+<!-- target.position default = 0,0,0 but can be moved by transform -->
+<!-- castShadow default = false -->
+<!-- shadowCameraNear default = 50.0 -->
+<!-- shadowCameraFar default = 5000.0 -->
+<!-- shadowCameraFOV default = 50.0 -->
+<!-- shadowBias default = 0 --> 
+<!-- shadowDarkness default = 0.5 -->
+<!-- shadowMapWidth default = 512 --> 
+<!-- shadowMapHeight default = 512 --> 
+
+<script type="text/ng-template" id="spotlight.i3d">
+  <i3d:spotlight id={{id}} 
+       color={{node.form.color}} 
+       intensity={{node.form.intensity}} 
+       distance={{node.form.distance}} 
+
+       angle={{node.form.angle}} 
+       exponential={{node.form.exponential}} 
+       targetx={{node.form.targetx}} 
+       targety={{node.form.targety}} 
+       targetz={{node.form.targetz}} 
+       castShadow={{node.form.castShadow}} 
+
+       shadowCameraNear={{node.form.shadowCameraNear}} 
+       shadowCameraFar={{node.form.shadowCameraFar}} 
+       shadowCameraFOV={{node.form.shadowCameraFOV}} 
+       shadowBias={{node.form.shadowBias}} 
+       shadowDarkness={{node.form.shadowDarkness}} 
+       shadowMapWidth={{node.form.shadowMapWidth}} 
+       shadowMapHeight={{node.form.shadowMapHeight}} 
+
+       transform={{node.transform}}       
+       children={{node.children}} >
+  </i3d:spotlight>
+</script>
+
+
+<!-- tetrahedron.i3d -->
+<script type="text/ng-template" id="tetrahedron.i3d">
+<i3d:tetrahedron id={{id}}  
+          form={{node.form}}
+          transform={{node.transform}}
+          children={{node.children}}>
+</i3d:tetrahedron> 
+</script>
+
+
+<!-- <i3d:ambientlight -->
+<script type="text/ng-template" id="ambientlights.i3d">
+  <i3d:ambientlight ng-repeat="(id,node) in i3d.actors.alights"
+       id={{id}} 
+       color={{node.form.color}} >
+  </i3d:ambientlight>
+</script>
+
+
+<!-- axes.i3d -->
+<!-- can be used in test to see orientation changes of objects -->
+<script type="text/ng-template" id="axes.i3d">
+<i3d:axes ng-repeat="(id,node) in i3d.actors.axes"
+       id={{id}}
+       length={{node.form.length}}
+       transform={{node.transform}}
+       children={{node.children}} >
+       <ng-include src="'children.i3d'"> 
+  </i3d:axes>
+</script>
+
+
+<!-- billboards.i3d -->
+<script type="text/ng-template" id="billboards.i3d">
+  <i3d:billboard ng-repeat="(id,node) in i3d.actors.billboards" 
+       id={{id}} 
+       form={{node.form}} 
+       transform={{node.transform}} 
+       children={{node.children}} >
+       <ng-include src="'children.i3d'">
+  </i3D:billboard> 
+</script> 
+
+
+<!-- cubes.i3d -->
+<script type="text/ng-template" id="cubes.i3d">
+  <i3d:cube ng-repeat="(id,node) in i3d.actors.cubes"
+       id={{id}} 
+       form={{node.form}}
+       transform={{node.transform}}
+       children={{node.children}}>
+       <ng-include src="'children.i3d'">
+  </i3d:cube> 
+</script>
+
+
+<!-- directionallights.i3d -->
+<script type="text/ng-template" id="directionallights.i3d">
+  <i3d:directionallight ng-repeat="(id,node) in i3d.actors.dlights"
+       id={{id}} 
+       color={{node.form.color}} 
+       directionx={{node.form.directionx}} 
+       directiony={{node.form.directiony}} 
+       directionz={{node.form.directionz}}
+       transform={{node.transform}} >
+  </i3d:directionallight>
+</script>
+
+
+<!-- grounds.i3d -->
+<script type="text/ng-template" id="grounds.i3d">
+  <i3d:ground ng-repeat="(id,node) in i3d.actors.grounds"
+       id={{id}}
+       form = {{node.form}}
+       transform = {{node.transform}}
+       children = {{node.children}} >
+       <ng-include src="'children.i3d'" >
+  </i3d:ground> 
+</script>
+
+
+<!-- jsonmodels.i3d -->
+<script type="text/ng-template" id="jsonmodels.i3d">
+  <i3d:jsonmodel ng-repeat="(id,node) in i3d.actors.jsonmodels"
+       id={{id}} 
+       form={{node.form}}
+       transform={{node.transform}}
+       children={{node.children}}>
+       <ng-include src="'children.i3d'">
+  </i3d:jsonmodel> 
+</script>
+
+
+<!-- pointlights.i3d -->
+<!-- intensity default = 1.0 -->
+<!-- distance default = 0.0 => no attenuation -->
+<!-- position default = 0,0,0 but can be moved by transform -->
+<script type="text/ng-template" id="pointlights.i3d">
+  <i3d:pointlight ng-repeat="(id,node) in i3d.actors.pointlights"
+       id={{id}} 
+       color={{node.form.color}} 
+       intensity={{node.form.intensity}} 
+       distance={{node.form.distance}} 
+       transform={{node.transform}} >
+  </i3d:pointlight>
+</script>
+
+
+<!-- spheres.i3d -->
+<script type="text/ng-template" id="spheres.i3d">
+  <i3d:sphere ng-repeat="(id,node) in i3d.actors.spheres"
+       id={{id}} 
+       form={{node.form}}
+       transform={{node.transform}}
+       children={{node.children}}>
+       <ng-include src="'children.i3d'">
+  </i3d:sphere> 
+</script>
+
+
+<!-- spotlights.i3d -->
+<!-- intensity default = 1.0 -->
+<!-- distance default = 0.0 => no attenuation -->
+<!-- angle default = PI/3.0 (cone beam angle) -->
+<!-- exponential default = 10.0 => fadeout radius outside cone-angle -->
+<!-- position default = 0,0,0 but can be moved by transform -->
+<!-- target.position default = 0,0,0 but can be moved by transform -->
+<!-- castShadow default = false -->
+<!-- shadowCameraNear default = 50.0 -->
+<!-- shadowCameraFar default = 5000.0 -->
+<!-- shadowCameraFOV default = 50.0 -->
+<!-- shadowBias default = 0 --> 
+<!-- shadowDarkness default = 0.5 -->
+<!-- shadowMapWidth default = 512 --> 
+<!-- shadowMapHeight default = 512 --> 
+<script type="text/ng-template" id="spotlights.i3d">
+  <i3d:spotlight ng-repeat="(id,node) in i3d.actors.spotlights"
+       id={{id}} 
+       color={{node.form.color}} 
+       intensity={{node.form.intensity}} 
+       distance={{node.form.distance}} 
+
+       angle={{node.form.angle}} 
+       exponential={{node.form.exponential}} 
+       targetx={{node.form.targetx}} 
+       targety={{node.form.targety}} 
+       targetz={{node.form.targetz}} 
+       castShadow={{node.form.castShadow}} 
+
+       shadowCameraNear={{node.form.shadowCameraNear}} 
+       shadowCameraFar={{node.form.shadowCameraFar}} 
+       shadowCameraFOV={{node.form.shadowCameraFOV}} 
+       shadowBias={{node.form.shadowBias}} 
+       shadowDarkness={{node.form.shadowDarkness}} 
+       shadowMapWidth={{node.form.shadowMapWidth}} 
+       shadowMapHeight={{node.form.shadowMapHeight}} 
+
+       transform={{node.transform}}       
+       children={{node.children}} >
+  </i3d:spotlight>
+</script>
+
+
+<!-- tetrahedra.i3d -->
+<script type="text/ng-template" id="tetrahedra.i3d">
+  <i3d:tetrahedron ng-repeat="(id,node) in i3d.actors.tetrahedra"
+       id={{id}} 
+       form={{node.form}}
+       transform={{node.transform}}
+       children={{node.children}}>
+       <ng-include src="'children.i3d'">
+  </i3d:tetrahedron> 
+</script>
+

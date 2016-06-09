@@ -1,0 +1,11 @@
+<!-- tetrahedra.i3d -->
+<script type="text/ng-template" id="tetrahedra.i3d">
+  <i3d:tetrahedron ng-repeat="(id,node) in i3d.actors.tetrahedra"
+       id={{id}} 
+       form={{node.form}}
+       transform={{node.transform}}
+       children={{node.children}}>
+       <ng-include src="'children.i3d'">
+  </i3d:tetrahedron> 
+</script>
+

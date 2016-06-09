@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>angular2 playground</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://code.angularjs.org/tools/traceur-runtime.js"></script>
+  <script src="https://code.angularjs.org/tools/system.js"></script>
+  <script src="https://code.angularjs.org/tools/typescript.js"></script>
+  
+  <script src="config.js"></script>
+  <script src="https://code.angularjs.org/2.0.0-alpha.37/angular2.min.js"></script>
+  <script>
+    System.import('app')
+      .catch(console.error.bind(console));
+  </script>
+
+</head>
+
+<body>
+  <my-app>
+    loading...
+  </my-app>
+</body>
+
+</html>
+
+System.config({
+  //use typescript for compilation
+  transpiler: 'typescript',
+  //typescript compiler options
+  typescriptOptions: {
+    emitDecoratorMetadata: true
+  },
+  //map tells the System loader where to look for things
+  map: {
+    app: "./src"
+  },
+  //packages defines our app package
+  packages: {
+    app: {
+      main: './main.ts',
+      defaultExtension: 'ts'
+    }
+  }
+});
+
+//main entry point
+import {bootstrap} from 'angular2/angular2'
+import {App} from './app'
+
+bootstrap(App)
+  .catch(err => console.error(err));
