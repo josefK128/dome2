@@ -13,6 +13,7 @@
 node_modules
 jspm_packages
 build
+docs
 
 # internal notes - last change
 # dome resources, notes, printer-versions, hide from transpile, etc.
