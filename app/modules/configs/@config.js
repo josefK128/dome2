@@ -23,12 +23,8 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 scene: Scene,
                 test: false,
                 name: 'dome2',
-                items: ['cherry', 'apricot', 'apple'],
-                hostL: 'localhost',
-                portL: 8082,
-                f: function () {
-                    document.getElementById('name').innerHTML = "hello " + config.name;
-                },
+                server_host: 'localhost',
+                server_port: 8080,
                 provider_defaults: [core_1.provide(PI, { useValue: 3.14 })]
             });
         }

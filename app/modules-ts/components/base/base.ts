@@ -1,29 +1,68 @@
-import {Component, Input} from '@angular/core';
+import {Component} from '@angular/core';
+import {ComponentResolver, ViewContainerRef} from '@angular/core';
 import {CORE_DIRECTIVES} from '@angular/common';
+import {Templatecache} from '../../services/templatecache';
+
+
+// singleton instance
+var base;
+
 
 @Component({
   selector: 'dome-base',
-  template: '<div *ngFor="let type of types">{{type}}</div>',
-  providers: [],
+  template: ``,
+  providers: [
+    Templatecache
+  ],
   directives: [CORE_DIRECTIVES],
   pipes: []
 })
-
-
 export class Base {
-  @Input() types;
-  //@Output() myEvent = new EventEmitter();
+  compiler: ComponentResolver;
+  view: ViewContainerRef;
+  templates: Templatecache;
 
-  constructor() {
-    this.types = this.types || [];
+  static changeScene(templatename) {
+    var template = base.templates.get(templatename),
+        componentref;
+//    var component;
+
+    console.log(`Base.changeScene: templatename = ${templatename} 
+                                   template = ${template}`);
+    if(template){
+      base.view.clear();
+      base.compiler.resolveComponent(template).then((factory) => {
+        componentref = base.view.createComponent(factory, 0, base.view.injector);
+      });
+    }else{
+      console.log(`template with name = ${templatename} not found!`);
+    }
   }
 
+  constructor(compiler: ComponentResolver, 
+              view: ViewContainerRef,
+              templates: Templatecache) {
+    base = this;
+    base.compiler = compiler;
+    base.view = view;
+    base.templates = templates;
+  }
+
+
   // ordered sequence of component lifecycle phase-transitions:
-//  ngOnChanges() { console.log(` Base ngOnChanges this.types = ${this.types}`); }
-//  ngOnInit() { console.log(` Base ngOnInit`); }
+//  ngOnChanges() { 
+//    console.log(`Base ngOnChanges`); 
+//  }
+//  ngOnInit() { 
+//    console.log(`Base ngOnInit`); 
+//  }
 //  ngDoCheck() { console.log(` Base ngDoCheck`); }
-//  ngAfterContentInit() { console.log(` Base ngAfterContentInit`); }
-//  ngAfterContentChecked() { console.log(` Base ngAfterContentChecked`); }
+//  ngAfterContentInit() { 
+//    console.log(` Base ngAfterContentInit`);
+//  }
+//  ngAfterContentChecked() { 
+//    console.log(` Base ngAfterContentChecked`); 
+//  }
 //  ngAfterViewInit() { console.log(` Base ngAfterViewInit`); }
 //  ngAfterViewChecked() { console.log(` Base ngAfterViewChecked`); }
 //  ngOnDestroy() { console.log(` Base ngOnDestroy`); }

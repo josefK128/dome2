@@ -2,7 +2,7 @@ export default
 `
 <div id="narrative" class="mediaweb" >
 <div class="base">
-<dome-base id="base">
+<dome-base id="base" >
   <!-- NOTE: a-frame causes runtime error at zone.js:1115  
        Uncaught TypeError: Cannot assign to read only property 
        'detachedCallback' of object '#<a-node>' -->
@@ -11,6 +11,7 @@ export default
   </a-scene> -->
 </dome-base>
 </div>
+
 
 <!-- canvas-webgl for insertion into i3d-three.js 'singularity' via
      procedural actions on CameraVR in component lifecycle phase-transitions
@@ -41,53 +42,20 @@ export default
 <!-- elements in defs are prototypes able to re-used
      their values are added to the values of the 'used' elements
      thus it is easiest if their values are set to zero
-     they are not themselves displayed -->
-
-<!-- NOTE: original <svg>...</svg> i2d scene is never cleared
-     by ViewContainerRef.clear() - but it is not seen again unless
-     an empty template is inserted under <dome-i2d></dome-i2d>
--->
-<div id="2D" class="stage" > 
+     they are not themselves displayed --> 
+<div id="2D" class="stage" 
+     style="z-index:10; pointer-events:none'" >  
 <dome-i2d></dome-i2d>
-<svg xmlns="http://www.w3.org/2000/svg" 
-     xmlns:xlink="http://www.w3.org/1999/xlink"
-     preserveAspectRatio="none" 
-     id="s" 
-     width="100%" height="100%" 
-     viewBox="-50, -50, 100, 100"> 
-
-
-  <!-- plane is stage& axes vector space - used for scaling/translating -->
-  <g id="plane" >
-  <g id="zoom_plane" >
-
-    <g id="i2d">
-    </g>
-
-
-    <!-- 2D coordinate axes reference -->
-    <!-- turn on/off via top-left UI radio button -->
-    <!-- NOTE!!!!! correction in this case: should be x="-1000" y="1000" -->
-    <g id="axes" style="display:block; pointer-events:none">
-      <!-- for i3Dmedia.org tosca and cav-localhost -->
-      <image x="-913.25" y="-913.25" width="2100" height="2100" xlink:href="./svg/axes.svg"/>
-      <!-- NOTE: prev. correction for tosca - Nov20 2014 - no longer needed -->
-      <!-- <image x="-1005" y="-1005" width="2100" height="2100" xlink:href="./svg/axes.svg"/> -->
-    </g><!-- axes -->
-
-  </g><!-- zoom_plane -->    
-  </g><!-- plane -->    
-</svg><!-- s -->
 </div><!-- 2D -->
 
 
 <!-- <div id="ui" class="ui" 
              style="z-index:100; x:0; y:0; pointer-events:auto; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, -30%)"> -->
-<div id="display" class="ui" style="z-index:100; x:0; y:0; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, 90%)" >
-<button (click)="urlChange()" >url change</button>
+<div id="ui" class="ui" 
+  style="z-index:100; x:0; y:0; pointer-events:auto; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, 90%)"> 
+<button (click)="urlChange()" style="z-index:100" >url change</button>
 <div id="counter"></div>
-<dome-ui>
-</dome-ui>
+<dome-ui ></dome-ui>
 </div><!--ui-->
 
 

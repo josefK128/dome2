@@ -1,4 +1,4 @@
-System.register(['@angular/core', '@angular/common'], function(exports_1, context_1) {
+System.register(['@angular/core', '@angular/common', '../../services/templatecache'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,37 +10,57 @@ System.register(['@angular/core', '@angular/common'], function(exports_1, contex
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, common_1;
-    var Base;
+    var core_1, core_2, common_1, templatecache_1;
+    var base, Base;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
+                core_2 = core_1_1;
             },
             function (common_1_1) {
                 common_1 = common_1_1;
+            },
+            function (templatecache_1_1) {
+                templatecache_1 = templatecache_1_1;
             }],
         execute: function() {
+            // singleton instance
             Base = (function () {
-                //@Output() myEvent = new EventEmitter();
-                function Base() {
-                    this.types = this.types || [];
+                function Base(compiler, view, templates) {
+                    base = this;
+                    base.compiler = compiler;
+                    base.view = view;
+                    base.templates = templates;
                 }
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Base.prototype, "types", void 0);
+                Base.changeScene = function (templatename) {
+                    var template = base.templates.get(templatename), componentref;
+                    //    var component;
+                    console.log("Base.changeScene: templatename = " + templatename + " \n                                   template = " + template);
+                    if (template) {
+                        base.view.clear();
+                        base.compiler.resolveComponent(template).then(function (factory) {
+                            componentref = base.view.createComponent(factory, 0, base.view.injector);
+                        });
+                    }
+                    else {
+                        console.log("template with name = " + templatename + " not found!");
+                    }
+                };
                 Base = __decorate([
                     core_1.Component({
                         selector: 'dome-base',
-                        template: '<div *ngFor="let type of types">{{type}}</div>',
-                        providers: [],
+                        template: "",
+                        providers: [
+                            templatecache_1.Templatecache
+                        ],
                         directives: [common_1.CORE_DIRECTIVES],
                         pipes: []
                     }), 
-                    __metadata('design:paramtypes', [])
+                    __metadata('design:paramtypes', [(typeof (_a = typeof core_2.ComponentResolver !== 'undefined' && core_2.ComponentResolver) === 'function' && _a) || Object, (typeof (_b = typeof core_2.ViewContainerRef !== 'undefined' && core_2.ViewContainerRef) === 'function' && _b) || Object, templatecache_1.Templatecache])
                 ], Base);
                 return Base;
+                var _a, _b;
             }());
             exports_1("Base", Base);
         }

@@ -6,10 +6,8 @@ interface Config {
   scene: any;
   test: boolean;
   name: string;
-  items: string[];
-  hostL: string;
-  portL: number;
-  f: Function;
+  server_host: string;
+  server_port: number;
   provider_defaults: any[];
 };
 export default Config;

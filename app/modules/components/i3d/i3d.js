@@ -32,9 +32,6 @@ System.register(['@angular/core', '@angular/common', '../../services/templatecac
                     i3d.compiler = compiler;
                     i3d.view = view;
                     i3d.templates = templates;
-                    console.log("I3D ctor: i3d.compiler = " + i3d.compiler);
-                    console.log("I3D ctor: i3d.view = " + i3d.view);
-                    console.log("I3D ctor: i3d.templates = " + i3d.templates);
                 }
                 I3d.changeScene = function (templatename) {
                     var template = i3d.templates.get(templatename), componentref;

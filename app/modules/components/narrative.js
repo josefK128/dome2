@@ -1,4 +1,4 @@
-System.register(['@angular/core', '@angular/common', '@angular/router', '../configs/@config', '../services/cameraVR', '../services/state', './base/base', './i2d/i2d', './i2d/leaf/circle', './i2d/leaf/rect', './i3d/i3d', './narrative.html'], function(exports_1, context_1) {
+System.register(['@angular/core', '@angular/common', '@angular/router', '../configs/@config', '../services/cameraVR', '../services/state', './i3d/i3d', './i2d/i2d', './base/base', './narrative.html'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, common_1, router_1, _config_1, cameraVR_1, state_1, base_1, i2d_1, circle_1, rect_1, i3d_1, narrative_html_1;
+    var core_1, common_1, router_1, _config_1, cameraVR_1, state_1, i3d_1, i2d_1, base_1, narrative_html_1;
     var Narrative;
     return {
         setters:[
@@ -35,20 +35,14 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
             function (state_1_1) {
                 state_1 = state_1_1;
             },
-            function (base_1_1) {
-                base_1 = base_1_1;
+            function (i3d_1_1) {
+                i3d_1 = i3d_1_1;
             },
             function (i2d_1_1) {
                 i2d_1 = i2d_1_1;
             },
-            function (circle_1_1) {
-                circle_1 = circle_1_1;
-            },
-            function (rect_1_1) {
-                rect_1 = rect_1_1;
-            },
-            function (i3d_1_1) {
-                i3d_1 = i3d_1_1;
+            function (base_1_1) {
+                base_1 = base_1_1;
             },
             function (narrative_html_1_1) {
                 narrative_html_1 = narrative_html_1_1;
@@ -58,7 +52,6 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                 function Narrative(cfg, cameraVR, state) {
                     this.count = 0;
                     this.config = cfg || {};
-                    this.items = _config_1.config.items || [];
                     this.f = _config_1.config.f || function () { Function.prototype; };
                     Narrative.provider_defaults = _config_1.config.provider_defaults || [];
                     this.cameraVR = cameraVR;
@@ -70,19 +63,27 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                 // Use the url to get the templatename used in I3d.changeScene(templatename)
                 // NOTE: !!!!!!!!
                 Narrative.prototype.urlChange = function (url) {
-                    var canvas;
                     console.log('\n\n\nurlChange!');
                     console.log("this.state.path() = " + this.state.path());
-                    this.items = ['peach', 'raspberry', 'plum', 'pear'];
-                    //console.log(`config.canvas_id = ${this.config.canvas_id}`);
-                    canvas = document.getElementById(this.config.canvas_id);
+                    // Later - change the address in the browser address bar
+                    //         and add the url-state to the browser history
+                    // this.state.go(url);
+                    // Later - get component~model tuples from url and change the views
+                    //         of each changed media layer
+                    //         send scene:score to narrative - contains queue and clock
+                    //         send shot:{} to cameraVR - contains GSAP execution - was
+                    //         $scope.$on($stateChangeSuccess, ()=>{}) in dome
                     if (this.count % 2 === 0) {
                         this.cameraVR.place(this.config.canvas_id, this.config.opening_scene, this, this.config.scene);
                         i3d_1.I3d.changeScene('space');
+                        i2d_1.I2d.changeScene('stage');
+                        base_1.Base.changeScene('list');
                     }
                     else {
                         this.cameraVR.place(this.config.canvas_id, "scene two", this, Scene2);
                         i3d_1.I3d.changeScene('space2');
+                        i2d_1.I2d.changeScene('stage2');
+                        base_1.Base.changeScene('list2');
                     }
                     document.getElementById('counter').innerHTML = "count = " + ++this.count;
                 };
@@ -109,7 +110,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                         ],
                         directives: [
                             common_1.CORE_DIRECTIVES,
-                            base_1.Base, i2d_1.I2d, i3d_1.I3d, circle_1.Circle, rect_1.Rect
+                            base_1.Base, i2d_1.I2d, i3d_1.I3d // later Ui
                         ]
                     }),
                     core_1.Injectable(),

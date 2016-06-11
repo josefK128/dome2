@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../configs/@config', '../components/i3d/composite/space', '../components/i3d/composite/space2'], function(exports_1, context_1) {
+System.register(['@angular/core', '../configs/@config', '../components/i3d/composite/space', '../components/i3d/composite/space2', '../components/i2d/composite/stage', '../components/i2d/composite/stage2', '../components/base/composite/list', '../components/base/composite/list2'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, _config_1, space_1, space2_1;
+    var core_1, _config_1, space_1, space2_1, stage_1, stage2_1, list_1, list2_1;
     var cache, Templatecache;
     return {
         setters:[
@@ -28,6 +28,18 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
             },
             function (space2_1_1) {
                 space2_1 = space2_1_1;
+            },
+            function (stage_1_1) {
+                stage_1 = stage_1_1;
+            },
+            function (stage2_1_1) {
+                stage2_1 = stage2_1_1;
+            },
+            function (list_1_1) {
+                list_1 = list_1_1;
+            },
+            function (list2_1_1) {
+                list2_1 = list2_1_1;
             }],
         execute: function() {
             // ...
@@ -37,8 +49,15 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
                     cache = this;
                     cache.config = cfg || {};
                     cache.components = {
+                        // i3d
                         'space': space_1.Space,
-                        'space2': space2_1.Space2
+                        'space2': space2_1.Space2,
+                        // i2d
+                        'stage': stage_1.Stage,
+                        'stage2': stage2_1.Stage2,
+                        // base
+                        'list': list_1.List,
+                        'list2': list2_1.List2,
                     };
                 }
                 Templatecache.prototype.get = function (name) {

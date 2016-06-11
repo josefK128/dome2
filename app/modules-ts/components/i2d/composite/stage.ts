@@ -1,4 +1,4 @@
-//Stage attribute-component
+//Stage component
 import {Component} from '@angular/core';
 import {Rect} from '../leaf/rect';
 import {Circle} from '../leaf/circle';
@@ -8,7 +8,7 @@ import {Circle} from '../leaf/circle';
 */
 
 @Component({
-  selector: '[stage]',
+  selector: 'stage',
   directives: [Rect, Circle],
   template: `
 <svg xmlns="http://www.w3.org/2000/svg" 
@@ -24,15 +24,10 @@ import {Circle} from '../leaf/circle';
   <g id="zoom_plane" >
 
     <g id="i2d">
-        <g circle/>
-        <g rect/>
-        <!-- <g circles/> ngFor in circles fails -->
+      <circle r="5" fill="white" opacity="0.5" ></circle>
+      <g circle/>
+      <!-- <g circles/> ngFor in circles fails -->
     </g>
-
-
-    <!-- i3d-svg-webgl templates are inserted into 'space' at i3d ui-view  -->
-    <g id="i3d" >
-    </g><!-- 'i3d' -->
 
 
     <!-- 2D coordinate axes reference -->
@@ -40,7 +35,7 @@ import {Circle} from '../leaf/circle';
     <!-- NOTE!!!!! correction in this case: should be x="-1000" y="1000" -->
     <g id="axes" style="display:block; pointer-events:none">
       <!-- for i3Dmedia.org tosca and cav-localhost -->
-      <image x="-913.25" y="-913.25" width="2100" height="2100" xlink:href="./app/svg/axes.svg"/>
+      <image x="-913.25" y="-913.25" width="2100" height="2100" xlink:href="./svg/axes.svg"/>
       <!-- NOTE: prev. correction for tosca - Nov20 2014 - no longer needed -->
       <!-- <image x="-1005" y="-1005" width="2100" height="2100" xlink:href="./svg/axes.svg"/> -->
     </g><!-- axes -->

@@ -2,7 +2,7 @@ export default
 `
 <div id="narrative" class="mediaweb" >
 <div class="base">
-<dome-base id="base">
+<dome-base id="base" >
   <!-- NOTE: a-frame causes runtime error at zone.js:1115  
        Uncaught TypeError: Cannot assign to read only property 
        'detachedCallback' of object '#<a-node>' -->
@@ -10,7 +10,7 @@ export default
     <a-box color="#6173F4" width="4" height="10" depth="2"></a-box>
   </a-scene> -->
 </dome-base>
-</div>
+<div>
 
 <!-- canvas-webgl for insertion into i3d-three.js 'singularity' via
      procedural actions on CameraVR in component lifecycle phase-transitions
@@ -47,7 +47,8 @@ export default
      by ViewContainerRef.clear() - but it is not seen again unless
      an empty template is inserted under <dome-i2d></dome-i2d>
 -->
-<div id="2D" class="stage" > 
+<div id="2D" class="stage" 
+     style="z-index:10; pointer-events:none'" >  
 <dome-i2d></dome-i2d>
 <svg xmlns="http://www.w3.org/2000/svg" 
      xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -83,12 +84,13 @@ export default
 
 <!-- <div id="ui" class="ui" 
              style="z-index:100; x:0; y:0; pointer-events:auto; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, -30%)"> -->
-<div id="display" class="ui" style="z-index:100; x:0; y:0; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, 90%)" >
+<div id="ui" class="ui"  
+     style="z-index:100; x:0; y:0; pointer-events:auto; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, 90%)"> 
 <button (click)="urlChange()" >url change</button>
-<div id="counter"></div>
+<div id="counter" ></div>
+</div><!--ui-->
 <dome-ui>
 </dome-ui>
-</div><!--ui-->
 
 
 </div><!--narrative-->

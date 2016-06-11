@@ -12,11 +12,11 @@ import Config from '../configs/config.interface';
 import {CONFIG, config} from '../configs/@config';
 import {CameraVR} from '../services/cameraVR';
 import {State} from '../services/state';
-import {Base} from './base/base';
-import {I2d} from './i2d/i2d';
-import {Circle} from './i2d/leaf/circle';
-import {Rect} from './i2d/leaf/rect';
 import {I3d} from './i3d/i3d';
+import {I2d} from './i2d/i2d';
+import {Base} from './base/base';
+//import {UI} from './ui/ui';
+
 // template
 import template from './narrative.html';
 
@@ -34,14 +34,13 @@ import template from './narrative.html';
   ],
   directives: [
     CORE_DIRECTIVES, 
-    Base, I2d, I3d, Circle, Rect
+    Base, I2d, I3d    // later Ui
   ]
 })
 @Injectable()
 export class Narrative {
   static provider_defaults: any[];
   config: any;
-  items: string[];
   f: Function;
   provider_defaults: any[];
   count: number = 0;
@@ -54,7 +53,6 @@ export class Narrative {
               state:State
   ) {
     this.config = cfg || {};
-    this.items = config.items || [];
     this.f = config.f || function(){Function.prototype;};
     Narrative.provider_defaults = config.provider_defaults || []; 
     this.cameraVR = cameraVR;
@@ -87,13 +85,18 @@ export class Narrative {
   // Use the url to get the templatename used in I3d.changeScene(templatename)
   // NOTE: !!!!!!!!
   urlChange(url:string) {
-  var canvas:any;
      
     console.log('\n\n\nurlChange!');
     console.log(`this.state.path() = ${this.state.path()}`);
-    this.items = ['peach', 'raspberry', 'plum', 'pear'];
-    //console.log(`config.canvas_id = ${this.config.canvas_id}`);
-    canvas = document.getElementById(this.config.canvas_id);
+
+    // Later - change the address in the browser address bar
+    //         and add the url-state to the browser history
+    // this.state.go(url);
+    // Later - get component~model tuples from url and change the views
+    //         of each changed media layer
+    //         send scene:score to narrative - contains queue and clock
+    //         send shot:{} to cameraVR - contains GSAP execution - was
+    //         $scope.$on($stateChangeSuccess, ()=>{}) in dome
 
     if(this.count%2 === 0){
       this.cameraVR.place(this.config.canvas_id,
@@ -101,12 +104,16 @@ export class Narrative {
                         this,
                         this.config.scene);
                         I3d.changeScene('space');
+                        I2d.changeScene('stage');
+                        Base.changeScene('list');
     }else{
-         this.cameraVR.place(this.config.canvas_id,
+      this.cameraVR.place(this.config.canvas_id,
                         "scene two",
                         this,
                         Scene2);
                         I3d.changeScene('space2');
+                        I2d.changeScene('stage2');
+                        Base.changeScene('list2');
     }
     document.getElementById('counter').innerHTML = `count = ${++this.count}`;
   }

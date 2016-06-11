@@ -18,12 +18,8 @@ export const config:Config = {
   scene: Scene,
   test: false,
   name: 'dome2',
-  items: ['cherry', 'apricot', 'apple'],
-  hostL: 'localhost',
-  portL: 8082,
-  f: () => {
-      document.getElementById('name').innerHTML = `hello ${config.name}`;
-  },
+  server_host: 'localhost',
+  server_port: 8080,
   provider_defaults: [provide(PI, {useValue: 3.14})] 
 };
 

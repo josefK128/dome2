@@ -98,7 +98,7 @@ body {
  * controls associated with scenes and navigation
  */
 .mediaweb .ui {
-  position: relative;  // rel floats independently */ 
+  position: absolute;  // rel floats independently */ 
   pointer-events: auto; 
   z-index: 100;
 }

@@ -52,31 +52,25 @@ export class I3d {
     i3d.compiler = compiler;
     i3d.view = view;
     i3d.templates = templates;
-    console.log(`I3D ctor: i3d.compiler = ${i3d.compiler}`);
-    console.log(`I3D ctor: i3d.view = ${i3d.view}`);
-    console.log(`I3D ctor: i3d.templates = ${i3d.templates}`);
   }
 
 
   // ordered sequence of component lifecycle phase-transitions:
 //  ngOnChanges() { 
-//    console.log(`I3D ngOnChanges`); 
+//    console.log(`I3d ngOnChanges`); 
 //  }
 //  ngOnInit() { 
-//    console.log(`I3D ngOnInit`); 
-//    console.log(`I3D: this.type = ${this.type}`);
-//    console.log(`I3D: this.compiler = ${this.compiler}`);
-//    console.log(`I3D: this.view = ${this.view}`);
+//    console.log(`I3d ngOnInit`); 
 //  }
-//  ngDoCheck() { console.log(` I3D ngDoCheck`); }
+//  ngDoCheck() { console.log(` I3d ngDoCheck`); }
 //  ngAfterContentInit() { 
-//    console.log(` I3D ngAfterContentInit`);
+//    console.log(` I3d ngAfterContentInit`);
 //  }
 //  ngAfterContentChecked() { 
-//    console.log(` I3D ngAfterContentChecked`); 
+//    console.log(` I3d ngAfterContentChecked`); 
 //    //document.getElementById("s").setAttribute("preseveAspectRatio", "none");
 //  }
-//  ngAfterViewInit() { console.log(` I3D ngAfterViewInit`); }
-//  ngAfterViewChecked() { console.log(` I3D ngAfterViewChecked`); }
-//  ngOnDestroy() { console.log(` I3D ngOnDestroy`); }
+//  ngAfterViewInit() { console.log(` I3d ngAfterViewInit`); }
+//  ngAfterViewChecked() { console.log(` I3d ngAfterViewChecked`); }
+//  ngOnDestroy() { console.log(` I3d ngOnDestroy`); }
 }
