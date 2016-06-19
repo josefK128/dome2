@@ -4,18 +4,16 @@
 // in <sphere ...></sphere> element(s) in the templates of composite 
 // components (for exp. scenes)
 // NOTE: the purpose of i3d leaf-components are to create webGL objects
-// and via CameraVR add them to the webGL scene rendered in the '3D' canvas,
-// and register the object as a scene 'actor' via CameraVR.addActorToScene(...)
+// and via Camera3d add them to the webGL scene rendered in the '3D' canvas,
+// and register the object as a scene 'actor' via Camera3d.addActorToScene(...)
 
 import {Component, Input} from '@angular/core';
-import {CameraVR} from 'app/modules-ts/services';
+import {Camera3d} from 'app/modules-ts/services';
 
 @Component({
   selector: 'tetrahedron',
   template: '',
-  providers: [
-    CameraVR
-  ]
+  providers: []
 })
 export class Tetrahedron {
   @Input() id: string;
@@ -31,7 +29,7 @@ export class Tetrahedron {
   tetrahedron: THREE.Object3D;
   pid: string;
 
-  constructor(cameraVR: CameraVR) {
+  constructor(camera3d: Camera3d) {
     this.id = this.is || Math.random().toString();
     this.radius = this.radius || 1;
     this.transform = this.transform || {};
@@ -75,7 +73,7 @@ export class Tetrahedron {
     node.material.side = THREE.DoubleSide;
   
     // add the Object3d to the scene and store in Camera3d actors by id
-    cameraVR.addActorToScene(id, node, pid);
+    camera3d.addActorToScene(id, node, pid);
   
     // transform tetrahedron - relative to parent in THREE.js scene !!!
     //transform3d.apply(transform, node);
@@ -85,7 +83,7 @@ export class Tetrahedron {
   // ordered sequence of component lifecycle phase-transitions:
 //  ngOnChanges() { console.log(`Tetrahedron ngOnChanges`); }
   ngOnInit() { 
-    console.log(`%%%% Tetrahedron ngOnInit: wrote sphere to CameraVR`); 
+    console.log(`%%%% Tetrahedron ngOnInit: wrote sphere to Camera3d`); 
     console.log(`%%%% Tetrahedron ngOnInit: sphere.radius = ${this.radius}`); 
   }
 //  ngDoCheck() { console.log(`Tetrahedron ngDoCheck`); }

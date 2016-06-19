@@ -33,9 +33,9 @@ System.register(['@angular/core', '@angular/common', '../../services/templatecac
                     i3d.view = view;
                     i3d.templates = templates;
                 }
-                I3d.changeScene = function (templatename) {
-                    var template = i3d.templates.get(templatename), componentref;
-                    //    var component;
+                I3d.changeState = function (templatename) {
+                    var template = i3d.templates.get(templatename), componentref; // component = componentref.instance;
+                    console.log("I3d.changeState: templatename = " + templatename);
                     if (template) {
                         i3d.view.clear();
                         i3d.compiler.resolveComponent(template).then(function (factory) {
@@ -45,21 +45,12 @@ System.register(['@angular/core', '@angular/common', '../../services/templatecac
                     else {
                         console.log("template with name = " + templatename + " not found!");
                     }
-                    // componentref is not returned immediately - it is available after delay
-                    //    setTimeout(() => {
-                    //      componentref = componentref || {};
-                    //      component = componentref.instance;
-                    //      console.log(`I3d.changeScene 1sec: componentref = ${componentref}`);
-                    //      console.log(`I3d.changeScene 1sec: component = ${component}`);
-                    //    },1000);
                 };
                 I3d = __decorate([
                     core_1.Component({
                         selector: 'dome-i3d',
                         template: "",
-                        providers: [
-                            templatecache_1.Templatecache
-                        ],
+                        providers: [],
                         directives: [common_1.CORE_DIRECTIVES],
                         pipes: []
                     }), 

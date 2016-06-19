@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ComponentResolver, ViewContainerRef} from '@angular/core';
+import {ComponentResolver, ViewContainerRef, ComponentRef} from '@angular/core';
 import {CORE_DIRECTIVES} from '@angular/common';
 
 // application
@@ -11,9 +11,7 @@ var i2d;
 @Component({
   selector: 'dome-i2d',
   template: ``,
-  providers: [
-    Templatecache
-  ],
+  providers: [],
   directives: [CORE_DIRECTIVES],
   pipes: []
 })
@@ -21,11 +19,12 @@ export class I2d {
   compiler: ComponentResolver;
   view: ViewContainerRef;
 
-  static changeScene(templatename) {
+  static changeState(templatename) {
     var template = i2d.templates.get(templatename),
         componentref:ComponentRef;
+        //var component;  // component = componentref.instance;
 
-    console.log(`I2d.changeScene: templatename = ${templatename}`);
+    console.log(`I2d.changeState: templatename = ${templatename}`);
     if(template){
       i2d.view.clear();
       i2d.compiler.resolveComponent(template).then((factory) => {

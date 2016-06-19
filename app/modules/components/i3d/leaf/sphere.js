@@ -4,9 +4,9 @@
 // in <sphere ...></sphere> element(s) in the templates of composite 
 // components (for exp. scenes)
 // NOTE: the purpose of i3d leaf-components are to create webGL objects
-// and via CameraVR add them to the webGL scene rendered in the '3D' canvas,
-// and register the object as a scene 'actor' via CameraVR.addActorToScene(...)
-System.register(['@angular/core', '../../../services/cameraVR'], function(exports_1, context_1) {
+// and via Camera3d add them to the webGL scene rendered in the '3D' canvas,
+// and register the object as a scene 'actor' via Camera3d.addActorToScene(...)
+System.register(['@angular/core', '../../../services/camera3d'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -18,27 +18,27 @@ System.register(['@angular/core', '../../../services/cameraVR'], function(export
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, cameraVR_1;
+    var core_1, camera3d_1;
     var Sphere;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (cameraVR_1_1) {
-                cameraVR_1 = cameraVR_1_1;
+            function (camera3d_1_1) {
+                camera3d_1 = camera3d_1_1;
             }],
         execute: function() {
             Sphere = (function () {
-                function Sphere(_cameraVR) {
-                    this.cameraVR = _cameraVR;
+                function Sphere(_camera3d) {
+                    this.camera3d = _camera3d;
                 }
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Sphere ngOnChanges`); }
                 Sphere.prototype.ngOnInit = function () {
                     var node;
                     console.log("\n\n%%%% Sphere ngOnInit:");
-                    console.log("%%%% this.cameraVR = " + this.cameraVR);
+                    console.log("%%%% this.camera3d = " + this.camera3d);
                     for (var p in this.model) {
                         console.log("this.model has property " + p + " with val = " + this.model[p]);
                     }
@@ -53,9 +53,9 @@ System.register(['@angular/core', '../../../services/cameraVR'], function(export
                     else {
                         console.log("%%%% Note: there is no parentNode of this.id= " + this.id);
                     }
-                    this.radius = this.model[this.id]['radius'];
+                    this.radius = this.model['actors'][this.id]['radius'];
                     console.log("%%%% sphere.radius = " + this.radius);
-                    console.log("%%%% Sphere wrote sphere " + this.id + " to CameraVR");
+                    console.log("%%%% Sphere wrote sphere " + this.id + " to Camera3d");
                 };
                 __decorate([
                     core_1.Input(), 
@@ -71,7 +71,7 @@ System.register(['@angular/core', '../../../services/cameraVR'], function(export
                         template: '',
                         providers: []
                     }), 
-                    __metadata('design:paramtypes', [cameraVR_1.CameraVR])
+                    __metadata('design:paramtypes', [camera3d_1.Camera3d])
                 ], Sphere);
                 return Sphere;
             }());

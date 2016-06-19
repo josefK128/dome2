@@ -16,16 +16,33 @@ System.register(['@angular/core'], function(exports_1, context_1) {
             // provider override experiment - no effect
             PI = new core_1.OpaqueToken('pi');
             exports_1("config", config = {
-                url_pattern: '{scene}/{i3d}/{shot}/',
-                url_keys: ['scene', 'i3d', 'shot'],
+                // recall that the ui radio-button is static - not dynamically created
+                controls: ['i2d', 'i3d', 'base', 'fps', 'csphere', 'key', 'fill', 'back'],
+                controlstates: { ui: true, i2d: false, i3d: true, base: true, fps: true, csphere: true, key: true, fill: true, back: true },
+                scenes: ['scene1', 'scene2'],
+                scenestates: { scene1: false, scene2: false },
+                scenepaths: { opening: 'opening://///',
+                    scene1: 'scene1:/space:model1/stage:/bg:/display:/shot:/',
+                    scene2: 'scene2:/space2:model2/stage2:/bg2:/display2:/shot2:/'
+                },
+                // metastate: '{scene}/{i3d}/{shot}/',  // for VR
+                // substates: ['scene', 'i3d', 'shot'],
+                metastate: '{scene}/{i3d}/{i2d}/{base}/{ui}/{shot}/',
+                substates: ['scene', 'i3d', 'i2d', 'base', 'ui', 'shot'],
                 canvas_id: '3D',
                 opening_scene: 'opening',
-                scene: Scene,
-                test: false,
+                unit_test: false,
+                e2e_test: false,
                 name: 'dome2',
                 server_host: 'localhost',
-                server_port: 8080,
-                provider_defaults: [core_1.provide(PI, { useValue: 3.14 })]
+                server_port: 8081,
+                server_connect: false,
+                record_stream: false,
+                channels: ['actions'],
+                // targets for action execs
+                targets: { narrative: {}, camera3d: {}, camera2d: {}, mediator: {}, animation: {},
+                    models: {}, scenes: {}, templatecache: {} },
+                provider_overrides: [core_1.provide(PI, { useValue: 3.14 })]
             });
         }
     }

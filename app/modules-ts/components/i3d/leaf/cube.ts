@@ -10,7 +10,7 @@ export class Cube {
   // ordered sequence of component lifecycle phase-transitions:
 //  ngOnChanges() { console.log(`Cube ngOnChanges`); }
   ngOnInit() { 
-    console.log(`%%%% Cube ngOnInit wrote cube to CameraVR`); 
+    console.log(`%%%% Cube ngOnInit wrote cube to Camera3d`); 
   }
 //  ngDoCheck() { console.log(`Cube ngDoCheck`); }
 //  ngAfterContentInit() { console.log(`Cube ngAfterContentInit`); }

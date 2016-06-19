@@ -4,11 +4,11 @@
 // in <sphere ...></sphere> element(s) in the templates of composite 
 // components (for exp. scenes)
 // NOTE: the purpose of i3d leaf-components are to create webGL objects
-// and via CameraVR add them to the webGL scene rendered in the '3D' canvas,
-// and register the object as a scene 'actor' via CameraVR.addActorToScene(...)
+// and via Camera3d add them to the webGL scene rendered in the '3D' canvas,
+// and register the object as a scene 'actor' via Camera3d.addActorToScene(...)
 
 import {Component, Input} from '@angular/core';
-import {CameraVR} from '../../../services/cameraVR';
+import {Camera3d} from '../../../services/camera3d';
 
 
 @Component({
@@ -21,13 +21,13 @@ export class Sphere {
   @Input() id: string;
   @Input() model: Object;
   radius:number;
-  cameraVR: CameraVR;
+  camera3d: Camera3d;
   parentElement:string;
   pid:string;
 
 
-  constructor(_cameraVR: CameraVR) {
-    this.cameraVR = _cameraVR;
+  constructor(_camera3d: Camera3d) {
+    this.camera3d = _camera3d;
   }
 
   // ordered sequence of component lifecycle phase-transitions:
@@ -35,7 +35,7 @@ export class Sphere {
 ngOnInit() {
   var node;
   console.log("\n\n%%%% Sphere ngOnInit:");
-  console.log(`%%%% this.cameraVR = ${this.cameraVR}`);
+  console.log(`%%%% this.camera3d = ${this.camera3d}`);
   for(var p in this.model){
     console.log(`this.model has property ${p} with val = ${this.model[p]}`);
   }
@@ -49,9 +49,9 @@ ngOnInit() {
   }else{
   console.log(`%%%% Note: there is no parentNode of this.id= ${this.id}`); 
   }
-  this.radius = this.model[this.id]['radius'];
+  this.radius = this.model['actors'][this.id]['radius'];
   console.log(`%%%% sphere.radius = ${this.radius}`); 
-  console.log(`%%%% Sphere wrote sphere ${this.id} to CameraVR`); 
+  console.log(`%%%% Sphere wrote sphere ${this.id} to Camera3d`); 
 }
 
 //  ngDoCheck() { console.log(`Sphere ngDoCheck`); }

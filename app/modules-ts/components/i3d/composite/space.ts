@@ -10,6 +10,7 @@ import {CONFIG} from '../../../configs/@config';
 // services
 import {Models} from '../../../services/models';
 import {State} from '../../../services/state';
+import {Camera3d} from '../../../services/camera3d';
 
 // components
 import {Sphere} from '../leaf/sphere';
@@ -20,7 +21,7 @@ import {Cube} from '../leaf/cube';
 @Component({
   selector: 'space',
   directives: [Sphere, Cone, Cube],
-  providers: [Models, State],
+  providers: [],
   template: `
   <sphere id="sphere1" [model]="model" ></sphere>
   <sphere id="sphere2" [model]="model" ></sphere>
@@ -29,35 +30,53 @@ import {Cube} from '../leaf/cube';
  `
 })
 export class Space {
-  config:any;
+  config:Config;
   model:Object;
-  state:any;
+  state:State;
+  camera3d:Camera3d;
+  templatename:string;
+  modelname:string;
+
 
   // NOTE: Later URL or else cfg to get models name for template 'space'
   // NOTE: if use cfg then this template is a 'genotype' with the application
   // of the model realizing the 'phenotype'
-  constructor(@Inject(CONFIG) cfg:Config, models:Models, state:State ) {
-    this.config = cfg || {};
-    this.model = models.get('model1');
+  constructor(@Inject(CONFIG) cfg:Config, 
+              models:Models,
+              state:State, 
+              camera3d:Camera3d){
+
+    this.config = cfg;
     this.state = state;
+    this.camera3d = camera3d;
+
+    // this.model = models.get('model1');
+    console.log(`state.path() = ${state.path()}`);
+    this.templatename = state.template(state.path(), 'i3d');  // 'space'
+    this.modelname = state.model(state.path(), 'i3d');  // 'model1'
+    console.log(`######## this.templatename = ${this.templatename}`);
+    console.log(`######## this.modelname = ${this.modelname}`);
+    console.log(`models.get('i3d.${this.templatename}.${this.modelname}')`);
+    this.model = models.get(`i3d.${this.templatename}.${this.modelname}`);
   }
 
+
+  // lifecycle
   // ordered sequence of component lifecycle phase-transitions:
-//  ngOnChanges() { console.log(`Space ngOnChanges`); }
- 
-  ngOnInit() { 
-    console.log(`\n#### Space ngOnInit`); 
-    console.log(`url = ${this.state.path()}`);
-    console.log(`this.model = ${this.model}`);
-    for(var p in this.model){
-      console.log(`this.model has property ${p} with val ${this.model[p]}`);
-    }
+  //ngOnChanges() { console.log(`Space ngOnChanges`); }
+  //ngOnInit() { console.log(`\nSpace ngOnInit`);} 
+  //ngDoCheck() { console.log(`Space ngDoCheck`); }
+  //ngAfterContentInit() { console.log(`Space ngAfterContentInit`); }
+  //ngAfterContentChecked() { console.log(`Space ngAfterContentChecked`); }
+  ngAfterViewInit() { 
+    console.log(`Space ngAfterViewInit`); 
+    console.log(`i3d actors = ${this.camera3d.reportActors()}`);
   }
-
-//  ngDoCheck() { console.log(`Space ngDoCheck`); }
-//  ngAfterContentInit() { console.log(`Space ngAfterContentInit`); }
-//  ngAfterContentChecked() { console.log(`Space ngAfterContentChecked`); }
-//  ngAfterViewInit() { console.log(`Space ngAfterViewInit`); }
-//  ngAfterViewChecked() { console.log(`Space ngAfterViewChecked`); }
-//  ngOnDestroy() { console.log(`Space ngOnDestroy`); }
+  //ngAfterViewChecked() { console.log(`Space ngAfterViewChecked`); }
+  ngOnDestroy() { 
+    console.log(`@@@@@@@ !!!!!!!!  Space ngOnDestroy`); 
+    console.log(`before i3d actors = ${this.camera3d.reportActors()}`);
+    this.camera3d.removeActorFromScene(this.templatename);
+    console.log(`after i3d actors = ${this.camera3d.reportActors()}`);
+  }  
 }

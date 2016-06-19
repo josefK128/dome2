@@ -24,7 +24,7 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Cone ngOnChanges`); }
                 Cone.prototype.ngOnInit = function () {
-                    console.log("%%%% Cone ngOnInit: wrote cone to CameraVR");
+                    console.log("%%%% Cone ngOnInit: wrote cone to Camera3d");
                 };
                 Cone = __decorate([
                     core_1.Component({

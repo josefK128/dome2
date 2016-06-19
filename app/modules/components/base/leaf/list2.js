@@ -27,8 +27,8 @@ System.register(['@angular/core', '@angular/common'], function(exports_1, contex
                 }
                 List2 = __decorate([
                     core_1.Component({
-                        selector: 'li',
-                        template: '<div *ngFor="let type of types">{{type}}</div>',
+                        selector: 'h3',
+                        template: '<div *ngFor="let type of types" >{{type}}</div>',
                         providers: [],
                         directives: [common_1.CORE_DIRECTIVES],
                         pipes: []

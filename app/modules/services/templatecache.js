@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../configs/@config', '../components/i3d/composite/space', '../components/i3d/composite/space2', '../components/i2d/composite/stage', '../components/i2d/composite/stage2', '../components/base/composite/list', '../components/base/composite/list2'], function(exports_1, context_1) {
+System.register(['@angular/core', '../configs/@config', '../components/i3d/composite/space', '../components/i3d/composite/space2', '../components/i2d/composite/stage', '../components/i2d/composite/stage2', '../components/base/leaf/list', '../components/base/leaf/list2', '../components/base/leaf/bg', '../components/base/leaf/bg2', '../components/ui/leaf/display', '../components/ui/leaf/display2'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,8 +13,8 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, _config_1, space_1, space2_1, stage_1, stage2_1, list_1, list2_1;
-    var cache, Templatecache;
+    var core_1, _config_1, space_1, space2_1, stage_1, stage2_1, list_1, list2_1, bg_1, bg2_1, display_1, display2_1;
+    var Templatecache;
     return {
         setters:[
             function (core_1_1) {
@@ -40,15 +40,24 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
             },
             function (list2_1_1) {
                 list2_1 = list2_1_1;
+            },
+            function (bg_1_1) {
+                bg_1 = bg_1_1;
+            },
+            function (bg2_1_1) {
+                bg2_1 = bg2_1_1;
+            },
+            function (display_1_1) {
+                display_1 = display_1_1;
+            },
+            function (display2_1_1) {
+                display2_1 = display2_1_1;
             }],
         execute: function() {
-            // ...
-            // reference to singleton instance of Templatecache
             Templatecache = (function () {
                 function Templatecache(cfg) {
-                    cache = this;
-                    cache.config = cfg || {};
-                    cache.components = {
+                    this.config = cfg;
+                    this.components = {
                         // i3d
                         'space': space_1.Space,
                         'space2': space2_1.Space2,
@@ -58,13 +67,71 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
                         // base
                         'list': list_1.List,
                         'list2': list2_1.List2,
+                        'bg': bg_1.Bg,
+                        'bg2': bg2_1.Bg2,
+                        // ui
+                        'display': display_1.Display,
+                        'display2': display2_1.Display2
                     };
                 }
-                Templatecache.prototype.get = function (name) {
-                    if (name) {
-                        if (cache.components[name]) {
-                            return cache.components[name];
+                //  get(name){
+                //    if(name){
+                //      if(this.components[name]){
+                //        return this.components[name];
+                //      }
+                //    } 
+                //    return undefined;
+                //  }
+                // if needed,create array of keys from dotted path string
+                // path can be simple string such as 'i3d'
+                // or a punctuated object-branch path such as 'i3d.space.model1'
+                // or an array of object-branch keys such as ['i3d', 'space', 'model1']
+                Templatecache.prototype.branch = function (path) {
+                    var keys, branch = this.components;
+                    console.log("branch():path = " + path);
+                    if (!Array.isArray(path)) {
+                        keys = (path.includes('.') ? path.split('.') : [path]);
+                        //keys = (pathstring.indexOf('.') > -1 ? pathstring.split('.') : [pathstring]);
+                        console.log("Array.isArray(keys) = " + Array.isArray(keys));
+                        console.log("keys = " + keys);
+                    }
+                    else {
+                        keys = path;
+                    }
+                    // operate using array of branch keys
+                    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+                        var s = keys_1[_i];
+                        console.log("branch: key = " + s + "  branch = " + branch);
+                        branch = (branch[s] ? branch[s] : undefined);
+                        if (branch === undefined) {
+                            console.log("!!!!!!!!!!!!!!!!!! branch from " + name + " is undefined!");
+                            return undefined;
                         }
+                    }
+                    return branch;
+                };
+                // example: get('i3d.Space6')
+                // example: get(['i3d', componentname])
+                Templatecache.prototype.get = function (path) {
+                    return this.branch(path);
+                };
+                // example: add('i3d.metaforms', 'MetaformK')
+                // example: add(['i3d', category], MetaformK)
+                Templatecache.prototype.add = function (path, modelname, model) {
+                    var branch = this.branch(path);
+                    if (branch) {
+                        branch[modelname] = model;
+                        return true;
+                    }
+                    return undefined;
+                };
+                // example: remove('i3d.metaforms.MetaformK')
+                // example: remove(['i3d', category, componentname])
+                Templatecache.prototype.remove = function (path) {
+                    var branch = this.branch(path);
+                    if (branch) {
+                        branch = undefined;
+                        return true;
                     }
                     return undefined;
                 };

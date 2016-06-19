@@ -11,9 +11,7 @@ var base;
 @Component({
   selector: 'dome-base',
   template: ``,
-  providers: [
-    Templatecache
-  ],
+  providers: [],
   directives: [CORE_DIRECTIVES],
   pipes: []
 })
@@ -22,13 +20,12 @@ export class Base {
   view: ViewContainerRef;
   templates: Templatecache;
 
-  static changeScene(templatename) {
+  static changeState(templatename) {
     var template = base.templates.get(templatename),
         componentref;
-//    var component;
+        //var component;  // component = componentref.instance;
 
-    console.log(`Base.changeScene: templatename = ${templatename} 
-                                   template = ${template}`);
+    console.log(`Base.changeState: templatename = ${templatename}`); 
     if(template){
       base.view.clear();
       base.compiler.resolveComponent(template).then((factory) => {

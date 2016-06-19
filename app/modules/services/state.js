@@ -33,26 +33,15 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
             State = (function () {
                 function State(cfg, location) {
                     this.config = cfg;
-                    this.pattern = url_template_js_1.default.parse(this.config.url_pattern);
+                    this.pattern = url_template_js_1.default.parse(this.config.metastate);
                     this.location = location;
                 }
                 State.prototype.path = function () {
-                    var params = { scene: 'scene1', i3d: 'space~model1', shot: '' }, url, _params = {};
-                    console.log("state.path: PATH = " + url_template_js_1.default);
-                    console.log("state.path: url_pattern = " + this.config.url_pattern);
-                    console.log("state.path: this.pattern = " + this.pattern);
-                    for (var p in params) {
-                        console.log("params has property " + p + " with val " + params[p]);
+                    var path = this.location.path();
+                    if (/^\//.test(path)) {
+                        return path.slice(1);
                     }
-                    url = this.stringify(params);
-                    console.log("state.path: url = " + url);
-                    _params = this.parse(url);
-                    for (var p in _params) {
-                        console.log("_params has property " + p + " with val " + _params[p]);
-                    }
-                    url = this.stringify(_params);
-                    console.log("state.path: (for _params) url = " + url);
-                    return this.location.path();
+                    return path;
                 };
                 State.prototype.go = function (url) {
                     this.location.go(url);
@@ -61,12 +50,19 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                     return this.pattern.expand(params);
                 };
                 State.prototype.parse = function (path) {
-                    var a = path.split('/'), params = {}, index = 0;
-                    for (var _i = 0, _a = this.config.url_keys; _i < _a.length; _i++) {
+                    var a = path.split('/'), substates = {}, index = 0, tuple;
+                    for (var _i = 0, _a = this.config.substates; _i < _a.length; _i++) {
                         var p = _a[_i];
-                        params[p] = a[index++];
+                        tuple = a[index++].split(':');
+                        substates[p] = { t: tuple[0], m: tuple[1] };
                     }
-                    return params;
+                    return substates;
+                };
+                State.prototype.template = function (path, substate) {
+                    return this.parse(path)[substate]['t'];
+                };
+                State.prototype.model = function (path, substate) {
+                    return this.parse(path)[substate]['m'];
                 };
                 State = __decorate([
                     core_1.Injectable(),

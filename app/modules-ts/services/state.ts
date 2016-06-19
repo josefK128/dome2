@@ -19,31 +19,16 @@ export class State {
   constructor(@Inject(CONFIG) cfg:Config,
               location:Location) {
                 this.config = cfg;
-                this.pattern = PATH.parse(this.config.url_pattern);
+                this.pattern = PATH.parse(this.config.metastate);
                 this.location = location;
   }
 
   path(){
-  var params:Object = {scene:'scene1', i3d:'space~model1', shot:''},
-      url:string,
-      _params:Object = {};
-
-    console.log(`state.path: PATH = ${PATH}`);  
-    console.log(`state.path: url_pattern = ${this.config.url_pattern}`);  
-    console.log(`state.path: this.pattern = ${this.pattern}`);  
-    for(var p in params){
-      console.log(`params has property ${p} with val ${params[p]}`);
+    var path = this.location.path();
+    if(/^\//.test(path)){   // if path.startsWith('/') remove it
+      return path.slice(1);  
     }
-    url = this.stringify(params);
-    console.log(`state.path: url = ${url}`);  
-    _params = this.parse(url);
-    for(var p in _params){
-      console.log(`_params has property ${p} with val ${_params[p]}`);
-    }
-    url = this.stringify(_params);
-    console.log(`state.path: (for _params) url = ${url}`);
-
-    return this.location.path();
+    return path;
   }
 
   go(url:string){
@@ -56,12 +41,22 @@ export class State {
 
   parse(path:string):Object {
     var a:string[] = path.split('/'),
-        params:Object = {},
-        index:number = 0;
+        substates:Object = {},
+        index:number = 0,
+        tuple:string[];
 
-    for(let p of this.config.url_keys){
-      params[p] = a[index++];
+    for(let p of this.config.substates){
+      tuple = a[index++].split(':');
+      substates[p] = {t: tuple[0], m: tuple[1]};
     }
-    return params;
+    return substates;
+  }
+
+  template(path:string, substate:string){
+    return this.parse(path)[substate]['t'];
+  }
+
+  model(path:string, substate:string){
+    return this.parse(path)[substate]['m'];
   }
 }

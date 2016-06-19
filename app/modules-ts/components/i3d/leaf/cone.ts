@@ -10,7 +10,7 @@ export class Cone {
   // ordered sequence of component lifecycle phase-transitions:
 //  ngOnChanges() { console.log(`Cone ngOnChanges`); }
   ngOnInit() { 
-    console.log(`%%%% Cone ngOnInit: wrote cone to CameraVR`); 
+    console.log(`%%%% Cone ngOnInit: wrote cone to Camera3d`); 
   }
 //  ngDoCheck() { console.log(`Cone ngDoCheck`); }
 //  ngAfterContentInit() { console.log(`Cone ngAfterContentInit`); }

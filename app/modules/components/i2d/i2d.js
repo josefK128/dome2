@@ -32,9 +32,10 @@ System.register(['@angular/core', '@angular/common', '../../services/templatecac
                     i2d.view = view;
                     i2d.templates = templates;
                 }
-                I2d.changeScene = function (templatename) {
+                I2d.changeState = function (templatename) {
                     var template = i2d.templates.get(templatename), componentref;
-                    console.log("I2d.changeScene: templatename = " + templatename);
+                    //var component;  // component = componentref.instance;
+                    console.log("I2d.changeState: templatename = " + templatename);
                     if (template) {
                         i2d.view.clear();
                         i2d.compiler.resolveComponent(template).then(function (factory) {
@@ -49,9 +50,7 @@ System.register(['@angular/core', '@angular/common', '../../services/templatecac
                     core_1.Component({
                         selector: 'dome-i2d',
                         template: "",
-                        providers: [
-                            templatecache_1.Templatecache
-                        ],
+                        providers: [],
                         directives: [common_1.CORE_DIRECTIVES],
                         pipes: []
                     }), 

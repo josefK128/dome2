@@ -33,10 +33,10 @@ System.register(['@angular/core', '@angular/common', '../../services/templatecac
                     base.view = view;
                     base.templates = templates;
                 }
-                Base.changeScene = function (templatename) {
+                Base.changeState = function (templatename) {
                     var template = base.templates.get(templatename), componentref;
-                    //    var component;
-                    console.log("Base.changeScene: templatename = " + templatename + " \n                                   template = " + template);
+                    //var component;  // component = componentref.instance;
+                    console.log("Base.changeState: templatename = " + templatename);
                     if (template) {
                         base.view.clear();
                         base.compiler.resolveComponent(template).then(function (factory) {
@@ -51,9 +51,7 @@ System.register(['@angular/core', '@angular/common', '../../services/templatecac
                     core_1.Component({
                         selector: 'dome-base',
                         template: "",
-                        providers: [
-                            templatecache_1.Templatecache
-                        ],
+                        providers: [],
                         directives: [common_1.CORE_DIRECTIVES],
                         pipes: []
                     }), 

@@ -1,0 +1,25 @@
+{
+  "name": "dome2-studio",
+  "version": "1.0.0",
+  "description": "Node-Express development server",
+  "author": "Rudolph",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josefK128/dome2.git"
+  },
+  "scripts": {
+    "start": "live-server",
+    "tsd": "tsd reinstall --resolve --overwrite --config app/tsd.json"
+  },
+  "dependencies": {
+    "express": "^4.14.0",
+    "socket.io": "^1.4.6"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "^4.4.5",
+    "npm": "^2.15.5"
+  }
+}

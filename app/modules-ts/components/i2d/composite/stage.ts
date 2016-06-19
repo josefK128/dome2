@@ -23,7 +23,7 @@ import {Circle} from '../leaf/circle';
   <g id="plane" >
   <g id="zoom_plane" >
 
-    <g id="i2d">
+    <g id="i2d" > 
       <circle r="5" fill="white" opacity="0.5" ></circle>
       <g circle/>
       <!-- <g circles/> ngFor in circles fails -->
@@ -33,7 +33,7 @@ import {Circle} from '../leaf/circle';
     <!-- 2D coordinate axes reference -->
     <!-- turn on/off via top-left UI radio button -->
     <!-- NOTE!!!!! correction in this case: should be x="-1000" y="1000" -->
-    <g id="axes" style="display:block; pointer-events:none">
+    <g id="axes" style="display:block; pointer-events:none" > 
       <!-- for i3Dmedia.org tosca and cav-localhost -->
       <image x="-913.25" y="-913.25" width="2100" height="2100" xlink:href="./svg/axes.svg"/>
       <!-- NOTE: prev. correction for tosca - Nov20 2014 - no longer needed -->

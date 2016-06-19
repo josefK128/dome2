@@ -12,7 +12,7 @@ System.register(['@angular/platform-browser-dynamic', './components/narrative'],
             }],
         execute: function() {
             // start application
-            platform_browser_dynamic_1.bootstrap(narrative_1.Narrative, narrative_1.Narrative.provider_defaults);
+            platform_browser_dynamic_1.bootstrap(narrative_1.Narrative, narrative_1.Narrative.provider_overrides);
         }
     }
 });
