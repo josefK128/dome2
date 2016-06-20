@@ -20,7 +20,7 @@ export class Ui {
   view: ViewContainerRef;
   templates: Templatecache;
 
-  static changeState(templatename) {
+  static changeState(templatename:string) {
     var template = ui.templates.get(templatename),
         componentref;
         //var component;  // component = componentref.instance;

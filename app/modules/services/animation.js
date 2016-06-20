@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../configs/@config'], function(exports_1, context_1) {
+System.register(['@angular/core', '../configs/@config', './camera3d', './camera2d'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, _config_1;
+    var core_1, _config_1, camera3d_1, camera2d_1;
     var Animation;
     return {
         setters:[
@@ -22,6 +22,12 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
             },
             function (_config_1_1) {
                 _config_1 = _config_1_1;
+            },
+            function (camera3d_1_1) {
+                camera3d_1 = camera3d_1_1;
+            },
+            function (camera2d_1_1) {
+                camera2d_1 = camera2d_1_1;
             }],
         execute: function() {
             // GSAP
@@ -29,8 +35,10 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
             Animation = (function () {
                 //timeline:any;
                 //tweenmax:any;
-                function Animation(cfg) {
+                function Animation(cfg, camera3d, camera2d) {
                     this.config = cfg;
+                    this.camera3d = camera3d;
+                    this.camera2d = camera2d;
                 }
                 Animation.prototype.perform = function (shot) {
                     console.log("Animation.perform: shot = " + shot);
@@ -38,7 +46,7 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                 Animation = __decorate([
                     core_1.Injectable(),
                     __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object])
+                    __metadata('design:paramtypes', [Object, camera3d_1.Camera3d, camera2d_1.Camera2d])
                 ], Animation);
                 return Animation;
             }());

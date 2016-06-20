@@ -98,5 +98,10 @@ export class Mediator {
     }
   }
 
+  // queue score actions and start Clock to time sends to narrative.exec
+  perform(score){
+    console.log(`mediator.perform: score = ${score}`);
+  }
+
 }//class Mediator
 

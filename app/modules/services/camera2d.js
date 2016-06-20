@@ -34,8 +34,9 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                     this.record_shots = this.config.recored_shots;
                     this.tl = {};
                     this.tlp = {};
-                    this.shot = {};
                     this.action = {};
+                    this.shot = {};
+                    this._shot = '';
                     // dolly - plane
                     this.plane = undefined;
                     this.x = 0.0; // plane (webgl y-coord!)
@@ -428,8 +429,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 Camera2d.prototype.home = function (a) {
                     a.d = a.d || 0.0;
@@ -445,8 +446,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 // ZOOM<br>
                 // cut - no animation
@@ -464,8 +465,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 Camera2d.prototype.zoomcutBy = function (a) {
                     if (a.s !== undefined) {
@@ -481,8 +482,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 // fly - animate
                 Camera2d.prototype.zoomflyTo = function (a) {
@@ -499,8 +500,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 Camera2d.prototype.zoomflyBy = function (a) {
                     if (a.s !== undefined) {
@@ -516,8 +517,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 // ROLL<br>
                 // cut - no animation
@@ -535,8 +536,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 Camera2d.prototype.rollcutBy = function (a) {
                     if (a.r !== undefined) {
@@ -552,8 +553,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 // fly - animate
                 Camera2d.prototype.rollflyTo = function (a) {
@@ -570,8 +571,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 Camera2d.prototype.rollflyBy = function (a) {
                     if (a.r !== undefined) {
@@ -587,8 +588,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 // DOLLY<br>
                 // cut - no animation
@@ -611,8 +612,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 Camera2d.prototype.dollycutBy = function (a) {
                     if (a.x !== undefined) {
@@ -633,8 +634,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 // fly - animate
                 Camera2d.prototype.dollyflyTo = function (a) {
@@ -656,8 +657,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 Camera2d.prototype.dollyflyBy = function (a) {
                     if (a.x !== undefined) {
@@ -678,8 +679,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 // random 2d-bezier camera nav<br> 
                 // use default 6 points and 'through' bezier curve type
@@ -729,8 +730,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    this.shot = 'shot-anim:' + JSON.stringify(this.shot);
-                    this.narrative.changeShot(this.shot);
+                    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
+                    this.narrative.changeShot(this._shot);
                 };
                 Camera2d = __decorate([
                     core_1.Injectable(),

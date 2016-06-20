@@ -94,6 +94,10 @@ System.register(['@angular/core', '../configs/@config', 'socket.io-client', './q
                         this.narrative.exec(this.iqueue.pop()); // final version
                     }
                 };
+                // queue score actions and start Clock to time sends to narrative.exec
+                Mediator.prototype.perform = function (score) {
+                    console.log("mediator.perform: score = " + score);
+                };
                 Mediator = __decorate([
                     core_1.Injectable(),
                     __param(0, core_1.Inject(_config_1.CONFIG)), 

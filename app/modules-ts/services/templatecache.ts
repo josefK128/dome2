@@ -14,8 +14,6 @@ import {Stage} from '../components/i2d/composite/stage';
 import {Stage2} from '../components/i2d/composite/stage2';
 // ...
 // base template-components (scenes)
-import {List} from '../components/base/leaf/list';
-import {List2} from '../components/base/leaf/list2';
 import {Bg} from '../components/base/leaf/bg';
 import {Bg2} from '../components/base/leaf/bg2';
 // ...
@@ -40,8 +38,6 @@ export class Templatecache {
       'stage': Stage,
       'stage2': Stage2,
       // base
-      'list': List,
-      'list2': List2,
       'bg': Bg,
       'bg2': Bg2,
       // ui
@@ -80,11 +76,14 @@ export class Templatecache {
 
     // operate using array of branch keys
     for(let s of keys){
-      console.log(`branch: key = ${s}  branch = ${branch}`);
-      branch = (branch[s] ? branch[s] : undefined);
-      if(branch === undefined){
-        console.log(`!!!!!!!!!!!!!!!!!! branch from ${name} is undefined!`);
-        return undefined;
+      // ignore key = ''
+      if(s.length > 0){
+        console.log(`branch: key = ${s}  branch = ${branch}`);
+        branch = (branch[s] ? branch[s] : undefined);
+        if(branch === undefined){
+          console.log(`!!!!!!!!!!!!!!!!!! branch from ${name} is undefined!`);
+          return undefined;
+        }
       }
     }
     return branch;

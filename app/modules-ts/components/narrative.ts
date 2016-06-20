@@ -28,6 +28,10 @@ import {I2d} from './i2d/i2d';
 import {Base} from './base/base';
 import {Ui} from './ui/ui';
 
+// components for launching score and action-generated shots, respectively
+import {Scene} from './scene/scene';
+import {Shot} from './shot/shot';
+
 // template
 import template from './narrative.html';
 
@@ -53,7 +57,7 @@ import template from './narrative.html';
   ],
   directives: [
     CORE_DIRECTIVES, 
-    Base, I2d, I3d, Ui
+    Base, I2d, I3d, Ui, Scene, Shot
   ]
 })
 @Injectable()
@@ -232,7 +236,29 @@ export class Narrative {
         let m = this.current_state[s]['m'];
         let tp = pstate[s]['t'];
         let mp = pstate[s]['m'];
+
+        // t='' => no-change. To empty a substate explicitly load an empty 
+        // template-component 
+        if(t === ''){
+          console.log(`substate ${s} has t='' so break!`);
+          break;
+        }
+
+        // if either a new template-component or even just a new model for the
+        // present template-component, must freshly load the template-component
+        // and apply the model.
+        // NOTE: for any substate, say 'i3d' for exp., only 'i3d' actors can be
+        // animated by a shot since there is no guarantee of other substates
+        // actors being loaded on ngAfterViewInit of 'i3d' composite
+        // template-component, which is dynamically loaded by I3d.
+        // Simultaneous sot-animations in two substates are not guaranteed to
+        // be synchronized - but probably are perceptually synchronous.
+        // NOTE: all animations are done b the animation service in the phase
+        // transition ngAfterViewInit of the dynamically loaded template 
+        // component - which guarantees all branch components are loaded before
+        // the shot-animation begins.
         if((t !== tp) || (m !== mp)){
+          console.log(`substate = ${s}  t = ${t}  m = ${m}`); 
           switch(s){
             case 'i3d':
               i3dscene = this.scenes.get(['i3d', i3dscenename]);
@@ -243,43 +269,65 @@ export class Narrative {
                 this.camera3d.changeTemplateScene(t);
               }
               // runs any i3d animation associated with i3dmodel['shot'] 
-              // runs Animation.perform(shot={}) in ngAfterContentInit for
+              // runs Animation.perform(shot={}) in ngAfterViewInit for
               // dynamically loaded composite template-component (exp: 'space') 
               I3d.changeState(t);
               break;
 
             case 'i2d':
-              this.camera2d.place(this);
+            this.camera2d.place(this);  // send narrative ref to Camera2d
               // runs any i2d animation associated with i2dmodel['shot'] 
-              // runs Animation.perform(shot={}) in ngAfterContentInit for
+              // runs Animation.perform(shot={}) in ngAfterViewInit for
               // dynamically loaded composite template-component 
               I2d.changeState(t);
               break;
 
             case 'base':
               // runs any base animation associated with basemodel['shot'] 
-              // runs Animation.perform(shot={}) in ngAfterContentInit for
+              // runs Animation.perform(shot={}) in ngAfterViewInit for
               // dynamically loaded composite template-component 
               Base.changeState(t);
               break;
 
             case 'ui':
               // runs any ui animation associated with uimodel['shot'] 
-              // runs Animation.perform(shot={}) in ngAfterContentInit for
+              // runs Animation.perform(shot={}) in ngAfterViewInit for
               // dynamically loaded composite template-component 
               Ui.changeState(t);
               break;
 
             case 'scene':
-              // send score to Mediator iqueue to fire@clock => narrative.exec
+              // send m:string = score whish is: 
+              // (1) a scorename, OR
+              // (2) a JSON-stringification of a javascript score array
+              // The javascript score array is found in either case and sent via
+              // Mediator.perform(score={}) which queues the score actions and
+              // checks periodically to fire narrative.exec(action) when an
+              // an action relative-timestamp is exceeded by the present
+              // relative clock time. 
+              if(m.length > 0){    // if non-empty score
+                this.current_state[t][m] = '';
+              }
               break;
 
-              case 'shot':
-              // runs animations via narrative.changeShot(shot) creating a path
-              // with a shot substate and calling narrative.changeState(path)
-              // Shot substate has either (1) shotname 't:m' or (2) shot={}
-              // If (1) shotname 't:m' get shot={} via models.get(['shot',t,m])
+            case 'shot':
+              // runs dynamic shot-animations via narrative.changeShot(shot). 
+              // NOTE: animations are run before any new template-components
+              // loaded, so shot-animations should use ONLY  previously loaded 
+              // actors! (actors loaded in templates during previous states)
+              // Generally the path used for dynamic shot-animations is
+              // '/////<shot> where <shot> is a string. Possibly the path
+              // could include non-'' path-substates which then load substate
+              // template-components which are NOT animated by <shot>
+              // NOTE: <shot> is either 
+              // (1) shotname 't:m' or 
+              // (2) a JSON serialization of a shot-object {...}
+              // If (1) get shot={} via models.get(['shot',t,m])
+              // If (2) get shot={} via JSON.parse(<shot>)
               // Then for either (1) or (2) run Animation.perform(shot={})
+              if(m.length > 0){    // if non-empty shot-animation
+                Shot.changeState(t,m);
+              }
               break;
 
             default:
@@ -301,36 +349,20 @@ export class Narrative {
 
 
 
-
-
-  // LATER!!!!
-  // shot is either:
+  // method to be called by action invoking a dynamic shot - shot is either:
   // [1] a string '<templatename:modelname>' whose shot model can be obtained 
   // from the Models service and drive a GSAP animation, OR
-  // [2] a js-object shot-model itself, capable of driving a GSAP animation
-  changeShot(shot){
-    //var shotname = "shot";
+  // [2] a JSON serialization of a shot-model itself, whose parsed sot-object 
+  // is capable of driving a GSAP animation
+  // path causes no substate changes except Shot.changeState(shot) in 'shot'
+  // case of this.changeState
+  changeShot(shot:string){
+    var path:string;
 
     console.log('changeShot: shot = ${shot}');
-
-    // obtain the current_state
-    //
-    // if shot is a string - write it to the shot substate:
-    // tuple = shot.split(':');
-    // this.current_state['shot']['t'] = tuple[0];
-    // this.current_state['shot']['m'] = tuple[1];
-    // path = this.state.stringify(this.current_state)
-    // this.changeState(path); // this will only invoke shot.changeState
-    //
-    // if shot is an object
-    // this.current_state['shot']['t'] = 'dynamic';
-    // this.current_state['shot']['m'] = shot;
-    // path = this.state.stringify(this.current_state)
-    // this.changeState(path); // this will only invoke shot.changeState
+    path = '/////' + shot;   // 'scene/i3d/i2d/base/ui/' + shot
+    this.changeState(path);
   }
-
-
-
 
 
 
@@ -523,15 +555,7 @@ export class Narrative {
 //  ngDoCheck() { console.log(`narrative ngDoCheck`); }
 //  ngAfterContentInit() { console.log(`narrative ngAfterContentInit`); }
 //  ngAfterContentChecked() { console.log(`narrative ngAfterContentChecked`); }
-    ngAfterViewInit() { 
-      console.log(`narrative ngAfterViewInit`); 
-      if(this.shot){
-        console.log(`this.shot = ${this.shot}`);
-        // exec shot - how? 
-        // get actors from this.camera3d this.camera2d end exec GSAP
-      }
-      this.shot = undefined;  // clear executed shot for next state  
-    }
+//  ngAfterViewInit() { console.log(`narrative ngAfterViewInit`); }
 //  ngAfterViewChecked() { console.log(`narrative ngAfterViewChecked`);}
 //  ngOnDestroy() { console.log(`narrative ngOnDestroy`); }
 }

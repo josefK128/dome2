@@ -11,8 +11,9 @@ import {CONFIG} from '../../../configs/@config';
 import {Models} from '../../../services/models';
 import {State} from '../../../services/state';
 import {Camera3d} from '../../../services/camera3d';
+import {Animation} from '../../../services/animation';
 
-// components
+// leaf components
 import {Sphere} from '../leaf/sphere';
 import {Cone} from '../leaf/cone';
 import {Cube} from '../leaf/cube';
@@ -25,8 +26,7 @@ import {Cube} from '../leaf/cube';
   template: `
   <sphere id="sphere1" [model]="model" ></sphere>
   <sphere id="sphere2" [model]="model" ></sphere>
-  <cone></cone>
-  <cube></cube>
+  <cone></cone> <cube></cube>
  `
 })
 export class Space {
@@ -34,23 +34,23 @@ export class Space {
   model:Object;
   state:State;
   camera3d:Camera3d;
+  animation:Animation;
   templatename:string;
   modelname:string;
+  shot:Object;
 
 
-  // NOTE: Later URL or else cfg to get models name for template 'space'
-  // NOTE: if use cfg then this template is a 'genotype' with the application
-  // of the model realizing the 'phenotype'
   constructor(@Inject(CONFIG) cfg:Config, 
               models:Models,
               state:State, 
-              camera3d:Camera3d){
+              camera3d:Camera3d,
+              animation:Animation){
 
     this.config = cfg;
     this.state = state;
     this.camera3d = camera3d;
+    this.animation = animation;
 
-    // this.model = models.get('model1');
     console.log(`state.path() = ${state.path()}`);
     this.templatename = state.template(state.path(), 'i3d');  // 'space'
     this.modelname = state.model(state.path(), 'i3d');  // 'model1'
@@ -58,6 +58,9 @@ export class Space {
     console.log(`######## this.modelname = ${this.modelname}`);
     console.log(`models.get('i3d.${this.templatename}.${this.modelname}')`);
     this.model = models.get(`i3d.${this.templatename}.${this.modelname}`);
+    if(this.model){
+      this.shot = this.model['shot'];
+    }
   }
 
 
@@ -71,6 +74,9 @@ export class Space {
   ngAfterViewInit() { 
     console.log(`Space ngAfterViewInit`); 
     console.log(`i3d actors = ${this.camera3d.reportActors()}`);
+    if(this.shot){
+      this.animation.perform(this.shot);   // this.shot is Object
+    }
   }
   //ngAfterViewChecked() { console.log(`Space ngAfterViewChecked`); }
   ngOnDestroy() { 

@@ -5,6 +5,10 @@ import {Injectable, Inject} from '@angular/core';
 import Config from '../configs/config.interface';
 import {CONFIG} from '../configs/@config';
 
+// services - cameras in order to obtains refs to actors
+import {Camera3d} from './camera3d';
+import {Camera2d} from './camera2d';
+
 // GSAP
 //
 
@@ -12,11 +16,16 @@ import {CONFIG} from '../configs/@config';
 @Injectable()
 export class Animation {
   config: any;
+  camera3d: Camera3d;
+  camera2d: Camera2d;
   //timeline:any;
   //tweenmax:any;
 
-  constructor(@Inject(CONFIG) cfg:Config) {
+  constructor(@Inject(CONFIG) cfg:Config,
+              camera3d:Camera3d, camera2d:Camera2d) {
     this.config = cfg;
+    this.camera3d = camera3d;
+    this.camera2d = camera2d;
   }
 
 

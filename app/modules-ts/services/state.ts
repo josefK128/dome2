@@ -39,6 +39,10 @@ export class State {
     return this.pattern.expand(params);
   }
 
+  // path must be well-formed according to config.metastate, i.e
+  // scene/i3d/i2d/base/ui/shot where the substates are strings which could
+  // be empty - all empty is the identity stateChange - i.e. 'no-change'
+  // NOTE: '<scenename>/////' for the present scenename is also 'no-change'
   parse(path:string):Object {
     var a:string[] = path.split('/'),
         substates:Object = {},
@@ -46,8 +50,11 @@ export class State {
         tuple:string[];
 
     for(let p of this.config.substates){
+      // ''.split(':') yields [''] so tuple[0] = '' but tuple[1] undefined
       tuple = a[index++].split(':');
-      substates[p] = {t: tuple[0], m: tuple[1]};
+      substates[p] = {};
+      substates[p]['t'] = tuple[0] || '';  // not really needed
+      substates[p]['m'] = tuple[1] || '';  // needed
     }
     return substates;
   }

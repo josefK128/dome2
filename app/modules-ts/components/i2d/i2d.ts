@@ -19,7 +19,7 @@ export class I2d {
   compiler: ComponentResolver;
   view: ViewContainerRef;
 
-  static changeState(templatename) {
+  static changeState(templatename:string) {
     var template = i2d.templates.get(templatename),
         componentref:ComponentRef;
         //var component;  // component = componentref.instance;

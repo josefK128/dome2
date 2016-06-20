@@ -52,11 +52,14 @@ export class Models {
 
     // operate using array of branch keys
     for(let s of keys){
-      console.log(`branch: key = ${s}  branch = ${branch}`);
-      branch = (branch[s] ? branch[s] : undefined);
-      if(branch === undefined){
-        console.log(`!!!!!!!!!!!!!!!!!! branch from ${name} is undefined!`);
-        return undefined;
+      // ignore key = ''
+      if(s.length > 0){
+        console.log(`branch: key = ${s}  branch = ${branch}`);
+        branch = (branch[s] ? branch[s] : undefined);
+        if(branch === undefined){
+          console.log(`!!!!!!!!!!!!!!!!!! branch from ${name} is undefined!`);
+          return undefined;
+        }
       }
     }
     return branch;

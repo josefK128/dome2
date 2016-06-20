@@ -23,7 +23,7 @@ export class I3d {
   templates: Templatecache;
 
 
-  static changeState(templatename) {
+  static changeState(templatename:string) {
     var template = i3d.templates.get(templatename),
         componentref:ComponentRef;  // component = componentref.instance;
  

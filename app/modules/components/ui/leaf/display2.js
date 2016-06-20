@@ -1,4 +1,4 @@
-System.register(['@angular/core', '@angular/common', '../../../configs/@config'], function(exports_1, context_1) {
+System.register(['@angular/core', '../../../configs/@config', '../../../services/models', '../../../services/state', '../../../services/animation'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,33 +13,62 @@ System.register(['@angular/core', '@angular/common', '../../../configs/@config']
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, common_1, _config_1;
+    var core_1, _config_1, models_1, state_1, animation_1;
     var Display2;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (common_1_1) {
-                common_1 = common_1_1;
-            },
             function (_config_1_1) {
                 _config_1 = _config_1_1;
+            },
+            function (models_1_1) {
+                models_1 = models_1_1;
+            },
+            function (state_1_1) {
+                state_1 = state_1_1;
+            },
+            function (animation_1_1) {
+                animation_1 = animation_1_1;
             }],
         execute: function() {
             Display2 = (function () {
-                function Display2(cfg) {
+                function Display2(cfg, models, state, animation) {
                     this.config = cfg;
+                    this.state = state;
+                    this.animation = animation;
+                    console.log("state.path() = " + state.path());
+                    this.templatename = state.template(state.path(), 'ui');
+                    this.modelname = state.model(state.path(), 'ui');
+                    console.log("######## this.templatename = " + this.templatename);
+                    console.log("######## this.modelname = " + this.modelname);
+                    console.log("models.get('ui." + this.templatename + "." + this.modelname + "')");
+                    this.model = models.get("ui." + this.templatename + "." + this.modelname);
+                    if (this.model) {
+                        this.shot = this.model['shot'];
+                    }
                 }
+                // ordered sequence of component lifecycle phase-transitions:
+                //  ngOnChanges() { console.log(` Display2 ngOnChanges`); }
+                //  ngOnInit() { console.log(` Display2 ngOnInit`); }
+                //  ngDoCheck() { console.log(` Display2 ngDoCheck`); }
+                //  ngAfterContentInit() { console.log(` Display2 ngAfterContentInit`); }
+                //  ngAfterContentChecked() { console.log(` Display2 ngAfterContentChecked`); }
+                Display2.prototype.ngAfterViewInit = function () {
+                    console.log("Display2 ngAfterViewInit");
+                    if (this.shot) {
+                        this.animation.perform(this.shot); // this.shot is Object
+                    }
+                };
                 Display2 = __decorate([
                     core_1.Component({
                         selector: 'span',
                         template: "\n  <h4>display2</h4>\n",
                         providers: [],
-                        directives: [common_1.CORE_DIRECTIVES],
                     }),
                     __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object])
+                    __metadata('design:paramtypes', [Object, models_1.Models, state_1.State, animation_1.Animation])
                 ], Display2);
                 return Display2;
             }());

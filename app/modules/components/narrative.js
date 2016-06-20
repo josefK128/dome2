@@ -1,4 +1,4 @@
-System.register(['@angular/core', '@angular/common', '@angular/router', '../configs/@config', '../services/camera3d', '../services/state', '../services/models', '../services/scenes', '../services/templatecache', '../services/queue', '../services/mediator', '../services/transform3d', '../services/camera2d', '../services/animation', './i3d/i3d', './i2d/i2d', './base/base', './ui/ui', './narrative.html'], function(exports_1, context_1) {
+System.register(['@angular/core', '@angular/common', '@angular/router', '../configs/@config', '../services/camera3d', '../services/state', '../services/models', '../services/scenes', '../services/templatecache', '../services/queue', '../services/mediator', '../services/transform3d', '../services/camera2d', '../services/animation', './i3d/i3d', './i2d/i2d', './base/base', './ui/ui', './scene/scene', './shot/shot', './narrative.html'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, common_1, router_1, _config_1, camera3d_1, state_1, models_1, scenes_1, templatecache_1, queue_1, mediator_1, transform3d_1, camera2d_1, animation_1, i3d_1, i2d_1, base_1, ui_1, narrative_html_1;
+    var core_1, common_1, router_1, _config_1, camera3d_1, state_1, models_1, scenes_1, templatecache_1, queue_1, mediator_1, transform3d_1, camera2d_1, animation_1, i3d_1, i2d_1, base_1, ui_1, scene_1, shot_1, narrative_html_1;
     var Narrative;
     return {
         setters:[
@@ -70,6 +70,12 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
             },
             function (ui_1_1) {
                 ui_1 = ui_1_1;
+            },
+            function (scene_1_1) {
+                scene_1 = scene_1_1;
+            },
+            function (shot_1_1) {
+                shot_1 = shot_1_1;
             },
             function (narrative_html_1_1) {
                 narrative_html_1 = narrative_html_1_1;
@@ -182,7 +188,27 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                             var m = this.current_state[s]['m'];
                             var tp = pstate[s]['t'];
                             var mp = pstate[s]['m'];
+                            // t='' => no-change. To empty a substate explicitly load an empty 
+                            // template-component 
+                            if (t === '') {
+                                console.log("substate " + s + " has t='' so break!");
+                                break;
+                            }
+                            // if either a new template-component or even just a new model for the
+                            // present template-component, must freshly load the template-component
+                            // and apply the model.
+                            // NOTE: for any substate, say 'i3d' for exp., only 'i3d' actors can be
+                            // animated by a shot since there is no guarantee of other substates
+                            // actors being loaded on ngAfterViewInit of 'i3d' composite
+                            // template-component, which is dynamically loaded by I3d.
+                            // Simultaneous sot-animations in two substates are not guaranteed to
+                            // be synchronized - but probably are perceptually synchronous.
+                            // NOTE: all animations are done b the animation service in the phase
+                            // transition ngAfterViewInit of the dynamically loaded template 
+                            // component - which guarantees all branch components are loaded before
+                            // the shot-animation begins.
                             if ((t !== tp) || (m !== mp)) {
+                                console.log("substate = " + s + "  t = " + t + "  m = " + m);
                                 switch (s) {
                                     case 'i3d':
                                         i3dscene = this.scenes.get(['i3d', i3dscenename]);
@@ -194,38 +220,60 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                                             this.camera3d.changeTemplateScene(t);
                                         }
                                         // runs any i3d animation associated with i3dmodel['shot'] 
-                                        // runs Animation.perform(shot={}) in ngAfterContentInit for
+                                        // runs Animation.perform(shot={}) in ngAfterViewInit for
                                         // dynamically loaded composite template-component (exp: 'space') 
                                         i3d_1.I3d.changeState(t);
                                         break;
                                     case 'i2d':
-                                        this.camera2d.place(this);
+                                        this.camera2d.place(this); // send narrative ref to Camera2d
                                         // runs any i2d animation associated with i2dmodel['shot'] 
-                                        // runs Animation.perform(shot={}) in ngAfterContentInit for
+                                        // runs Animation.perform(shot={}) in ngAfterViewInit for
                                         // dynamically loaded composite template-component 
                                         i2d_1.I2d.changeState(t);
                                         break;
                                     case 'base':
                                         // runs any base animation associated with basemodel['shot'] 
-                                        // runs Animation.perform(shot={}) in ngAfterContentInit for
+                                        // runs Animation.perform(shot={}) in ngAfterViewInit for
                                         // dynamically loaded composite template-component 
                                         base_1.Base.changeState(t);
                                         break;
                                     case 'ui':
                                         // runs any ui animation associated with uimodel['shot'] 
-                                        // runs Animation.perform(shot={}) in ngAfterContentInit for
+                                        // runs Animation.perform(shot={}) in ngAfterViewInit for
                                         // dynamically loaded composite template-component 
                                         ui_1.Ui.changeState(t);
                                         break;
                                     case 'scene':
-                                        // send score to Mediator iqueue to fire@clock => narrative.exec
+                                        // send m:string = score whish is: 
+                                        // (1) a scorename, OR
+                                        // (2) a JSON-stringification of a javascript score array
+                                        // The javascript score array is found in either case and sent via
+                                        // Mediator.perform(score={}) which queues the score actions and
+                                        // checks periodically to fire narrative.exec(action) when an
+                                        // an action relative-timestamp is exceeded by the present
+                                        // relative clock time. 
+                                        if (m.length > 0) {
+                                            this.current_state[t][m] = '';
+                                        }
                                         break;
                                     case 'shot':
-                                        // runs animations via narrative.changeShot(shot) creating a path
-                                        // with a shot substate and calling narrative.changeState(path)
-                                        // Shot substate has either (1) shotname 't:m' or (2) shot={}
-                                        // If (1) shotname 't:m' get shot={} via models.get(['shot',t,m])
+                                        // runs dynamic shot-animations via narrative.changeShot(shot). 
+                                        // NOTE: animations are run before any new template-components
+                                        // loaded, so shot-animations should use ONLY  previously loaded 
+                                        // actors! (actors loaded in templates during previous states)
+                                        // Generally the path used for dynamic shot-animations is
+                                        // '/////<shot> where <shot> is a string. Possibly the path
+                                        // could include non-'' path-substates which then load substate
+                                        // template-components which are NOT animated by <shot>
+                                        // NOTE: <shot> is either 
+                                        // (1) shotname 't:m' or 
+                                        // (2) a JSON serialization of a shot-object {...}
+                                        // If (1) get shot={} via models.get(['shot',t,m])
+                                        // If (2) get shot={} via JSON.parse(<shot>)
                                         // Then for either (1) or (2) run Animation.perform(shot={})
+                                        if (m.length > 0) {
+                                            shot_1.Shot.changeState(t, m);
+                                        }
                                         break;
                                     default:
                                         console.log("substate " + s + " is unrecognized ?!");
@@ -243,28 +291,18 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                     }
                     this.scenestates[this.current_scene] = true;
                 }; //changeState
-                // LATER!!!!
-                // shot is either:
+                // method to be called by action invoking a dynamic shot - shot is either:
                 // [1] a string '<templatename:modelname>' whose shot model can be obtained 
                 // from the Models service and drive a GSAP animation, OR
-                // [2] a js-object shot-model itself, capable of driving a GSAP animation
+                // [2] a JSON serialization of a shot-model itself, whose parsed sot-object 
+                // is capable of driving a GSAP animation
+                // path causes no substate changes except Shot.changeState(shot) in 'shot'
+                // case of this.changeState
                 Narrative.prototype.changeShot = function (shot) {
-                    //var shotname = "shot";
+                    var path;
                     console.log('changeShot: shot = ${shot}');
-                    // obtain the current_state
-                    //
-                    // if shot is a string - write it to the shot substate:
-                    // tuple = shot.split(':');
-                    // this.current_state['shot']['t'] = tuple[0];
-                    // this.current_state['shot']['m'] = tuple[1];
-                    // path = this.state.stringify(this.current_state)
-                    // this.changeState(path); // this will only invoke shot.changeState
-                    //
-                    // if shot is an object
-                    // this.current_state['shot']['t'] = 'dynamic';
-                    // this.current_state['shot']['m'] = shot;
-                    // path = this.state.stringify(this.current_state)
-                    // this.changeState(path); // this will only invoke shot.changeState
+                    path = '/////' + shot; // 'scene/i3d/i2d/base/ui/' + shot
+                    this.changeState(path);
                 };
                 // execute actions - declarative function invocations
                 // message-based function invocation
@@ -455,16 +493,6 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                     }
                     this.state.go(this.current_path);
                 };
-                //  ngDoCheck() { console.log(`narrative ngDoCheck`); }
-                //  ngAfterContentInit() { console.log(`narrative ngAfterContentInit`); }
-                //  ngAfterContentChecked() { console.log(`narrative ngAfterContentChecked`); }
-                Narrative.prototype.ngAfterViewInit = function () {
-                    console.log("narrative ngAfterViewInit");
-                    if (this.shot) {
-                        console.log("this.shot = " + this.shot);
-                    }
-                    this.shot = undefined; // clear executed shot for next state  
-                };
                 Narrative = __decorate([
                     core_1.Component({
                         selector: 'dome-narrative',
@@ -486,7 +514,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                         ],
                         directives: [
                             common_1.CORE_DIRECTIVES,
-                            base_1.Base, i2d_1.I2d, i3d_1.I3d, ui_1.Ui
+                            base_1.Base, i2d_1.I2d, i3d_1.I3d, ui_1.Ui, scene_1.Scene, shot_1.Shot
                         ]
                     }),
                     core_1.Injectable(),

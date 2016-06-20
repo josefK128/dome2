@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../configs/@config', '../components/i3d/composite/space', '../components/i3d/composite/space2', '../components/i2d/composite/stage', '../components/i2d/composite/stage2', '../components/base/leaf/list', '../components/base/leaf/list2', '../components/base/leaf/bg', '../components/base/leaf/bg2', '../components/ui/leaf/display', '../components/ui/leaf/display2'], function(exports_1, context_1) {
+System.register(['@angular/core', '../configs/@config', '../components/i3d/composite/space', '../components/i3d/composite/space2', '../components/i2d/composite/stage', '../components/i2d/composite/stage2', '../components/base/leaf/bg', '../components/base/leaf/bg2', '../components/ui/leaf/display', '../components/ui/leaf/display2'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, _config_1, space_1, space2_1, stage_1, stage2_1, list_1, list2_1, bg_1, bg2_1, display_1, display2_1;
+    var core_1, _config_1, space_1, space2_1, stage_1, stage2_1, bg_1, bg2_1, display_1, display2_1;
     var Templatecache;
     return {
         setters:[
@@ -34,12 +34,6 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
             },
             function (stage2_1_1) {
                 stage2_1 = stage2_1_1;
-            },
-            function (list_1_1) {
-                list_1 = list_1_1;
-            },
-            function (list2_1_1) {
-                list2_1 = list2_1_1;
             },
             function (bg_1_1) {
                 bg_1 = bg_1_1;
@@ -65,8 +59,6 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
                         'stage': stage_1.Stage,
                         'stage2': stage2_1.Stage2,
                         // base
-                        'list': list_1.List,
-                        'list2': list2_1.List2,
                         'bg': bg_1.Bg,
                         'bg2': bg2_1.Bg2,
                         // ui
@@ -101,11 +93,14 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
                     // operate using array of branch keys
                     for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
                         var s = keys_1[_i];
-                        console.log("branch: key = " + s + "  branch = " + branch);
-                        branch = (branch[s] ? branch[s] : undefined);
-                        if (branch === undefined) {
-                            console.log("!!!!!!!!!!!!!!!!!! branch from " + name + " is undefined!");
-                            return undefined;
+                        // ignore key = ''
+                        if (s.length > 0) {
+                            console.log("branch: key = " + s + "  branch = " + branch);
+                            branch = (branch[s] ? branch[s] : undefined);
+                            if (branch === undefined) {
+                                console.log("!!!!!!!!!!!!!!!!!! branch from " + name + " is undefined!");
+                                return undefined;
+                            }
                         }
                     }
                     return branch;

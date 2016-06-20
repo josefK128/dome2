@@ -62,11 +62,14 @@ System.register(['@angular/core', '../configs/@config', '../models/i3d/space/mod
                     // operate using array of branch keys
                     for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
                         var s = keys_1[_i];
-                        console.log("branch: key = " + s + "  branch = " + branch);
-                        branch = (branch[s] ? branch[s] : undefined);
-                        if (branch === undefined) {
-                            console.log("!!!!!!!!!!!!!!!!!! branch from " + name + " is undefined!");
-                            return undefined;
+                        // ignore key = ''
+                        if (s.length > 0) {
+                            console.log("branch: key = " + s + "  branch = " + branch);
+                            branch = (branch[s] ? branch[s] : undefined);
+                            if (branch === undefined) {
+                                console.log("!!!!!!!!!!!!!!!!!! branch from " + name + " is undefined!");
+                                return undefined;
+                            }
                         }
                     }
                     return branch;

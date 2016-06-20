@@ -49,12 +49,19 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                 State.prototype.stringify = function (params) {
                     return this.pattern.expand(params);
                 };
+                // path must be well-formed according to config.metastate, i.e
+                // scene/i3d/i2d/base/ui/shot where the substates are strings which could
+                // be empty - all empty is the identity stateChange - i.e. 'no-change'
+                // NOTE: '<scenename>/////' for the present scenename is also 'no-change'
                 State.prototype.parse = function (path) {
                     var a = path.split('/'), substates = {}, index = 0, tuple;
                     for (var _i = 0, _a = this.config.substates; _i < _a.length; _i++) {
                         var p = _a[_i];
+                        // ''.split(':') yields [''] so tuple[0] = '' but tuple[1] undefined
                         tuple = a[index++].split(':');
-                        substates[p] = { t: tuple[0], m: tuple[1] };
+                        substates[p] = {};
+                        substates[p]['t'] = tuple[0] || ''; // not really needed
+                        substates[p]['m'] = tuple[1] || ''; // needed
                     }
                     return substates;
                 };
