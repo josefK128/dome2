@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../configs/@config', '../components/i3d/composite/space', '../components/i3d/composite/space2', '../components/i2d/composite/stage', '../components/i2d/composite/stage2', '../components/base/leaf/bg', '../components/base/leaf/bg2', '../components/ui/leaf/display', '../components/ui/leaf/display2'], function(exports_1, context_1) {
+System.register(['@angular/core', '../configs/@config', '../components/i3d/composite/space', '../components/i3d/composite/space2', '../components/i2d/composite/stage', '../components/i2d/composite/stage2', '../components/base/composite/bg', '../components/base/composite/bg2', '../components/ui/composite/display', '../components/ui/composite/display2'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {

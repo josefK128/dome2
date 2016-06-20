@@ -1,4 +1,4 @@
-// display.ts - base leaf component
+// display2.ts - ui composite component - but no present child components
 import {Component, Inject} from '@angular/core';
 
 // configuration
@@ -15,13 +15,13 @@ import {Animation} from '../../../services/animation';
 @Component({
 selector: 'span',
 template: `
-  <h4>display</h4>
+  <h4>display2</h4>
 `,
   providers: [],
 })
 
 
-export class Display {
+export class Display2 {
   config:any;
   model:Object;
   state:State;
@@ -52,18 +52,18 @@ export class Display {
  }
 
   // ordered sequence of component lifecycle phase-transitions:
-//  ngOnChanges() { console.log(` Display ngOnChanges`); }
-//  ngOnInit() { console.log(` Display ngOnInit`); }
-//  ngDoCheck() { console.log(` Display ngDoCheck`); }
-//  ngAfterContentInit() { console.log(` Display ngAfterContentInit`); }
-//  ngAfterContentChecked() { console.log(` Display ngAfterContentChecked`); }
+//  ngOnChanges() { console.log(` Display2 ngOnChanges`); }
+//  ngOnInit() { console.log(` Display2 ngOnInit`); }
+//  ngDoCheck() { console.log(` Display2 ngDoCheck`); }
+//  ngAfterContentInit() { console.log(` Display2 ngAfterContentInit`); }
+//  ngAfterContentChecked() { console.log(` Display2 ngAfterContentChecked`); }
   ngAfterViewInit() { 
-    console.log(`Display ngAfterViewInit`); 
+    console.log(`Display2 ngAfterViewInit`); 
     if(this.shot){
       this.animation.perform(this.shot);   // this.shot is Object
     }
   }
 
-//  ngAfterViewChecked() { console.log(` Display ngAfterViewChecked`); }
-//  ngOnDestroy() { console.log(` Display ngOnDestroy`); }
+//  ngAfterViewChecked() { console.log(` Display2 ngAfterViewChecked`); }
+//  ngOnDestroy() { console.log(` Display2 ngOnDestroy`); }
 }

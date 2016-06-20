@@ -14,12 +14,12 @@ import {Stage} from '../components/i2d/composite/stage';
 import {Stage2} from '../components/i2d/composite/stage2';
 // ...
 // base template-components (scenes)
-import {Bg} from '../components/base/leaf/bg';
-import {Bg2} from '../components/base/leaf/bg2';
+import {Bg} from '../components/base/composite/bg';
+import {Bg2} from '../components/base/composite/bg2';
 // ...
 // ui template-components (scenes)
-import {Display} from '../components/ui/leaf/display';
-import {Display2} from '../components/ui/leaf/display2';
+import {Display} from '../components/ui/composite/display';
+import {Display2} from '../components/ui/composite/display2';
 
 
 

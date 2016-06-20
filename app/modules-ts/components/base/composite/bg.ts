@@ -1,4 +1,4 @@
-// bg2.ts - base leaf component
+// bg.ts - base composite component - but no present child components
 import {Component, Inject} from '@angular/core';
 
 // configuration
@@ -14,13 +14,13 @@ import {Animation} from '../../../services/animation';
 @Component({
   selector: 'span',
   template: `
-  <div style="background: url('images/glad.png'); width:100%; height:100%; background-size:cover; background-repeat:no-repeat; background-position:50% 50%; opacity:0.6">
+<div style="background: url('./images/sky.jpg'); width:100%; height:100%; background-size:cover; background-repeat:no-repeat; background-position:50% 50%">
   </div>`,
   providers: [],
 })
 
 
-export class Bg2 {
+export class Bg {
   config:Config;
   model:Object;
   state:State;
@@ -51,18 +51,18 @@ export class Bg2 {
   }
 
   // ordered sequence of component lifecycle phase-transitions:
-//  ngOnChanges() { console.log(` Bg2 ngOnChanges`); }
-//  ngOnInit() { console.log(` Bg2 ngOnInit`); }
-//  ngDoCheck() { console.log(` Bg2 ngDoCheck`); }
-//  ngAfterContentInit() { console.log(` Bg2 ngAfterContentInit`); }
-//  ngAfterContentChecked() { console.log(` Bg2 ngAfterContentChecked`); }
+//  ngOnChanges() { console.log(` Bg ngOnChanges`); }
+//  ngOnInit() { console.log(` Bg ngOnInit`); }
+//  ngDoCheck() { console.log(` Bg ngDoCheck`); }
+//  ngAfterContentInit() { console.log(` Bg ngAfterContentInit`); }
+//  ngAfterContentChecked() { console.log(` Bg ngAfterContentChecked`); }
   ngAfterViewInit() { 
-    console.log(`Bg2 ngAfterViewInit`); 
+    console.log(`Bg ngAfterViewInit`); 
     if(this.shot){
       this.animation.perform(this.shot);   // this.shot is Object
     }
   }
 
-//  ngAfterViewChecked() { console.log(` Bg2 ngAfterViewChecked`); }
-//  ngOnDestroy() { console.log(` Bg2 ngOnDestroy`); }
+//  ngAfterViewChecked() { console.log(` Bg ngAfterViewChecked`); }
+//  ngOnDestroy() { console.log(` Bg ngOnDestroy`); }
 }
