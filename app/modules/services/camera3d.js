@@ -14,7 +14,7 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
         return function (target, key) { decorator(target, key, paramIndex); }
     };
     var core_1, _config_1, mediator_1;
-    var cvr, Camera3d;
+    var c3d, Camera3d;
     return {
         setters:[
             function (core_1_1) {
@@ -33,71 +33,71 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
             Camera3d = (function () {
                 function Camera3d(cfg, mediator) {
                     this.count = 0;
-                    cvr = this;
-                    cvr.config = cfg || {};
-                    cvr.mediator = mediator;
-                    cvr.actors = {};
-                    cvr.billboards = {};
+                    c3d = this;
+                    c3d.config = cfg || {};
+                    c3d.mediator = mediator;
+                    c3d.actors = {};
+                    c3d.billboards = {};
                 } //ctor
                 // initialize scene - 'place' camera in scene
                 Camera3d.prototype.place = function (canvasId, _scenename, _narrative, _scene, _clearColor, _alpha, _fov) {
                     var sphereGeometry, sphereMaterial;
                     // pass in procedural Scene or use declarative i3d-svg scene in index.html
-                    cvr.scene = _scene || new THREE.Scene();
-                    cvr.scene.name = _scenename || 'noname';
+                    c3d.scene = _scene || new THREE.Scene();
+                    c3d.scene.name = _scenename || 'noname';
                     // save scene as prev_scene used to remove scene-actor children
-                    cvr.prev_scene = cvr.scene;
-                    console.log("camera3d.place: cvr.scene.name = " + cvr.scene.name);
-                    cvr.addActorToScene(cvr.scene.name, cvr.scene, undefined);
-                    cvr.canvasId = canvasId;
-                    cvr.canvas = document.getElementById(canvasId);
-                    cvr.gl = cvr.canvas.getContext("webgl", { premultipliedAlpha: false });
+                    c3d.prev_scene = c3d.scene;
+                    console.log("camera3d.place: c3d.scene.name = " + c3d.scene.name);
+                    c3d.addActorToScene(c3d.scene.name, c3d.scene, undefined);
+                    c3d.canvasId = canvasId;
+                    c3d.canvas = document.getElementById(canvasId);
+                    c3d.gl = c3d.canvas.getContext("webgl", { premultipliedAlpha: false });
                     //gl = getWebGLContext(canvas);  // libs/webGL/cuon-utils.js
                     //gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
                     // initialize scene properties
                     // clearColor - default white-transparent
                     //clearColor = _clearColor || 'transparent'; 
-                    cvr.clearColor = _clearColor || 0x00000000;
-                    cvr.alpha = _alpha || 0.0;
+                    c3d.clearColor = _clearColor || 0x00000000;
+                    c3d.alpha = _alpha || 0.0;
                     // initialize reference to NarrativeController scope - for UI sync
-                    cvr.narrative = _narrative;
+                    c3d.narrative = _narrative;
                     // diagnostics
-                    //console.log(`camera3d.place: cvr.canvasId = ${cvr.canvasId}`);
-                    //console.log(`camera3d.place: cvr.canvas = ${cvr.canvas}`);
-                    //console.log(`camera3d.place: cvr.gl = ${cvr.gl}`);
-                    //console.log(`camera3d.place: cvr.clearColor = ${cvr.clearColor}`);
-                    //console.log(`camerayVR.place: cvr.alpha = ${cvr.alpha}`);
-                    //console.log(`camerayVR.place: cvr.narrative = ${cvr.narrative}`);
+                    //console.log(`camera3d.place: c3d.canvasId = ${c3d.canvasId}`);
+                    //console.log(`camera3d.place: c3d.canvas = ${c3d.canvas}`);
+                    //console.log(`camera3d.place: c3d.gl = ${c3d.gl}`);
+                    //console.log(`camera3d.place: c3d.clearColor = ${c3d.clearColor}`);
+                    //console.log(`camerayVR.place: c3d.alpha = ${c3d.alpha}`);
+                    //console.log(`camerayVR.place: c3d.narrative = ${c3d.narrative}`);
                     // camerasphere
                     sphereGeometry = new THREE.SphereGeometry(50, 20, 20);
                     sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x7777ff, wireframe: true });
-                    cvr.csphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                    c3d.csphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
                     // position the sphere
-                    cvr.csphere.position.x = 0;
-                    cvr.csphere.position.y = 0;
-                    cvr.csphere.position.z = 0;
+                    c3d.csphere.position.x = 0;
+                    c3d.csphere.position.y = 0;
+                    c3d.csphere.position.z = 0;
                     // camera
-                    cvr.fov = _fov || 90.0;
-                    cvr.camera = new THREE.PerspectiveCamera(cvr.fov, window.innerWidth / window.innerHeight, 1, 1000);
+                    c3d.fov = _fov || 90.0;
+                    c3d.camera = new THREE.PerspectiveCamera(c3d.fov, window.innerWidth / window.innerHeight, 1, 1000);
                     // default camera.position - could be changed by camera_sphere<br>
                     // camera.position = {x:csph.pos.x, y:csph.pos.y, z:csph.pos.z + 50}
-                    cvr.camera.position.x = 0.0;
-                    cvr.camera.position.y = 0.0;
-                    cvr.camera.position.z = 50.0;
+                    c3d.camera.position.x = 0.0;
+                    c3d.camera.position.y = 0.0;
+                    c3d.camera.position.z = 50.0;
                     // add camera as child of csphere
-                    cvr.csphere.add(cvr.camera);
-                    cvr.addActorToScene('csphere', cvr.csphere, cvr.scene.name);
+                    c3d.csphere.add(c3d.camera);
+                    c3d.addActorToScene('csphere', c3d.csphere, c3d.scene.name);
                     // add csphere to the scene
-                    cvr.scene.add(cvr.csphere);
-                    cvr.addActorToScene('camera', cvr.camera, 'csphere');
+                    c3d.scene.add(c3d.csphere);
+                    c3d.addActorToScene('camera', c3d.camera, 'csphere');
                     // renderer
-                    cvr.renderer = new THREE.WebGLRenderer({ canvas: cvr.canvas, antialias: true, alpha: true });
-                    cvr.renderer.setSize('100vw', '100vh');
+                    c3d.renderer = new THREE.WebGLRenderer({ canvas: c3d.canvas, antialias: true, alpha: true });
+                    c3d.renderer.setSize('100vw', '100vh');
                     // setClearColor(color, alpha) - use passed params (if given)
-                    cvr.renderer.setClearColor(cvr.clearColor, cvr.alpha);
-                    cvr.renderer.setSize(window.innerWidth, window.innerHeight);
+                    c3d.renderer.setClearColor(c3d.clearColor, c3d.alpha);
+                    c3d.renderer.setSize(window.innerWidth, window.innerHeight);
                     // listen for and handle resize event
-                    window.addEventListener('resize', cvr.onWindowResize, false);
+                    window.addEventListener('resize', c3d.onWindowResize, false);
                     // keyboard functions
                     window.addEventListener("keyup", function (e) {
                         console.log("keyup: key = " + e.keyCode);
@@ -107,17 +107,17 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             case 65:
                                 if (e.altKey) {
                                     // position and point the camera to the center of the scene
-                                    cvr.camera.position.x = 0;
-                                    cvr.camera.position.y = 0;
-                                    cvr.camera.position.z = 50;
-                                    cvr.camera.lookAt(cvr.scene.position);
+                                    c3d.camera.position.x = 0;
+                                    c3d.camera.position.y = 0;
+                                    c3d.camera.position.z = 50;
+                                    c3d.camera.lookAt(c3d.scene.position);
                                 }
                                 else {
                                     // position and point the camera to the center of the scene
-                                    cvr.camera.position.x = -40;
-                                    cvr.camera.position.y = 20;
-                                    cvr.camera.position.z = 100;
-                                    cvr.camera.lookAt(cvr.scene.position);
+                                    c3d.camera.position.x = -40;
+                                    c3d.camera.position.y = 20;
+                                    c3d.camera.position.z = 100;
+                                    c3d.camera.lookAt(c3d.scene.position);
                                 }
                                 break;
                             default:
@@ -125,57 +125,57 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         }
                     });
                     // begin camera coddntrol animation - in sync with GSAP animation
-                    // later replace cvr line by TweenMax.ticker line below
-                    cvr.animate();
-                    //TweenMax.ticker.addEventListener('tick', cvr.render);
+                    // later replace c3d line by TweenMax.ticker line below
+                    c3d.animate();
+                    //TweenMax.ticker.addEventListener('tick', c3d.render);
                 }; //place
                 // start rendering cycle
                 Camera3d.prototype.animate = function () {
                     // diagnostics
-                    if (cvr.count++ < 2) {
-                        console.log("\nstart animate: cvr.count === " + cvr.count);
+                    if (c3d.count++ < 2) {
+                        console.log("\nstart animate: c3d.count === " + c3d.count);
                         console.log("this === " + this);
-                        console.log("cvr === " + cvr);
+                        console.log("c3d === " + c3d);
                     }
                     // animation update for directives registering update function via f=id
-                    //    if(cvr.scene['animations']){
-                    //      for(let f of Object.keys(cvr.scene['animations'])){
-                    //        cvr.scene['animations'][f]();
+                    //    if(c3d.scene['animations']){
+                    //      for(let f of Object.keys(c3d.scene['animations'])){
+                    //        c3d.scene['animations'][f]();
                     //      }
                     //    }
-                    requestAnimationFrame(cvr.animate);
+                    requestAnimationFrame(c3d.animate);
                     //requestAnimationFrame(Camera3d.prototype.animate);
-                    cvr.render();
+                    c3d.render();
                 };
                 // render scene using camera<br>
                 // possibly orient billboards to face (lookAt) camera
                 Camera3d.prototype.render = function () {
-                    //    if(cvrbillboardsFace){
-                    //      cvr.billboardsTarget.addVectors(csphere.position, camera.position);
-                    //      cvr.billboardsTarget.z *= zoom;  // world camera.pos.z follows the radius
+                    //    if(c3dbillboardsFace){
+                    //      c3d.billboardsTarget.addVectors(csphere.position, camera.position);
+                    //      c3d.billboardsTarget.z *= zoom;  // world camera.pos.z follows the radius
                     //                                   // of csphere which corresponds to z*zoom
-                    //      Object.keys(cvr.billboards).forEach(function(id){
-                    //        cvr.billboards[id].lookAt(cvr.billboardsTarget);
+                    //      Object.keys(c3d.billboards).forEach(function(id){
+                    //        c3d.billboards[id].lookAt(c3d.billboardsTarget);
                     //      });
                     //    }
-                    //    if(cvr.stats){
-                    //      cvr.stats.update();
+                    //    if(c3d.stats){
+                    //      c3d.stats.update();
                     //    }
-                    cvr.renderer.render(cvr.scene, cvr.camera);
+                    c3d.renderer.render(c3d.scene, c3d.camera);
                 };
                 // add a passed in actor Object3d to scene - register in actors by id<br>
                 // the scene is an Object3d and is the root of the scenegraph tree
                 Camera3d.prototype.addActorToScene = function (id, o3d, pid) {
-                    console.log("\ncvr.addActorToScene: id = " + id + " o3d = " + o3d + " pid = " + pid);
+                    console.log("\nc3d.addActorToScene: id = " + id + " o3d = " + o3d + " pid = " + pid);
                     // o3d is scene - not really needed but creates root actor
-                    if (o3d === cvr.scene) {
-                        cvr.actors[id] = o3d; // add scene as root
+                    if (o3d === c3d.scene) {
+                        c3d.actors[id] = o3d; // add scene as root
                         o3d.name = id;
                         console.log("added scene with id = " + id + " o3d.name = " + o3d.name);
                         return true;
                     }
                     // check duplicate
-                    cvr.scene.traverse(function (o) {
+                    c3d.scene.traverse(function (o) {
                         if (o.name === id) {
                             console.log("actor " + id + " = " + o3d + " is duplicate! did not add!");
                             return false; // exception - duplication - don't add bb to bbs list
@@ -183,20 +183,20 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                     });
                     // add new actor to actors list
                     o3d.name = id;
-                    if (pid && cvr.actors[pid]) {
-                        cvr.actors[pid].add(o3d); // add to parent
+                    if (pid && c3d.actors[pid]) {
+                        c3d.actors[pid].add(o3d); // add to parent
                     }
                     else {
-                        cvr.scene.add(o3d); // add as root to scene
+                        c3d.scene.add(o3d); // add as root to scene
                     }
-                    cvr.actors[id] = o3d;
+                    c3d.actors[id] = o3d;
                     o3d.updateMatrix(); //needed?
                     console.log("added actor " + id + " = " + o3d + " with pid = " + pid + " to scene");
                     return true;
                 };
                 // remove actor Object3d from the scene
                 Camera3d.prototype.removeActorFromScene = function (id) {
-                    var node = cvr.actors[id], p;
+                    var node = c3d.actors[id], p;
                     if (node) {
                         if (node.parent) {
                             p = node.parent;
@@ -204,47 +204,47 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         }
                         else {
                             // prev_scene is the container of all webgl actors to be removed
-                            cvr.prev_scene.remove(node);
+                            c3d.prev_scene.remove(node);
                         }
-                        delete cvr.actors[id];
+                        delete c3d.actors[id];
                     }
                 };
                 Camera3d.prototype.actor = function (id) {
-                    return cvr.actors[id] || null;
+                    return c3d.actors[id] || null;
                 };
                 Camera3d.prototype.reportActors = function () {
                     console.log('Camera3d.reportActors()!');
-                    return Object.keys(cvr.actors); // ids
+                    return Object.keys(c3d.actors); // ids
                 };
                 // add a passed in actor/billboard Object3d to the scene
                 Camera3d.prototype.addBillboardToScene = function (id, o3d, pid) {
                     // addActor returns true if no webgl duplicate found => can add to bb list
-                    if (cvr.addActorToScene(id, o3d, pid)) {
-                        cvr.billboards[id] = o3d;
+                    if (c3d.addActorToScene(id, o3d, pid)) {
+                        c3d.billboards[id] = o3d;
                     }
                 };
                 // remove actor/billboard Object3d from the scene
                 Camera3d.prototype.removeBillboardFromScene = function (id) {
-                    if (cvr.billboards[id]) {
-                        delete cvr.billboards[id];
+                    if (c3d.billboards[id]) {
+                        delete c3d.billboards[id];
                     }
-                    cvr.removeActorFromScene(id);
+                    c3d.removeActorFromScene(id);
                 };
                 Camera3d.prototype.billboard = function (id) {
-                    return cvr.billboards[id] || null;
+                    return c3d.billboards[id] || null;
                 };
                 Camera3d.prototype.reportBillboards = function () {
-                    return Object.keys(cvr.billboards); // ids
+                    return Object.keys(c3d.billboards); // ids
                 };
                 // remove current scene
                 Camera3d.prototype.changeTemplateScene = function (template, _scene) {
-                    cvr.prev_scene = cvr.scene; // used to remove scene-actor children
-                    cvr.scene = _scene || (new THREE.Scene());
-                    cvr.scene.name = template;
+                    c3d.prev_scene = c3d.scene; // used to remove scene-actor children
+                    c3d.scene = _scene || (new THREE.Scene());
+                    c3d.scene.name = template;
                     // setClearColor(color, alpha)
-                    cvr.renderer.setClearColor(cvr.clearColor, cvr.alpha);
-                    cvr.renderer.setSize(window.innerWidth, window.innerHeight);
-                    cvr.renderer.render(cvr.scene, cvr.camera);
+                    c3d.renderer.setClearColor(c3d.clearColor, c3d.alpha);
+                    c3d.renderer.setSize(window.innerWidth, window.innerHeight);
+                    c3d.renderer.render(c3d.scene, c3d.camera);
                 };
                 // change camera.aspect on window resize and render w. new projection matrix<br>
                 // first two lines commented out to allow viewport resize and aspect ratio
@@ -252,8 +252,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                 Camera3d.prototype.onWindowResize = function () {
                     //camera.aspect = window.innerWidth / window.innerHeight;  
                     //camera.updateProjectionMatrix();
-                    cvr.renderer.setSize(window.innerWidth, window.innerHeight);
-                    cvr.render();
+                    c3d.renderer.setSize(window.innerWidth, window.innerHeight);
+                    c3d.render();
                 };
                 ;
                 Camera3d = __decorate([

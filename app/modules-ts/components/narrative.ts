@@ -157,6 +157,31 @@ export class Narrative {
     // give Narrative ref to Mediator to call N.exec(action) if 
     // action has become executable by timestamp > present
     this.mediator.set_narrative(this);
+
+    // fwd/back
+    // back-to-opening is disallowed - back just stays on state 1 which
+    // is the first scene chosen
+    window.onpopstate = (event) => {
+      var path:string = state.path(),
+          change_location:boolean = false;
+          //basehref:string = document.getElementsByTagName('base')[0].href,
+
+//      console.log(`basehref: ${basehref}`);
+//      console.log(`location.pathname returns ${window.location.pathname}`); 
+//      console.log(`path: ${state.path()}`); 
+//      console.log(`opening path: ${this.config.scenepaths['opening']}`); 
+//      console.log(`current_path: ${this.current_path}`); 
+//      console.log(`state: ${JSON.stringify(event.state)}`);
+      
+      // initial opening scene is not revisitable!
+      // if a try is made to go back to opening go to state 1 which
+      // is the first scene chosen
+      if(path !== this.config.scenepaths['opening']){
+        this.changeState(path, change_location);
+      }else{
+        window.history.go(1);
+      }
+    };
   }//ctor
 
 
@@ -196,7 +221,7 @@ export class Narrative {
 
   // change component loading and animations according to path (local 'url')
   // the path appears in the address bar and is available from state service
-  changeState(path:string) {
+  changeState(path:string, change_location:boolean = true) {
     console.log('\n\n\nchangeState!');
     console.log(`new path = ${path}`);
     console.log(`current_path = ${this.current_path}`);
@@ -218,7 +243,14 @@ export class Narrative {
       // change address bar and register state in browser history
       // then any component can use the State service to get modelnames by: 
       // substate 's' modelname = State.model(State.path(), 's')
-      this.state.go(this.current_path);
+      // State.go calls Location.go calls history.pushState(null,path,'')
+      // so calls to changeState after browser fwd/back events set
+      // change_location=false - change_location has default value true,
+      // so all other state changes cause a stage.go => location.go =>
+      // history,pushState(nul,path,'')
+      if(change_location){
+        this.state.go(this.current_path);
+      }
 
       // 'i3d' modelname here does not require use of the State service
       i3dmodelname = this.current_state['i3d']['m'];
@@ -297,7 +329,7 @@ export class Narrative {
               break;
 
             case 'scene':
-              // send m:string = score whish is: 
+              // send m:string = score which is: 
               // (1) a scorename, OR
               // (2) a JSON-stringification of a javascript score array
               // The javascript score array is found in either case and sent via
@@ -306,7 +338,8 @@ export class Narrative {
               // an action relative-timestamp is exceeded by the present
               // relative clock time. 
               if(m.length > 0){    // if non-empty score
-                this.current_state[t][m] = '';
+                // Scene will execute Mediator.perform(m);
+                Scene.changeState(t,m);
               }
               break;
 
@@ -356,11 +389,11 @@ export class Narrative {
   // is capable of driving a GSAP animation
   // path causes no substate changes except Shot.changeState(shot) in 'shot'
   // case of this.changeState
-  changeShot(shot:string){
+  changeShot(_shot:string){
     var path:string;
 
-    console.log('changeShot: shot = ${shot}');
-    path = '/////' + shot;   // 'scene/i3d/i2d/base/ui/' + shot
+    console.log('changeShot: _shot = ${_shot}');
+    path = '/////' + _shot;   // 'scene/i3d/i2d/base/ui/' + _shot
     this.changeState(path);
   }
 
@@ -549,6 +582,7 @@ export class Narrative {
     for(let s of Object.keys(this.scenestates)){
       console.log(`narrative ctor: this.scenestates[${s}] = ${this.scenestates[s]}`);
     }
+    // initial address bar url (differs from application http url)
     this.state.go(this.current_path);
   }
 

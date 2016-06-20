@@ -17,9 +17,9 @@ export const config:Config = {
   controlstates: {ui: true, i2d: false, i3d: true, base: true, fps: true, csphere: true, key: true, fill: true, back: true},
   scenes: ['scene1', 'scene2'],
   scenestates: {scene1:false, scene2:false},
-  scenepaths: {opening: 'opening://///',
-    scene1:'scene1:/space:model1/stage:/bg:/display:/shot:/',
-    scene2:'scene2:/space2:model2/stage2:/bg2:/display2:/shot2:/'
+  scenepaths: {opening: 'opening://///no-shot:',
+    scene1:'scene1:/space:model1/stage:/bg:/display:/shot:',
+    scene2:'scene2:/space2:model2/stage2:/bg2:/display2:/shot2:'
   },
 
   // metastate: '{scene}/{i3d}/{shot}/',  // for VR

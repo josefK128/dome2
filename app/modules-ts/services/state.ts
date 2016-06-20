@@ -25,14 +25,18 @@ export class State {
 
   path(){
     var path = this.location.path();
+    console.log(`state.path: location.path() returns ${path}`);
     if(/^\//.test(path)){   // if path.startsWith('/') remove it
-      return path.slice(1);  
+      //path = path.slice(1);
+      //console.log(`state.path: path.slice(1) = ${path}`);
+      //return path;  
+      return path.slice(1);
     }
     return path;
   }
 
-  go(url:string){
-    this.location.go(url);
+  go(path:string){
+    this.location.go(path);
   }
 
   stringify(params:Object):string {

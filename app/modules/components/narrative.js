@@ -83,6 +83,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
         execute: function() {
             Narrative = (function () {
                 function Narrative(cfg, camera3d, state, models, scenes, templatecache, mediator, transform3d, camera2d, animation) {
+                    var _this = this;
                     // config
                     this.config = cfg || {};
                     this.controls = _config_1.config.controls;
@@ -124,6 +125,28 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                     // give Narrative ref to Mediator to call N.exec(action) if 
                     // action has become executable by timestamp > present
                     this.mediator.set_narrative(this);
+                    // fwd/back
+                    // back-to-opening is disallowed - back just stays on state 1 which
+                    // is the first scene chosen
+                    window.onpopstate = function (event) {
+                        var path = state.path(), change_location = false;
+                        //basehref:string = document.getElementsByTagName('base')[0].href,
+                        //      console.log(`basehref: ${basehref}`);
+                        //      console.log(`location.pathname returns ${window.location.pathname}`); 
+                        //      console.log(`path: ${state.path()}`); 
+                        //      console.log(`opening path: ${this.config.scenepaths['opening']}`); 
+                        //      console.log(`current_path: ${this.current_path}`); 
+                        //      console.log(`state: ${JSON.stringify(event.state)}`);
+                        // initial opening scene is not revisitable!
+                        // if a try is made to go back to opening go to state 1 which
+                        // is the first scene chosen
+                        if (path !== _this.config.scenepaths['opening']) {
+                            _this.changeState(path, change_location);
+                        }
+                        else {
+                            window.history.go(1);
+                        }
+                    };
                 } //ctor
                 // change appearance of display substates and controls
                 Narrative.prototype.changeControl = function (control) {
@@ -156,7 +179,8 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                 }; //changeControls
                 // change component loading and animations according to path (local 'url')
                 // the path appears in the address bar and is available from state service
-                Narrative.prototype.changeState = function (path) {
+                Narrative.prototype.changeState = function (path, change_location) {
+                    if (change_location === void 0) { change_location = true; }
                     console.log('\n\n\nchangeState!');
                     console.log("new path = " + path);
                     console.log("current_path = " + this.current_path);
@@ -171,7 +195,14 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                         // change address bar and register state in browser history
                         // then any component can use the State service to get modelnames by: 
                         // substate 's' modelname = State.model(State.path(), 's')
-                        this.state.go(this.current_path);
+                        // State.go calls Location.go calls history.pushState(null,path,'')
+                        // so calls to changeState after browser fwd/back events set
+                        // change_location=false - change_location has default value true,
+                        // so all other state changes cause a stage.go => location.go =>
+                        // history,pushState(nul,path,'')
+                        if (change_location) {
+                            this.state.go(this.current_path);
+                        }
                         // 'i3d' modelname here does not require use of the State service
                         i3dmodelname = this.current_state['i3d']['m'];
                         console.log("i3dmodelname = " + i3dmodelname);
@@ -244,7 +275,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                                         ui_1.Ui.changeState(t);
                                         break;
                                     case 'scene':
-                                        // send m:string = score whish is: 
+                                        // send m:string = score which is: 
                                         // (1) a scorename, OR
                                         // (2) a JSON-stringification of a javascript score array
                                         // The javascript score array is found in either case and sent via
@@ -253,7 +284,8 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                                         // an action relative-timestamp is exceeded by the present
                                         // relative clock time. 
                                         if (m.length > 0) {
-                                            this.current_state[t][m] = '';
+                                            // Scene will execute Mediator.perform(m);
+                                            scene_1.Scene.changeState(t, m);
                                         }
                                         break;
                                     case 'shot':
@@ -298,10 +330,10 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                 // is capable of driving a GSAP animation
                 // path causes no substate changes except Shot.changeState(shot) in 'shot'
                 // case of this.changeState
-                Narrative.prototype.changeShot = function (shot) {
+                Narrative.prototype.changeShot = function (_shot) {
                     var path;
-                    console.log('changeShot: shot = ${shot}');
-                    path = '/////' + shot; // 'scene/i3d/i2d/base/ui/' + shot
+                    console.log('changeShot: _shot = ${_shot}');
+                    path = '/////' + _shot; // 'scene/i3d/i2d/base/ui/' + _shot
                     this.changeState(path);
                 };
                 // execute actions - declarative function invocations
@@ -491,6 +523,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                         var s = _a[_i];
                         console.log("narrative ctor: this.scenestates[" + s + "] = " + this.scenestates[s]);
                     }
+                    // initial address bar url (differs from application http url)
                     this.state.go(this.current_path);
                 };
                 Narrative = __decorate([

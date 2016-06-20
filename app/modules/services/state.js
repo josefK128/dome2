@@ -38,13 +38,17 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                 }
                 State.prototype.path = function () {
                     var path = this.location.path();
+                    console.log("state.path: location.path() returns " + path);
                     if (/^\//.test(path)) {
+                        //path = path.slice(1);
+                        //console.log(`state.path: path.slice(1) = ${path}`);
+                        //return path;  
                         return path.slice(1);
                     }
                     return path;
                 };
-                State.prototype.go = function (url) {
-                    this.location.go(url);
+                State.prototype.go = function (path) {
+                    this.location.go(path);
                 };
                 State.prototype.stringify = function (params) {
                     return this.pattern.expand(params);
