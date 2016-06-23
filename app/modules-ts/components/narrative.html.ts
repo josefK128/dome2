@@ -113,6 +113,9 @@ export default
     </span> 
   </div> 
   <div style="padding-left:3%" ><font color="green">{{current_scene}}</font></div> -->
+  
+  <!-- three.js fps -->
+  <div id="stats"  [style.display]="fpsdisplay "style="position:absolute; transform:scaleY(0.85) translateY(-8%)"></div>
 
   <dome-ui>
   </dome-ui>

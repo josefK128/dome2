@@ -18,6 +18,7 @@ var c3d;
 export class Camera3d {
   config:Config;
   mediator:Mediator;
+  narrative;
   canvasId;
   canvas;
   camera;
@@ -32,17 +33,27 @@ export class Camera3d {
   billboards;
   stats;
   gl;
-  narrative;
+  stats;
   count:number = 0;
+  record:boolean;
+  shot:Object;
+
 
   constructor(@Inject(CONFIG) cfg:Config, mediator:Mediator) {
     c3d = this;
-    c3d.config = cfg || {};
+    c3d.config = cfg;
+    c3d.record_shots = c3d.config.record_shots;
     c3d.mediator = mediator;
     c3d.actors = {};
     c3d.billboards = {};
   }//ctor
 
+
+  // set_stats
+  set_stats(stats){
+    console.log(`camera3d.set_stats: stats = ${stats}`);
+    c3d.stats = stats;
+  }
 
   // initialize scene - 'place' camera in scene
   place(canvasId, _scenename, _narrative, _scene, _clearColor, _alpha, _fov) {
@@ -127,6 +138,8 @@ export class Camera3d {
     // keyboard functions
     window.addEventListener("keyup", function(e){
       console.log(`keyup: key = ${e.keyCode}`);
+      var a:Object;
+
       switch(e.keyCode){
         // ZOOM<br>
         // a - zoom in          
@@ -145,18 +158,183 @@ export class Camera3d {
             c3d.camera.lookAt(c3d.scene.position);
           }
           break;
+      
+        // DOLLY - translation along axes and more generally<br>
+        // 1 => dollyx+        
+        case 49:    
+          if(e.altKey){     // alt => fly
+            if(e.shiftKey){ // sh => abs transform ('to')
+              a = {x:20, d:3};  
+              c3d.dollyflyTo(a);  
+              //log({t:'camera3d', f:'dollyflyTo', a:a});
+              if(c3d.record_shots){
+                c3d.mediator.record({t:'camera3d', f:'dollyflyTo', a:a});
+              }
+            }else{          // no-sh => rel transform ('by')
+              a = {x:10, d:3};  
+              c3d.dollyflyBy(a);
+              //log({t:'camera3d', f:'dollyflyBy', a:a});
+              if(c3d.record_shots){
+                c3d.mediator.record({t:'camera3d', f:'dollyflyBy', a:a});
+              }
+            }
+          }else{            // no-alt => cut
+            if(e.shiftKey){ // shift  => 'to'
+              a = {x:20};  
+              c3d.dollycutTo(a);
+              //log({t:'camera3d', f:'dollycutTo', a:a});
+              if(c3d.record_shots){
+                c3d.mediator.record({t:'camera3d', f:'dollycutTo', a:a});
+              }
+            }else{         
+              a = {x:10};
+              c3d.dollycutBy(a); 
+              //log({t:'camera3d', f:'dollycutBy', a:a});
+              if(c3d.record_shots){
+                c3d.mediator.record({t:'camera3d', f:'dollycutBy', a:a});
+              }
+            }
+          }//dollyx+
+          break;
+
+        // 2 - dollyx-        
+        case 50:  
+          if(e.altKey){     // alt => fly
+            if(e.shiftKey){ // sh => abs transform ('to')
+              a = {x:-20, d:3};  
+              c3d.dollyflyTo(a);  
+              //log({t:'camera3d', f:'dollyflyTo', a:a});
+              if(c3d.record_shots){
+                c3d.mediator.record({t:'camera3d', f:'dollyflyTo', a:a});
+              }
+            }else{          // no-sh => rel transform ('by')
+              a = {x:-10, d:3};  
+              c3d.dollyflyBy(a);
+              //log({t:'camera3d', f:'dollyflyBy', a:a});
+              if(c3d.record_shots){
+                c3d.mediator.record({t:'camera3d', f:'dollyflyBy', a:a});
+              }
+            }
+          }else{            // no-alt => cut
+            if(e.shiftKey){ // shift  => 'to'
+              a = {x:-20};  
+              c3d.dollycutTo(a);
+              //log({t:'camera3d', f:'dollycutTo', a:a});
+              if(c3d.record_shots){
+                c3d.mediator.record({t:'camera3d', f:'dollycutTo', a:a});
+              }
+            }else{         
+              a = {x:-10};
+              c3d.dollycutBy(a); 
+              //log({t:'camera3d', f:'dollycutBy', a:a});
+              if(c3d.record_shots){
+                c3d.mediator.record({t:'camera3d', f:'dollycutBy', a:a});
+              }
+            }
+          }//50-dollyx-
+          break;
 
         default:
           break;
       }
-    });
+    });//window.addEventListener(...)
 
 
-    // begin camera coddntrol animation - in sync with GSAP animation
+    // begin camera control animation - in sync with GSAP animation
     // later replace c3d line by TweenMax.ticker line below
     c3d.animate();
     //TweenMax.ticker.addEventListener('tick', c3d.render);
   }//place
+
+
+
+  // camera shot implementations
+  // DOLLY - camera translation<br>
+  // fly - animate (default dur=3.0)
+  dollyflyTo(a) {  
+    a.d = a.d || 3.0;
+    a.x = a.x || c3d.csphere.position.x;
+    a.y = a.y || c3d.csphere.position.y;
+    a.z = a.z || c3d.csphere.position.z;
+
+    // shot microstate-change
+    c3d.shot = {delta: {
+                timeline: {p: {paused:true, repeat:0},
+                             actors:{
+                              'i3d:csphere:position':[{dur:a.d, 
+                                 p:{x:a.x, y:a.y, z:a.z, 
+                                 immediateRender:false}}]
+                              }
+                            }//tl
+                        }//delta
+              };//shot
+    c3d.narrative.changeShot(c3d.shot);
+  }
+  dollyflyBy(a) {
+    a.d = a.d || 3.0;
+    a.x = a.x || 0.0;
+    a.y = a.y || 0.0;
+    a.z = a.z || 0.0;
+    a.x = c3d.csphere.position.x + a.x; 
+    a.y = c3d.csphere.position.y + a.y; 
+    a.z = c3d.csphere.position.z + a.z; 
+
+    // shot microstate-change
+    c3d.shot = {delta: {
+                timeline: {p: {paused:true, repeat:0},
+                             actors:{
+                              'i3d:csphere:position':[{dur:a.d, 
+                                 p:{x:a.x, y:a.y, z:a.z, 
+                                 immediateRender:false}}]
+                              }
+                            }//tl
+                        }//delta
+              };//shot
+    c3d.narrative.shot(c3d.shot);
+  }
+
+  // cut - no animation (dur=0)
+  dollycutTo(a) {  
+    a.x = a.x || c3d.csphere.position.x;
+    a.y = a.y || c3d.csphere.position.y;
+    a.z = a.z || c3d.csphere.position.z;
+
+    // shot microstate-change
+    c3d.shot = {delta: {
+                timeline: {p: {paused:true, repeat:0},
+                             actors:{
+                              'i3d:csphere:position':[{dur:0, 
+                                 p:{x:a.x, y:a.y, z:a.z, 
+                                 immediateRender:false}}]
+                              }
+                            }//tl
+                        }//delta
+              };//shot
+    c3d.narrative.shot(this.shot);
+  }
+  dollycutBy(a) {
+    a.d = 0.0;
+    a.x = a.x || 0.0;
+    a.y = a.y || 0.0;
+    a.z = a.z || 0.0;
+    a.x = c3d.csphere.position.x + a.x; 
+    a.y = c3d.csphere.position.y + a.y; 
+    a.z = c3d.csphere.position.z + a.z; 
+
+    // shot microstate-change
+    c3d.shot = {delta: {
+                timeline: {p: {paused:true, repeat:0},
+                             actors:{
+                              'i3d:csphere:position':[{dur:0, 
+                                 p:{x:a.x, y:a.y, z:a.z, 
+                                 immediateRender:false}}]
+                              }
+                            }//tl
+                        }//delta
+              };//shot
+    c3d.narrative.shot(this.shot);
+  }
+
 
 
   // start rendering cycle
@@ -197,6 +375,9 @@ export class Camera3d {
 //      c3d.stats.update();
 //    }
 
+    if(this.stats){
+      this.stats.update();
+    }
     c3d.renderer.render( c3d.scene, c3d.camera );
   }
 

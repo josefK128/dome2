@@ -20,7 +20,6 @@ export class Camera2d {
   tl:Object;
   tlp:Object;
   shot:Object;
-  _shot:string;
   action:Object;
   plane:any;
   zoom_plane:any;
@@ -39,7 +38,6 @@ export class Camera2d {
     this.tlp = {};
     this.action = {};
     this.shot = {};
-    this._shot = '';
    
     // dolly - plane
     this.plane = undefined;
@@ -60,7 +58,8 @@ export class Camera2d {
     // * NOTE: logging of action is for building e2e_test cell when 
     //   generating e2e_spec
     window.addEventListener("keyup", function(e){
-      var a;
+      var a:Object;
+
       switch(e.keyCode){
 
         // CENTER/HOME - normalize camera and csphere<br>
@@ -422,7 +421,7 @@ export class Camera2d {
 
     // shot
     this.shot = {delta: {
-      timeline: {p: {paused:true, repeat:0},
+        timeline: {p: {paused:true, repeat:0},
                actors:{
                  'i2d:plane':[{dur:a.d, 
                                  p:{'x': 0.0, 'y': 0.0, immediateRender:false}}],
@@ -432,8 +431,7 @@ export class Camera2d {
               }//tl
               }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
 
 
@@ -442,7 +440,7 @@ export class Camera2d {
 
     //shot
     this.shot = {delta: {
-      timeline: {p: {paused:true, repeat:0},
+        timeline: {p: {paused:true, repeat:0},
                actors:{
                  'i2d:plane':[{dur:a.d, 
                                  p:{'x': 0.0, 'y': 0.0, immediateRender:false}}],
@@ -452,8 +450,7 @@ export class Camera2d {
               }//tl
               }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
 
 
@@ -472,8 +469,7 @@ export class Camera2d {
                             }//tl
                         }//delta
                 };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
   zoomcutBy(a) {   
     if(a.s !== undefined){this.scale *= a.s;}
@@ -488,8 +484,7 @@ export class Camera2d {
                             }//tl
                         }//delta
                 };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
 
   // fly - animate
@@ -506,8 +501,7 @@ export class Camera2d {
                             }//tl
                         }//delta
                 };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
   zoomflyBy(a) {   
     if(a.s !== undefined){this.scale *= a.s;}
@@ -522,8 +516,7 @@ export class Camera2d {
                             }//tl
                         }//delta
                 };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
 
 
@@ -542,8 +535,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
   rollcutBy(a) {  
     if(a.r !== undefined){this.angle += a.r;}
@@ -558,8 +550,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
 
   // fly - animate
@@ -576,8 +567,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
   rollflyBy(a) {  
     if(a.r !== undefined){this.angle += a.r;}
@@ -592,8 +582,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
 
 
@@ -616,8 +605,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
   dollycutBy(a) { 
     if(a.x !== undefined){this.x += a.x;}
@@ -635,8 +623,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
 
   // fly - animate
@@ -656,8 +643,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
   dollyflyBy(a) { 
     if(a.x !== undefined){this.x += a.x;}
@@ -675,8 +661,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
 
   // random 2d-bezier camera nav<br> 
@@ -732,8 +717,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this._shot = 'shot-anim:' + JSON.stringify(this.shot);
-    this.narrative.changeShot(this._shot);
+    this.narrative.changeShot(this.shot);
   }
 }//Camera2D
 

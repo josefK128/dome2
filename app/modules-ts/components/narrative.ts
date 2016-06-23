@@ -77,6 +77,7 @@ export class Narrative {
   i2ddisplay:string;
   i3ddisplay:string;
   basedisplay:string;
+  fpsdisplay:string;
 
   // state -> previous state
   current_scene:string;
@@ -100,6 +101,8 @@ export class Narrative {
   shotindex:number;
 
 
+
+  // ctor
   constructor(@Inject(CONFIG) cfg:Config, 
               camera3d:Camera3d,
               state:State,
@@ -134,6 +137,7 @@ export class Narrative {
     this.i2ddisplay = (this.controlstates['i2d'] ? 'block' : 'none');
     this.i3ddisplay = (this.controlstates['i3d'] ? 'block' : 'none');
     this.basedisplay = (this.controlstates['base'] ? 'block' : 'none');
+    this.fpsdisplay = (this.controlstates['fps'] ? 'block' : 'none');
 
     // state
     this.current_scene = config.opening_scene;
@@ -212,6 +216,11 @@ export class Narrative {
         this.basedisplay = (this.controlstates['base'] ? 'inline' : 'none');
         console.log(`after: this.basedisplay = ${this.basedisplay}`);
         break;
+      case 'fps':
+        console.log(`before: this.fpsdisplay = ${this.fpsdisplay}`);
+        this.fpsdisplay = (this.controlstates['fps'] ? 'inline' : 'none');
+        console.log(`after: this.fpsdisplay = ${this.fpsdisplay}`);
+        break;
       default:
         break;
     }
@@ -232,24 +241,37 @@ export class Narrative {
         i3dmodel:Object,
         i3dscenename:string,
         i3dscene:Object,
-        i3dtemplatename:string;
+        i3dtemplatename:string,
+        pstate = this.current_state,  // save current state as previous
+        ppath = this.current_path;  // save current pathas previous
 
       // update state
-      let pstate = this.current_state;  // save current state as previous
       this.current_state = this.state.parse(path);           // new state
       this.current_scene = this.current_state['scene']['t'];    // for ui  
       this.current_path = path;                               // new path
 
-      // change address bar and register state in browser history
-      // then any component can use the State service to get modelnames by: 
+      // change address bar and register state in browser history.
+      // The 'absolute' path is recorded (and shows in the address bar) - i.e.
+      // all present substates are present in the path irregardless of when 
+      // they were loaded.
+      // Initially the path can be 'delta' - i.e. show only present changes,
+      // and this is accomodated in the transition substate changes below,
+      // but for the back mechanism to work all substate content must be
+      // available at each step.
+      //
+      // Accessibility to the path also allows any substate component to use 
+      // the State service to get modelnames by tghe following technique: 
       // substate 's' modelname = State.model(State.path(), 's')
+      //
       // State.go calls Location.go calls history.pushState(null,path,'')
       // so calls to changeState after browser fwd/back events set
       // change_location=false - change_location has default value true,
       // so all other state changes cause a stage.go => location.go =>
-      // history,pushState(nul,path,'')
+      // history,pushState(null,path,'')
       if(change_location){
-        this.state.go(this.current_path);
+        var abs_path = this.state.abs_path(ppath, path);
+        //console.log(`abs_path = ${abs_path}`);
+        this.state.go(abs_path);
       }
 
       // 'i3d' modelname here does not require use of the State service
@@ -387,15 +409,22 @@ export class Narrative {
   // from the Models service and drive a GSAP animation, OR
   // [2] a JSON serialization of a shot-model itself, whose parsed sot-object 
   // is capable of driving a GSAP animation
-  // path causes no substate changes except Shot.changeState(shot) in 'shot'
-  // case of this.changeState
-  changeShot(_shot:string){
-    var path:string;
-
-    console.log('changeShot: _shot = ${_shot}');
-    path = '/////' + _shot;   // 'scene/i3d/i2d/base/ui/' + _shot
-    this.changeState(path);
+  // path causes no substate changes except 'case shot' which invokes
+  // Shot.changeState(t,m) where t = 'leaf-shot' (part of this.config.shotroot
+  // which is normally '/////leaf-shot:') and m is the JSON.stringified form
+  // of shot:Object
+  changeShot(shot:Object){
+    this.changeState(this.config.shotRoot + JSON.stringify(shot));
   }
+//  // was previously:
+//  changeShot(_shot:string){
+//    var path:string;
+//
+//    console.log('changeShot: _shot = ${_shot}');
+//    path = this.config.shotroot + _shot;  // normally '/////' + _shot  
+//                                         // 'scene/i3d/i2d/base/ui/' + _shot
+//    this.changeState(path);
+//  }
 
 
 
@@ -575,6 +604,8 @@ export class Narrative {
   }
 
   ngOnInit() {
+    var stats:Object;
+
     console.log(`narrative ngOnInit`);
     for(let p in Narrative.provider_overrides[0]){
       console.log(`Narrative.provider_overrides[0] has property ${p} with val ${Narrative.provider_overrides[0][p]}`); 
@@ -582,7 +613,13 @@ export class Narrative {
     for(let s of Object.keys(this.scenestates)){
       console.log(`narrative ctor: this.scenestates[${s}] = ${this.scenestates[s]}`);
     }
-    // initial address bar url (differs from application http url)
+    stats = new Stats();
+    console.log(`############################ stats = ${stats}`);
+    stats.setMode(0); // 0:fps 1:ms, etc.
+    document.getElementById('stats').appendChild(stats.domElement);
+    this.camera3d.set_stats(stats);
+
+// initial address bar url (differs from application http url)
     this.state.go(this.current_path);
   }
 

@@ -24,8 +24,10 @@ export const config:Config = {
 
   // metastate: '{scene}/{i3d}/{shot}/',  // for VR
   // substates: ['scene', 'i3d', 'shot'],
+  // shotroot: '//leaf-shot:'
   metastate: '{scene}/{i3d}/{i2d}/{base}/{ui}/{shot}/',
   substates: ['scene', 'i3d', 'i2d', 'base', 'ui', 'shot'],
+  shotroot: '/////leaf-shot:',
 
   canvas_id: '3D',
   opening_scene: 'opening',
@@ -38,6 +40,7 @@ export const config:Config = {
   server_port: 8081,   // channels
   server_connect: false,
   record_stream: false,
+  record_shots: false,
   channels: ['actions'],
 
   // targets for action execs

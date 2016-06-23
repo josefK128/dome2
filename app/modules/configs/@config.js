@@ -27,8 +27,10 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 },
                 // metastate: '{scene}/{i3d}/{shot}/',  // for VR
                 // substates: ['scene', 'i3d', 'shot'],
+                // shotroot: '//leaf-shot:'
                 metastate: '{scene}/{i3d}/{i2d}/{base}/{ui}/{shot}/',
                 substates: ['scene', 'i3d', 'i2d', 'base', 'ui', 'shot'],
+                shotroot: '/////leaf-shot:',
                 canvas_id: '3D',
                 opening_scene: 'opening',
                 unit_test: false,
@@ -38,6 +40,7 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 server_port: 8081,
                 server_connect: false,
                 record_stream: false,
+                record_shots: false,
                 channels: ['actions'],
                 // targets for action execs
                 targets: { narrative: {}, camera3d: {}, camera2d: {}, mediator: {}, animation: {},

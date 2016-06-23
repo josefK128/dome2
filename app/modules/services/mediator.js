@@ -87,11 +87,11 @@ System.register(['@angular/core', '../configs/@config', 'socket.io-client', './q
                     this.iqueue.ready = true;
                     this.next();
                 };
-                // fetch next action from iqueue - removes action from queue
+                // fetch next action Object from iqueue - removes action from queue
                 // if queue is empty returns undefined
                 Mediator.prototype.next = function () {
                     if (this.iqueue.peek()) {
-                        this.narrative.exec(this.iqueue.pop()); // final version
+                        this.narrative.exec(this.iqueue.pop()); // iqueue hold action Objects
                     }
                 };
                 // queue score actions and start Clock to time sends to narrative.exec

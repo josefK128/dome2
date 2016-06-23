@@ -36,6 +36,7 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                     this.pattern = url_template_js_1.default.parse(this.config.metastate);
                     this.location = location;
                 }
+                // return present address bar path (with leading '\' removed)
                 State.prototype.path = function () {
                     var path = this.location.path();
                     console.log("state.path: location.path() returns " + path);
@@ -47,12 +48,46 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                     }
                     return path;
                 };
+                // returns path formed from current_path where each subspace with a '' entry
+                // is replaced by the corresponding entry from the previous path.
+                // All paths are then 'absolute' - they show the present set of subspaces
+                // irregardless of when they were loaded
+                State.prototype.abs_path = function (ppath, path) {
+                    var ppa = ppath.split('/'), pa = path.split('/');
+                    for (var i = 0; i < pa.length; i++) {
+                        if (pa[i] === '') {
+                            pa[i] = ppa[i];
+                        }
+                    }
+                    return pa.join('/');
+                };
+                // execute Location.go(path) - changes address bar and adds history entry
                 State.prototype.go = function (path) {
                     this.location.go(path);
                 };
+                // state params object -> serialized state path
                 State.prototype.stringify = function (params) {
-                    return this.pattern.expand(params);
+                    var state = {}, path;
+                    for (var _i = 0, _a = this.config.substates; _i < _a.length; _i++) {
+                        var s = _a[_i];
+                        state[s] = params[s]['t'];
+                        state[s] = params[s]['t'] + ':';
+                        params[s]['m'] = params[s]['m'] || '';
+                        state[s] = params[s]['t'] + ':' + params[s]['m'];
+                    }
+                    path = this.pattern.expand(state);
+                    console.log("path = " + path);
+                    if (/\/$/.test(path)) {
+                        path = path.substring(0, path.length - 1);
+                    }
+                    if (/^\//.test(path)) {
+                        return path.slice(1);
+                    }
+                    else {
+                        return path;
+                    }
                 };
+                // serialized state path -> state params object 
                 // path must be well-formed according to config.metastate, i.e
                 // scene/i3d/i2d/base/ui/shot where the substates are strings which could
                 // be empty - all empty is the identity stateChange - i.e. 'no-change'

@@ -90,11 +90,11 @@ export class Mediator {
     this.next();
   }
     
-  // fetch next action from iqueue - removes action from queue
+  // fetch next action Object from iqueue - removes action from queue
   // if queue is empty returns undefined
   next(){
     if(this.iqueue.peek()){
-      this.narrative.exec(this.iqueue.pop()); // final version
+      this.narrative.exec(this.iqueue.pop()); // iqueue hold action Objects
     }
   }
 
