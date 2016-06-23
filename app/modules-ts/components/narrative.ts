@@ -604,7 +604,7 @@ export class Narrative {
   }
 
   ngOnInit() {
-    var stats:Object;
+    var stats:Stats;
 
     console.log(`narrative ngOnInit`);
     for(let p in Narrative.provider_overrides[0]){
