@@ -41,7 +41,8 @@ System.register(['@angular/core', '../configs/@config', './camera3d', './camera2
                     this.camera2d = camera2d;
                 }
                 Animation.prototype.perform = function (shot) {
-                    console.log("Animation.perform: shot = " + shot);
+                    console.log("Animation.perform: typeof shot = " + shot);
+                    console.log("Animation.perform: shot = " + JSON.stringify(shot));
                 };
                 Animation = __decorate([
                     core_1.Injectable(),

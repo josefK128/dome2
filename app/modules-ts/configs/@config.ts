@@ -18,16 +18,14 @@ export const config:Config = {
   scenes: ['scene1', 'scene2'],
   scenestates: {scene1:false, scene2:false},
   scenepaths: {opening: 'opening://///no-shot:',
-    scene1:'scene1:/space:model1/stage:/bg:/display:/shot:',
-    scene2:'scene2:/space2:model2/stage2:/bg2:/display2:/shot2:'
+    scene1:'scene1:/space:model1/stage:/bg:/display:/establishing:',
+    scene2:'scene2:/space2:model2/stage2:/bg2:/display2:/establishing:'
   },
 
   // metastate: '{scene}/{i3d}/{shot}/',  // for VR
   // substates: ['scene', 'i3d', 'shot'],
-  // shotroot: '//leaf-shot:'
   metastate: '{scene}/{i3d}/{i2d}/{base}/{ui}/{shot}/',
   substates: ['scene', 'i3d', 'i2d', 'base', 'ui', 'shot'],
-  shotroot: '/////leaf-shot:',
 
   canvas_id: '3D',
   opening_scene: 'opening',

@@ -28,6 +28,7 @@
     "systemjs": "^0.19.27",
     "three.js": "^0.77.1",
     "url-template": "^2.0.7",
+    "uuencode": "0.0.4",
     "zone.js": "^0.6.12"
   },
   "devDependencies": {

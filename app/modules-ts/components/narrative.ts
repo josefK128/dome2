@@ -15,6 +15,7 @@ import {Camera3d} from '../services/camera3d';
 import {State} from '../services/state';
 import {Models} from '../services/models';
 import {Scenes} from '../services/scenes';
+import {Scores} from '../services/scores';
 import {Templatecache} from '../services/templatecache';
 import {Queue} from '../services/queue';
 import {Mediator} from '../services/mediator';
@@ -48,6 +49,7 @@ import template from './narrative.html';
     provide(State, {useClass: State}),  
     provide(Models, {useClass: Models}),  
     provide(Scenes, {useClass: Scenes}),  
+    provide(Scores, {useClass: Scores}),  
     provide(Templatecache, {useClass: Templatecache}),  
     provide(Queue, {useClass: Queue}),  
     provide(Mediator, {useClass: Mediator}),  
@@ -96,9 +98,12 @@ export class Narrative {
   camera2d:Camera2d;
   animation:Animation;
 
-  // shot
-  shot:Object;
-  shotindex:number;
+  // display fps stats
+  stats:Stats;
+
+  // index for unique 'leaf-shot' template-names for dynamic shots on
+  // existing scenes
+  shotindex:number = 0;
 
 
 
@@ -154,9 +159,6 @@ export class Narrative {
     this.state = state;
     this.current_state = this.state.parse(this.current_path); 
 
-    // shot
-    this.shot = {};
-    this.shotindex = 0;
 
     // give Narrative ref to Mediator to call N.exec(action) if 
     // action has become executable by timestamp > present
@@ -227,9 +229,67 @@ export class Narrative {
   }//changeControls
 
 
+  // method to be called by action invoking a dynamic shot - shot is either:
+  // [1] a string '<templatename:modelname>' whose shot model can be obtained 
+  // from the Models service and drive a GSAP animation, OR
+  // [2] a JSON serialization of a shot-model itself, whose parsed sot-object 
+  // is capable of driving a GSAP animation.
+  // The path formed to represent the statechange is absolute - i.e. fully
+  // specify each substate of the state (scene, i3d, i2d, base, ui, shot)
+  // The absolute path is sent to this.changeState(path) which compares each
+  // substate to the previous substate and, if there is a change on a 
+  // particular substate, invokes changeState on the corresponding substate 
+  // component (Scene, I3d, I2d, Base, UI, Shot)
+  changeShot(shot:Object){
+    var path:string,
+        pa:string[];
 
-  // change component loading and animations according to path (local 'url')
-  // the path appears in the address bar and is available from state service
+    // create an absolute path representing the new shot    
+    path = this.current_path;    // create substates array 
+    pa = this.current_path.split('/'); // remove previous shot substate     
+    pa.pop();
+    path = pa.join('/') + `/shot${this.shotindex++}:` + JSON.stringify(shot);
+    console.log(`changeShot: new absolute path = ${path}`);
+    this.changeState(path);
+  }
+
+
+
+  // change specific substate(s) while leaving the others as current.
+  // allows selective dynamic change of substate layers
+  // NOTE: shot changes should be made by changeShot(shot:Object) since
+  // there is no mechanism to ensure  actors in new layers will be loaded
+  // in order to permit animation and/or viewing in a shot.
+  // The form of a delta_path is a '/' separated set of 't:m' strings where
+  // t is the template-component-name and m is the model-name
+  // exp: delta_path = '/sky:storm////` would cause an i3d-substate change
+  // to the 'Sky' template-component using the 'storm' i3d-data-model'
+  // The form of the delta_path follows the standard config.metastate, 
+  // typically 'scene/i3d/i2d/base/ui/shot' where eahc of the six substates
+  // is either a 't:m' or 't:' name if to be changed, or '' if no change 
+  changeSubstates(delta_path:string) {
+    var dpa:string[] = delta_path.split('/'),
+        cpa:string[] = this.current_path.split('/'),
+        path:string,
+        i:number;
+
+    console.log('\n\n\nchangeSubstates! delta_path = ${delta_path}');
+    for(i=0; i<cpa.length; i++){
+      if(!dpa[i] || dpa[i] === ''){
+        dpa[i] = cpa[i];
+      }
+    }
+    path = dpa.join(':');
+    console.log('changeSubstates!pabsolute path = ${path}');
+    this.changeState(path);
+  }
+
+
+
+  // change component loading and animations according to absolute path, i.e
+  // all present and transitional substate template:model pairs are represented
+  // in the path argument.
+  // Also, the path appears in address bar and is available from state service
   changeState(path:string, change_location:boolean = true) {
     console.log('\n\n\nchangeState!');
     console.log(`new path = ${path}`);
@@ -237,27 +297,27 @@ export class Narrative {
 
     // check substate changes only if path change => >=1 substate change
     if(path !== this.current_path){
-    let i3dmodelname:string,
-        i3dmodel:Object,
-        i3dscenename:string,
-        i3dscene:Object,
-        i3dtemplatename:string,
-        pstate = this.current_state,  // save current state as previous
-        ppath = this.current_path;  // save current pathas previous
-
+      let pstate = this.current_state;  // save current state as previous
+      
       // update state
       this.current_state = this.state.parse(path);           // new state
-      this.current_scene = this.current_state['scene']['t'];    // for ui  
       this.current_path = path;                               // new path
+
+      // update scene for scene ui
+      if(this.current_state['scene']['t'].length > 0){
+        this.current_scene = this.current_state['scene']['t'];    
+
+        // sync ui scene checkboxes
+        for(let s of Object.keys(this.scenestates)){
+          this.scenestates[s] = false;
+        }
+        this.scenestates[this.current_scene] = true;
+      }
 
       // change address bar and register state in browser history.
       // The 'absolute' path is recorded (and shows in the address bar) - i.e.
       // all present substates are present in the path irregardless of when 
       // they were loaded.
-      // Initially the path can be 'delta' - i.e. show only present changes,
-      // and this is accomodated in the transition substate changes below,
-      // but for the back mechanism to work all substate content must be
-      // available at each step.
       //
       // Accessibility to the path also allows any substate component to use 
       // the State service to get modelnames by tghe following technique: 
@@ -269,20 +329,10 @@ export class Narrative {
       // so all other state changes cause a stage.go => location.go =>
       // history,pushState(null,path,'')
       if(change_location){
-        var abs_path = this.state.abs_path(ppath, path);
-        //console.log(`abs_path = ${abs_path}`);
-        this.state.go(abs_path);
+        console.log(`$$$$$$$ state.go(${path})`);
+        this.state.go(path);
       }
 
-      // 'i3d' modelname here does not require use of the State service
-      i3dmodelname = this.current_state['i3d']['m'];
-      console.log(`i3dmodelname = ${i3dmodelname}`);
-      i3dtemplatename = this.current_state['i3d']['t'];
-      console.log(`i3dtemplatename = ${i3dtemplatename}`);
-      i3dmodel = this.models.get(['i3d', i3dtemplatename, i3dmodelname]);
-      console.log(`i3dmodel = ${i3dmodel}`);
-      i3dscenename = i3dmodel['scene'];
-      console.log(`i3dscenename = ${i3dscenename}`);
 
       // load substate component if either template or model has changed
       for(let s of this.substates){
@@ -291,12 +341,9 @@ export class Narrative {
         let tp = pstate[s]['t'];
         let mp = pstate[s]['m'];
 
-        // t='' => no-change. To empty a substate explicitly load an empty 
-        // template-component 
-        if(t === ''){
-          console.log(`substate ${s} has t='' so break!`);
-          break;
-        }
+        console.log(`substate = ${s}  t = ${t}  tp = ${tp}`); 
+        console.log(`substate = ${s}  m = ${m}  mp = ${mp}`); 
+
 
         // if either a new template-component or even just a new model for the
         // present template-component, must freshly load the template-component
@@ -312,16 +359,25 @@ export class Narrative {
         // component - which guarantees all branch components are loaded before
         // the shot-animation begins.
         if((t !== tp) || (m !== mp)){
-          console.log(`substate = ${s}  t = ${t}  m = ${m}`); 
           switch(s){
             case 'i3d':
-              i3dscene = this.scenes.get(['i3d', i3dscenename]);
+              // 'i3d' modelname here does not require use of the State service
+              let i3dmodelname = this.current_state['i3d']['m'];
+              console.log(`i3dmodelname = ${i3dmodelname}`);
+              let i3dtemplatename = this.current_state['i3d']['t'];
+              console.log(`i3dtemplatename = ${i3dtemplatename}`);
+              let i3dmodel = this.models.get(['i3d', i3dtemplatename, i3dmodelname]);
+              console.log(`i3dmodel = ${i3dmodel}`);
+              let i3dscenename = i3dmodel['scene'];
+              console.log(`i3dscenename = ${i3dscenename}`);
+              let i3dscene = this.scenes.get(['i3d', i3dscenename]);
               console.log(`i3dscene = ${i3dscene}`);
               if(i3dscene){
                 this.camera3d.place(this.config.canvas_id, t, this, i3dscene);
               }else{
                 this.camera3d.changeTemplateScene(t);
               }
+
               // runs any i3d animation associated with i3dmodel['shot'] 
               // runs Animation.perform(shot={}) in ngAfterViewInit for
               // dynamically loaded composite template-component (exp: 'space') 
@@ -390,41 +446,10 @@ export class Narrative {
           }
         }//t or m delta  
       }//substates 
-
     }else{
-      console.log(`path = ${path} is the current_path`);
+      console.log(`no change of path! path = ${path}`);
     }
-
-    // sync ui scene checkboxes
-    for(let s of Object.keys(this.scenestates)){
-      this.scenestates[s] = false;
-    }
-    this.scenestates[this.current_scene] = true;
   }//changeState
-
-
-
-  // method to be called by action invoking a dynamic shot - shot is either:
-  // [1] a string '<templatename:modelname>' whose shot model can be obtained 
-  // from the Models service and drive a GSAP animation, OR
-  // [2] a JSON serialization of a shot-model itself, whose parsed sot-object 
-  // is capable of driving a GSAP animation
-  // path causes no substate changes except 'case shot' which invokes
-  // Shot.changeState(t,m) where t = 'leaf-shot' (part of this.config.shotroot
-  // which is normally '/////leaf-shot:') and m is the JSON.stringified form
-  // of shot:Object
-  changeShot(shot:Object){
-    this.changeState(this.config.shotRoot + JSON.stringify(shot));
-  }
-//  // was previously:
-//  changeShot(_shot:string){
-//    var path:string;
-//
-//    console.log('changeShot: _shot = ${_shot}');
-//    path = this.config.shotroot + _shot;  // normally '/////' + _shot  
-//                                         // 'scene/i3d/i2d/base/ui/' + _shot
-//    this.changeState(path);
-//  }
 
 
 
@@ -604,22 +629,21 @@ export class Narrative {
   }
 
   ngOnInit() {
-    var stats:Stats;
-
     console.log(`narrative ngOnInit`);
-    for(let p in Narrative.provider_overrides[0]){
-      console.log(`Narrative.provider_overrides[0] has property ${p} with val ${Narrative.provider_overrides[0][p]}`); 
-    }
-    for(let s of Object.keys(this.scenestates)){
-      console.log(`narrative ctor: this.scenestates[${s}] = ${this.scenestates[s]}`);
-    }
-    stats = new Stats();
-    console.log(`############################ stats = ${stats}`);
-    stats.setMode(0); // 0:fps 1:ms, etc.
-    document.getElementById('stats').appendChild(stats.domElement);
-    this.camera3d.set_stats(stats);
+//    for(let p in Narrative.provider_overrides[0]){
+//      console.log(`Narrative.provider_overrides[0] has property ${p} with val ${Narrative.provider_overrides[0][p]}`); 
+//    }
+//    for(let s of Object.keys(this.scenestates)){
+//      console.log(`narrative ctor: this.scenestates[${s}] = ${this.scenestates[s]}`);
+//    }
 
-// initial address bar url (differs from application http url)
+    this.stats = new Stats();
+    this.stats.setMode(0); // 0:fps 1:ms, etc.
+    document.getElementById('stats').appendChild(this.stats.domElement);
+    this.camera3d.set_stats(this.stats);
+
+    // initial address bar url (differs from application http url
+    // to prevent http fetch on back 
     this.state.go(this.current_path);
   }
 

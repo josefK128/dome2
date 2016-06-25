@@ -234,6 +234,7 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
+                    console.log("dollyflyTo: c3d.shot = " + c3d.shot);
                     c3d.narrative.changeShot(c3d.shot);
                 };
                 Camera3d.prototype.dollyflyBy = function (a) {
@@ -255,7 +256,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.narrative.shot(c3d.shot);
+                    console.log("dollyflyBy: c3d.shot = " + c3d.shot);
+                    c3d.narrative.changeShot(c3d.shot);
                 };
                 // cut - no animation (dur=0)
                 Camera3d.prototype.dollycutTo = function (a) {
@@ -273,7 +275,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.narrative.shot(this.shot);
+                    console.log("dollycutTo: c3d.shot = " + c3d.shot);
+                    c3d.narrative.changeShot(c3d.shot);
                 };
                 Camera3d.prototype.dollycutBy = function (a) {
                     a.d = 0.0;
@@ -294,7 +297,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.narrative.shot(this.shot);
+                    console.log("dollycutBy: c3d.shot = " + JSON.stringify(c3d.shot));
+                    c3d.narrative.changeShot(c3d.shot);
                 };
                 // start rendering cycle
                 Camera3d.prototype.animate = function () {

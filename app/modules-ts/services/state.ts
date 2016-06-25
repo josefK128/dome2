@@ -23,34 +23,22 @@ export class State {
                 this.location = location;
   }
 
+
   // return present address bar path (with leading '\' removed)
+  // relies on location.path
   path(){
-    var path = this.location.path();
-    console.log(`state.path: location.path() returns ${path}`);
-    if(/^\//.test(path)){   // if path.startsWith('/') remove it
-      //path = path.slice(1);
-      //console.log(`state.path: path.slice(1) = ${path}`);
-      //return path;  
-      return path.slice(1);
+    var _path = this.location.path();
+    console.log(`$$$$$$$$$$$ state.path: location.path() returns ${_path}`);
+    _path = decodeURI(_path);
+    console.log(`$$$$$$$$$$$ state.path: uudecoded _path = ${_path}`);
+
+    // if path.startsWith('/') remove it
+    if(/^\//.test(_path)){  
+      return _path.slice(1);
     }
-    return path;
+    return _path;
   }
 
-  // returns path formed from current_path where each subspace with a '' entry
-  // is replaced by the corresponding entry from the previous path.
-  // All paths are then 'absolute' - they show the present set of subspaces
-  // irregardless of when they were loaded
-  abs_path(ppath, path){
-    var ppa:string[] = ppath.split('/'),
-        pa:string[] = path.split('/');
-
-    for(var i=0; i<pa.length; i++){
-      if(pa[i] === ''){
-        pa[i] = ppa[i];
-      }
-    }
-    return pa.join('/');
-  }
 
   // execute Location.go(path) - changes address bar and adds history entry
   go(path:string){
@@ -58,16 +46,16 @@ export class State {
   }
 
 
-  // state params object -> serialized state path
-  stringify(params:Object):string {
+  // substates object -> serialized state path
+  stringify(substates:Object):string {
     var state:Object = {},
         path:string;
 
     for(let s of this.config.substates){
-      state[s] = params[s]['t'];
-      state[s] = params[s]['t'] + ':';
-      params[s]['m'] = params[s]['m'] || '';
-      state[s] = params[s]['t'] + ':' + params[s]['m'];
+      state[s] = substates[s]['t'];
+      state[s] = substates[s]['t'] + ':';
+      substates[s]['m'] = substates[s]['m'] || '';
+      state[s] = substates[s]['t'] + ':' + substates[s]['m'];
     }
     path = this.pattern.expand(state);
     console.log(`path = ${path}`);
@@ -82,7 +70,7 @@ export class State {
   }
 
 
-  // serialized state path -> state params object 
+  // serialized state path -> substates object 
   // path must be well-formed according to config.metastate, i.e
   // scene/i3d/i2d/base/ui/shot where the substates are strings which could
   // be empty - all empty is the identity stateChange - i.e. 'no-change'
@@ -91,11 +79,32 @@ export class State {
     var a:string[] = path.split('/'),
         substates:Object = {},
         index:number = 0,
-        tuple:string[];
+        tuple:string[],
+        ta:string[],
+        template:string,
+        ma:string[],
+        model:string;
 
     for(let p of this.config.substates){
+
       // ''.split(':') yields [''] so tuple[0] = '' but tuple[1] undefined
-      tuple = a[index++].split(':');
+      // no more than a single split to 2 substrings in order to preserve
+      // models which are shots and thus contain ':' in their objects
+      tuple = a[index++].split(':'); 
+
+      // if shot and shot is a JSON-object reassemble its ':'-split parts
+      if(p === 'shot'){
+        if(tuple[1] && tuple[1].length > 0){
+          ta = tuple.slice(0,1);  //returns tuple[0]
+          template = ta[0]; 
+          console.log(`state.parse: shot template=${template}`);
+          ma = tuple.slice(1);  //returns tuple[1,...]
+          model = ma.join(":");
+          console.log(`state.parse: shot model=${model}`);
+          tuple[0] = template;
+          tuple[1] = model;
+        }
+      }
       substates[p] = {};
       substates[p]['t'] = tuple[0] || '';  // not really needed
       substates[p]['m'] = tuple[1] || '';  // needed
@@ -103,10 +112,14 @@ export class State {
     return substates;
   }
 
+
+  // convenience method to get specific substate template-component name
   template(path:string, substate:string){
     return this.parse(path)[substate]['t'];
   }
 
+
+  // convenience method to get specific substate model name
   model(path:string, substate:string){
     return this.parse(path)[substate]['m'];
   }

@@ -30,6 +30,7 @@ export class Animation {
 
 
   perform(shot:Object){
-    console.log(`Animation.perform: shot = ${shot}`);
+    console.log(`Animation.perform: typeof shot = ${shot}`);
+    console.log(`Animation.perform: shot = ${JSON.stringify(shot)}`);
   }
 }

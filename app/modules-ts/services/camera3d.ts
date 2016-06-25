@@ -31,7 +31,6 @@ export class Camera3d {
   prev_scene;
   actors;
   billboards;
-  stats;
   gl;
   stats;
   count:number = 0;
@@ -268,6 +267,7 @@ export class Camera3d {
                             }//tl
                         }//delta
               };//shot
+    console.log(`dollyflyTo: c3d.shot = ${c3d.shot}`);
     c3d.narrative.changeShot(c3d.shot);
   }
   dollyflyBy(a) {
@@ -290,7 +290,8 @@ export class Camera3d {
                             }//tl
                         }//delta
               };//shot
-    c3d.narrative.shot(c3d.shot);
+    console.log(`dollyflyBy: c3d.shot = ${c3d.shot}`);
+    c3d.narrative.changeShot(c3d.shot);
   }
 
   // cut - no animation (dur=0)
@@ -310,7 +311,8 @@ export class Camera3d {
                             }//tl
                         }//delta
               };//shot
-    c3d.narrative.shot(this.shot);
+    console.log(`dollycutTo: c3d.shot = ${c3d.shot}`);
+    c3d.narrative.changeShot(c3d.shot);
   }
   dollycutBy(a) {
     a.d = 0.0;
@@ -332,7 +334,8 @@ export class Camera3d {
                             }//tl
                         }//delta
               };//shot
-    c3d.narrative.shot(this.shot);
+    console.log(`dollycutBy: c3d.shot = ${JSON.stringify(c3d.shot)}`);
+    c3d.narrative.changeShot(c3d.shot);
   }
 
 

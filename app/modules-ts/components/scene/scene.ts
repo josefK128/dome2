@@ -10,6 +10,7 @@ var scene;
 
 
 @Component({
+  selector: 'dome-scene',
   template: ``,
   providers: [],
   directives: [CORE_DIRECTIVES],

@@ -37,43 +37,34 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                     this.location = location;
                 }
                 // return present address bar path (with leading '\' removed)
+                // relies on location.path
                 State.prototype.path = function () {
-                    var path = this.location.path();
-                    console.log("state.path: location.path() returns " + path);
-                    if (/^\//.test(path)) {
+                    var _path = this.location.path();
+                    console.log("$$$$$$$$$$$ state.path: location.path() returns " + _path);
+                    _path = decodeURI(_path);
+                    console.log("$$$$$$$$$$$ state.path: uudecoded _path = " + _path);
+                    // if path.startsWith('/') remove it
+                    if (/^\//.test(_path)) {
                         //path = path.slice(1);
                         //console.log(`state.path: path.slice(1) = ${path}`);
                         //return path;  
-                        return path.slice(1);
+                        return _path.slice(1);
                     }
-                    return path;
-                };
-                // returns path formed from current_path where each subspace with a '' entry
-                // is replaced by the corresponding entry from the previous path.
-                // All paths are then 'absolute' - they show the present set of subspaces
-                // irregardless of when they were loaded
-                State.prototype.abs_path = function (ppath, path) {
-                    var ppa = ppath.split('/'), pa = path.split('/');
-                    for (var i = 0; i < pa.length; i++) {
-                        if (pa[i] === '') {
-                            pa[i] = ppa[i];
-                        }
-                    }
-                    return pa.join('/');
+                    return _path;
                 };
                 // execute Location.go(path) - changes address bar and adds history entry
                 State.prototype.go = function (path) {
                     this.location.go(path);
                 };
-                // state params object -> serialized state path
-                State.prototype.stringify = function (params) {
+                // substates object -> serialized state path
+                State.prototype.stringify = function (substates) {
                     var state = {}, path;
                     for (var _i = 0, _a = this.config.substates; _i < _a.length; _i++) {
                         var s = _a[_i];
-                        state[s] = params[s]['t'];
-                        state[s] = params[s]['t'] + ':';
-                        params[s]['m'] = params[s]['m'] || '';
-                        state[s] = params[s]['t'] + ':' + params[s]['m'];
+                        state[s] = substates[s]['t'];
+                        state[s] = substates[s]['t'] + ':';
+                        substates[s]['m'] = substates[s]['m'] || '';
+                        state[s] = substates[s]['t'] + ':' + substates[s]['m'];
                     }
                     path = this.pattern.expand(state);
                     console.log("path = " + path);
@@ -87,26 +78,43 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                         return path;
                     }
                 };
-                // serialized state path -> state params object 
+                // serialized state path -> substates object 
                 // path must be well-formed according to config.metastate, i.e
                 // scene/i3d/i2d/base/ui/shot where the substates are strings which could
                 // be empty - all empty is the identity stateChange - i.e. 'no-change'
                 // NOTE: '<scenename>/////' for the present scenename is also 'no-change'
                 State.prototype.parse = function (path) {
-                    var a = path.split('/'), substates = {}, index = 0, tuple;
+                    var a = path.split('/'), substates = {}, index = 0, tuple, ta, template, ma, model;
                     for (var _i = 0, _a = this.config.substates; _i < _a.length; _i++) {
                         var p = _a[_i];
                         // ''.split(':') yields [''] so tuple[0] = '' but tuple[1] undefined
+                        // no more than a single split to 2 substrings in order to preserve
+                        // models which are shots and thus contain ':' in their objects
                         tuple = a[index++].split(':');
+                        // if shot and shot is a JSON-object reassemble its ':'-split parts
+                        if (p === 'shot') {
+                            if (tuple[1] && tuple[1].length > 0) {
+                                ta = tuple.slice(0, 1); //returns tuple[0]
+                                template = ta[0];
+                                console.log("state.parse: shot template=" + template);
+                                ma = tuple.slice(1); //returns tuple[1,...]
+                                model = ma.join(":");
+                                console.log("state.parse: shot model=" + model);
+                                tuple[0] = template;
+                                tuple[1] = model;
+                            }
+                        }
                         substates[p] = {};
                         substates[p]['t'] = tuple[0] || ''; // not really needed
                         substates[p]['m'] = tuple[1] || ''; // needed
                     }
                     return substates;
                 };
+                // convenience method to get specific substate template-component name
                 State.prototype.template = function (path, substate) {
                     return this.parse(path)[substate]['t'];
                 };
+                // convenience method to get specific substate model name
                 State.prototype.model = function (path, substate) {
                     return this.parse(path)[substate]['m'];
                 };

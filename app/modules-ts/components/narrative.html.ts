@@ -115,13 +115,17 @@ export default
   <div style="padding-left:3%" ><font color="green">{{current_scene}}</font></div> -->
   
   <!-- three.js fps -->
-  <div id="stats"  [style.display]="fpsdisplay "style="position:absolute; transform:scaleY(0.85) translateY(-8%)"></div>
+  <div id="stats"  [style.display]="fpsdisplay "style="position:absolute; transform:scaleY(0.85) translateY(5%) scaleX(0.7) translateX(-20%)"></div>
 
+  <br/><br/>
   <dome-ui>
   </dome-ui>
   </div><!-- hide -->
 </div><!--ui-->
 
+<!-- to run component constructors -->
+<dome-scene></dome-scene>
+<dome-shot></dome-shot>
 
 </div><!--narrative-->
 `;

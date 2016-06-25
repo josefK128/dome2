@@ -47,6 +47,7 @@ System.register(['@angular/core', '@angular/common', '../../services/scores', '.
                 };
                 Scene = __decorate([
                     core_1.Component({
+                        selector: 'dome-scene',
                         template: "",
                         providers: [],
                         directives: [common_1.CORE_DIRECTIVES],

@@ -7,7 +7,6 @@ interface Config {
 
   metastate:string;
   substates:string[];
-  shotroot:string;
 
   canvas_id: string;
   opening_scene: string;

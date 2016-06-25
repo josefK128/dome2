@@ -6,10 +6,11 @@ import {Models} from '../../services/models';
 import {Animation} from '../../services/animation';
 
 // singleton instance
-var shot;
+var shot:Shot;
 
 
 @Component({
+  selector: 'dome-shot',
   template: ``,
   providers: [],
   directives: [CORE_DIRECTIVES],
@@ -19,18 +20,23 @@ export class Shot {
   animation: Animation;
   models: Models;
 
-  static changeState(templatename:string, _shot:string) {
-    var tuple:string[];
+  static changeState(templatename:string, _model:string) {
+    var model:Object;
+    
     console.log(`Shot.changeState: templatename = ${templatename}`); 
-    console.log(`Shot.changeState: _shot = ${_shot}`); 
-    if(_shot[0] === '{'){
-      _shot = JSON.parse(_shot);
+    console.log(`Shot.changeState: _model = ${_model}`); 
+    console.log(`Shot.changeState: _model[0] = ${_model[0]}`); 
+    console.log(`_model is JSON-object is ${/^[\{%7B]/.test(_model)}`);
+    console.log(`_model[0] is '{' is ${/\{/.test(_model[0])}`);
+    console.log(`_model matches '%7B' is ${/^%7B/.test(_model)}`);
+    if(/^[\{%7B]/.test(_model)){
+      console.log(`Shot.changeState: _model is a JSON-object`);;
+      model = JSON.parse(_model);
     }else{
-      tuple = _shot.split(':');
-      tuple[1] = tuple[1] || '';     // if shot = 't:' only
-      _shot = shot.models.get(['shot', templatename, tuple[0], tuple[1]]);
+      console.log(`Shot.changeState: _model is a shot-name`);;
+      model = shot.models.get(['shot', templatename, _model]);
     }
-    shot.animation.perform(_shot);
+    shot.animation.perform(model);
   }
 
   constructor(models: Models, 

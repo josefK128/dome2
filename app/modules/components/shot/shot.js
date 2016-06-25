@@ -34,22 +34,29 @@ System.register(['@angular/core', '@angular/common', '../../services/models', '.
                     shot.models = models;
                     shot.animation = animation;
                 }
-                Shot.changeState = function (templatename, _shot) {
-                    var tuple;
+                Shot.changeState = function (templatename, _model) {
+                    var model;
                     console.log("Shot.changeState: templatename = " + templatename);
-                    console.log("Shot.changeState: _shot = " + _shot);
-                    if (_shot[0] === '{') {
-                        _shot = JSON.parse(_shot);
+                    console.log("Shot.changeState: _model = " + _model);
+                    console.log("Shot.changeState: _model[0] = " + _model[0]);
+                    console.log("_model is JSON-object is " + /^[\{%7B]/.test(_model));
+                    console.log("_model[0] is '{' is " + /\{/.test(_model[0]));
+                    console.log("_model matches '%7B' is " + /^%7B/.test(_model));
+                    if (/^[\{%7B]/.test(_model)) {
+                        console.log("Shot.changeState: _model is a JSON-object");
+                        ;
+                        model = JSON.parse(_model);
                     }
                     else {
-                        tuple = _shot.split(':');
-                        tuple[1] = tuple[1] || ''; // if shot = 't:' only
-                        _shot = shot.models.get(['shot', templatename, tuple[0], tuple[1]]);
+                        console.log("Shot.changeState: _model is a shot-name");
+                        ;
+                        model = shot.models.get(['shot', templatename, _model]);
                     }
-                    shot.animation.perform(_shot);
+                    shot.animation.perform(model);
                 };
                 Shot = __decorate([
                     core_1.Component({
+                        selector: 'dome-shot',
                         template: "",
                         providers: [],
                         directives: [common_1.CORE_DIRECTIVES],

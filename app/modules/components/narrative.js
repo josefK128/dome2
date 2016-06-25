@@ -1,4 +1,4 @@
-System.register(['@angular/core', '@angular/common', '@angular/router', '../configs/@config', '../services/camera3d', '../services/state', '../services/models', '../services/scenes', '../services/templatecache', '../services/queue', '../services/mediator', '../services/transform3d', '../services/camera2d', '../services/animation', './i3d/i3d', './i2d/i2d', './base/base', './ui/ui', './scene/scene', './shot/shot', './narrative.html'], function(exports_1, context_1) {
+System.register(['@angular/core', '@angular/common', '@angular/router', '../configs/@config', '../services/camera3d', '../services/state', '../services/models', '../services/scenes', '../services/scores', '../services/templatecache', '../services/queue', '../services/mediator', '../services/transform3d', '../services/camera2d', '../services/animation', './i3d/i3d', './i2d/i2d', './base/base', './ui/ui', './scene/scene', './shot/shot', './narrative.html'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, common_1, router_1, _config_1, camera3d_1, state_1, models_1, scenes_1, templatecache_1, queue_1, mediator_1, transform3d_1, camera2d_1, animation_1, i3d_1, i2d_1, base_1, ui_1, scene_1, shot_1, narrative_html_1;
+    var core_1, common_1, router_1, _config_1, camera3d_1, state_1, models_1, scenes_1, scores_1, templatecache_1, queue_1, mediator_1, transform3d_1, camera2d_1, animation_1, i3d_1, i2d_1, base_1, ui_1, scene_1, shot_1, narrative_html_1;
     var Narrative;
     return {
         setters:[
@@ -40,6 +40,9 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
             },
             function (scenes_1_1) {
                 scenes_1 = scenes_1_1;
+            },
+            function (scores_1_1) {
+                scores_1 = scores_1_1;
             },
             function (templatecache_1_1) {
                 templatecache_1 = templatecache_1_1;
@@ -85,6 +88,9 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                 // ctor
                 function Narrative(cfg, camera3d, state, models, scenes, templatecache, mediator, transform3d, camera2d, animation) {
                     var _this = this;
+                    // index for unique 'leaf-shot' template-names for dynamic shots on
+                    // existing scenes
+                    this.shotindex = 0;
                     // config
                     this.config = cfg || {};
                     this.controls = _config_1.config.controls;
@@ -121,9 +127,6 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                     this.animation = animation;
                     this.state = state;
                     this.current_state = this.state.parse(this.current_path);
-                    // shot
-                    this.shot = {};
-                    this.shotindex = 0;
                     // give Narrative ref to Mediator to call N.exec(action) if 
                     // action has become executable by timestamp > present
                     this.mediator.set_narrative(this);
@@ -184,8 +187,55 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                             break;
                     }
                 }; //changeControls
-                // change component loading and animations according to path (local 'url')
-                // the path appears in the address bar and is available from state service
+                // method to be called by action invoking a dynamic shot - shot is either:
+                // [1] a string '<templatename:modelname>' whose shot model can be obtained 
+                // from the Models service and drive a GSAP animation, OR
+                // [2] a JSON serialization of a shot-model itself, whose parsed sot-object 
+                // is capable of driving a GSAP animation.
+                // The path formed to represent the statechange is absolute - i.e. fully
+                // specify each substate of the state (scene, i3d, i2d, base, ui, shot)
+                // The absolute path is sent to this.changeState(path) which compares each
+                // substate to the previous substate and, if there is a change on a 
+                // particular substate, invokes changeState on the corresponding substate 
+                // component (Scene, I3d, I2d, Base, UI, Shot)
+                Narrative.prototype.changeShot = function (shot) {
+                    var path, pa;
+                    // create an absolute path representing the new shot    
+                    path = this.current_path; // create substates array 
+                    pa = this.current_path.split('/'); // remove previous shot substate     
+                    pa.pop();
+                    path = pa.join('/') + ("/shot" + this.shotindex++ + ":") + JSON.stringify(shot);
+                    console.log("changeShot: new absolute path = " + path);
+                    this.changeState(path);
+                };
+                // change specific substate(s) while leaving the others as current.
+                // allows selective dynamic change of substate layers
+                // NOTE: shot changes should be made by changeShot(shot:Object) since
+                // there is no mechanism to ensure  actors in new layers will be loaded
+                // in order to permit animation and/or viewing in a shot.
+                // The form of a delta_path is a '/' separated set of 't:m' strings where
+                // t is the template-component-name and m is the model-name
+                // exp: delta_path = '/sky:storm////` would cause an i3d-substate change
+                // to the 'Sky' template-component using the 'storm' i3d-data-model'
+                // The form of the delta_path follows the standard config.metastate, 
+                // typically 'scene/i3d/i2d/base/ui/shot' where eahc of the six substates
+                // is either a 't:m' or 't:' name if to be changed, or '' if no change 
+                Narrative.prototype.changeSubstates = function (delta_path) {
+                    var dpa = delta_path.split('/'), cpa = this.current_path.split('/'), path, i;
+                    console.log('\n\n\nchangeSubstates! delta_path = ${delta_path}');
+                    for (i = 0; i < cpa.length; i++) {
+                        if (!dpa[i] || dpa[i] === '') {
+                            dpa[i] = cpa[i];
+                        }
+                    }
+                    path = dpa.join(':');
+                    console.log('changeSubstates!pabsolute path = ${path}');
+                    this.changeState(path);
+                };
+                // change component loading and animations according to absolute path, i.e
+                // all present and transitional substate template:model pairs are represented
+                // in the path argument.
+                // Also, the path appears in address bar and is available from state service
                 Narrative.prototype.changeState = function (path, change_location) {
                     if (change_location === void 0) { change_location = true; }
                     console.log('\n\n\nchangeState!');
@@ -193,20 +243,24 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                     console.log("current_path = " + this.current_path);
                     // check substate changes only if path change => >=1 substate change
                     if (path !== this.current_path) {
-                        var i3dmodelname = void 0, i3dmodel = void 0, i3dscenename = void 0, i3dscene = void 0, i3dtemplatename = void 0, pstate = this.current_state, // save current state as previous
-                        ppath = this.current_path; // save current pathas previous
+                        var pstate = this.current_state; // save current state as previous
                         // update state
                         this.current_state = this.state.parse(path); // new state
-                        this.current_scene = this.current_state['scene']['t']; // for ui  
                         this.current_path = path; // new path
+                        // update scene for scene ui
+                        if (this.current_state['scene']['t'].length > 0) {
+                            this.current_scene = this.current_state['scene']['t'];
+                            // sync ui scene checkboxes
+                            for (var _i = 0, _a = Object.keys(this.scenestates); _i < _a.length; _i++) {
+                                var s = _a[_i];
+                                this.scenestates[s] = false;
+                            }
+                            this.scenestates[this.current_scene] = true;
+                        }
                         // change address bar and register state in browser history.
                         // The 'absolute' path is recorded (and shows in the address bar) - i.e.
                         // all present substates are present in the path irregardless of when 
                         // they were loaded.
-                        // Initially the path can be 'delta' - i.e. show only present changes,
-                        // and this is accomodated in the transition substate changes below,
-                        // but for the back mechanism to work all substate content must be
-                        // available at each step.
                         //
                         // Accessibility to the path also allows any substate component to use 
                         // the State service to get modelnames by tghe following technique: 
@@ -218,32 +272,18 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                         // so all other state changes cause a stage.go => location.go =>
                         // history,pushState(null,path,'')
                         if (change_location) {
-                            var abs_path = this.state.abs_path(ppath, path);
-                            //console.log(`abs_path = ${abs_path}`);
-                            this.state.go(abs_path);
+                            console.log("$$$$$$$ state.go(" + path + ")");
+                            this.state.go(path);
                         }
-                        // 'i3d' modelname here does not require use of the State service
-                        i3dmodelname = this.current_state['i3d']['m'];
-                        console.log("i3dmodelname = " + i3dmodelname);
-                        i3dtemplatename = this.current_state['i3d']['t'];
-                        console.log("i3dtemplatename = " + i3dtemplatename);
-                        i3dmodel = this.models.get(['i3d', i3dtemplatename, i3dmodelname]);
-                        console.log("i3dmodel = " + i3dmodel);
-                        i3dscenename = i3dmodel['scene'];
-                        console.log("i3dscenename = " + i3dscenename);
                         // load substate component if either template or model has changed
-                        for (var _i = 0, _a = this.substates; _i < _a.length; _i++) {
-                            var s = _a[_i];
+                        for (var _b = 0, _c = this.substates; _b < _c.length; _b++) {
+                            var s = _c[_b];
                             var t = this.current_state[s]['t'];
                             var m = this.current_state[s]['m'];
                             var tp = pstate[s]['t'];
                             var mp = pstate[s]['m'];
-                            // t='' => no-change. To empty a substate explicitly load an empty 
-                            // template-component 
-                            if (t === '') {
-                                console.log("substate " + s + " has t='' so break!");
-                                break;
-                            }
+                            console.log("substate = " + s + "  t = " + t + "  tp = " + tp);
+                            console.log("substate = " + s + "  m = " + m + "  mp = " + mp);
                             // if either a new template-component or even just a new model for the
                             // present template-component, must freshly load the template-component
                             // and apply the model.
@@ -258,10 +298,18 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                             // component - which guarantees all branch components are loaded before
                             // the shot-animation begins.
                             if ((t !== tp) || (m !== mp)) {
-                                console.log("substate = " + s + "  t = " + t + "  m = " + m);
                                 switch (s) {
                                     case 'i3d':
-                                        i3dscene = this.scenes.get(['i3d', i3dscenename]);
+                                        // 'i3d' modelname here does not require use of the State service
+                                        var i3dmodelname = this.current_state['i3d']['m'];
+                                        console.log("i3dmodelname = " + i3dmodelname);
+                                        var i3dtemplatename = this.current_state['i3d']['t'];
+                                        console.log("i3dtemplatename = " + i3dtemplatename);
+                                        var i3dmodel = this.models.get(['i3d', i3dtemplatename, i3dmodelname]);
+                                        console.log("i3dmodel = " + i3dmodel);
+                                        var i3dscenename = i3dmodel['scene'];
+                                        console.log("i3dscenename = " + i3dscenename);
+                                        var i3dscene = this.scenes.get(['i3d', i3dscenename]);
                                         console.log("i3dscene = " + i3dscene);
                                         if (i3dscene) {
                                             this.camera3d.place(this.config.canvas_id, t, this, i3dscene);
@@ -333,36 +381,9 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                         } //substates 
                     }
                     else {
-                        console.log("path = " + path + " is the current_path");
+                        console.log("no change of path! path = " + path);
                     }
-                    // sync ui scene checkboxes
-                    for (var _b = 0, _c = Object.keys(this.scenestates); _b < _c.length; _b++) {
-                        var s = _c[_b];
-                        this.scenestates[s] = false;
-                    }
-                    this.scenestates[this.current_scene] = true;
                 }; //changeState
-                // method to be called by action invoking a dynamic shot - shot is either:
-                // [1] a string '<templatename:modelname>' whose shot model can be obtained 
-                // from the Models service and drive a GSAP animation, OR
-                // [2] a JSON serialization of a shot-model itself, whose parsed sot-object 
-                // is capable of driving a GSAP animation
-                // path causes no substate changes except 'case shot' which invokes
-                // Shot.changeState(t,m) where t = 'leaf-shot' (part of this.config.shotroot
-                // which is normally '/////leaf-shot:') and m is the JSON.stringified form
-                // of shot:Object
-                Narrative.prototype.changeShot = function (shot) {
-                    this.changeState(this.config.shotRoot + JSON.stringify(shot));
-                };
-                //  // was previously:
-                //  changeShot(_shot:string){
-                //    var path:string;
-                //
-                //    console.log('changeShot: _shot = ${_shot}');
-                //    path = this.config.shotroot + _shot;  // normally '/////' + _shot  
-                //                                         // 'scene/i3d/i2d/base/ui/' + _shot
-                //    this.changeState(path);
-                //  }
                 // execute actions - declarative function invocations
                 // message-based function invocation
                 // NOTE: if use 'id' instead of simple 't' then id
@@ -542,21 +563,19 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                     console.log("ngOnChanges scene = " + changes['scene'].currentValue);
                 };
                 Narrative.prototype.ngOnInit = function () {
-                    var stats;
                     console.log("narrative ngOnInit");
-                    for (var p in Narrative.provider_overrides[0]) {
-                        console.log("Narrative.provider_overrides[0] has property " + p + " with val " + Narrative.provider_overrides[0][p]);
-                    }
-                    for (var _i = 0, _a = Object.keys(this.scenestates); _i < _a.length; _i++) {
-                        var s = _a[_i];
-                        console.log("narrative ctor: this.scenestates[" + s + "] = " + this.scenestates[s]);
-                    }
-                    stats = new Stats();
-                    console.log("############################ stats = " + stats);
-                    stats.setMode(0); // 0:fps 1:ms, etc.
-                    document.getElementById('stats').appendChild(stats.domElement);
-                    this.camera3d.set_stats(stats);
-                    // initial address bar url (differs from application http url)
+                    //    for(let p in Narrative.provider_overrides[0]){
+                    //      console.log(`Narrative.provider_overrides[0] has property ${p} with val ${Narrative.provider_overrides[0][p]}`); 
+                    //    }
+                    //    for(let s of Object.keys(this.scenestates)){
+                    //      console.log(`narrative ctor: this.scenestates[${s}] = ${this.scenestates[s]}`);
+                    //    }
+                    this.stats = new Stats();
+                    this.stats.setMode(0); // 0:fps 1:ms, etc.
+                    document.getElementById('stats').appendChild(this.stats.domElement);
+                    this.camera3d.set_stats(this.stats);
+                    // initial address bar url (differs from application http url
+                    // to prevent http fetch on back 
                     this.state.go(this.current_path);
                 };
                 Narrative = __decorate([
@@ -571,6 +590,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                             core_1.provide(state_1.State, { useClass: state_1.State }),
                             core_1.provide(models_1.Models, { useClass: models_1.Models }),
                             core_1.provide(scenes_1.Scenes, { useClass: scenes_1.Scenes }),
+                            core_1.provide(scores_1.Scores, { useClass: scores_1.Scores }),
                             core_1.provide(templatecache_1.Templatecache, { useClass: templatecache_1.Templatecache }),
                             core_1.provide(queue_1.Queue, { useClass: queue_1.Queue }),
                             core_1.provide(mediator_1.Mediator, { useClass: mediator_1.Mediator }),
