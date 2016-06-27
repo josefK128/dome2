@@ -31,6 +31,7 @@ System.register(['@angular/core', '../configs/@config', '../models/i3d/space/mod
             }],
         execute: function() {
             Models = (function () {
+                // NOTE: all templates must be listed and have defined ({}) sets of models
                 function Models(cfg) {
                     this.config = cfg;
                     this.models = {
@@ -38,9 +39,12 @@ System.register(['@angular/core', '../configs/@config', '../models/i3d/space/mod
                             space: { model1: model1_1.Model1 },
                             space2: { model2: model2_1.Model2 }
                         },
-                        i2d: {},
-                        base: {},
-                        ui: {}
+                        i2d: { stage: {},
+                            stage2: {} },
+                        base: { bg: {},
+                            bg2: {} },
+                        ui: { display: {},
+                            display2: {} }
                     };
                 } //ctor
                 // if needed,create array of keys from dotted path string
@@ -64,7 +68,7 @@ System.register(['@angular/core', '../configs/@config', '../models/i3d/space/mod
                         var s = keys_1[_i];
                         // ignore key = ''
                         if (s.length > 0) {
-                            console.log("branch: key = " + s + "  branch = " + branch);
+                            console.log("branch: key = " + s + "  branch = " + branch + " branch[" + s + "] = " + branch[s]);
                             branch = (branch[s] ? branch[s] : undefined);
                             if (branch === undefined) {
                                 console.log("!!!!!!!!!!!!!!!!!! branch from " + name + " is undefined!");

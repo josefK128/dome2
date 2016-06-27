@@ -154,7 +154,21 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                     };
                 } //ctor
                 // change appearance of display substates and controls
-                Narrative.prototype.changeControl = function (control) {
+                Narrative.prototype.changeControl = function (control, val) {
+                    // if value ('on'/'off') is sent the control is a light
+                    if (val) {
+                        var visible = this.controlstates[control] ? 'on' : 'off';
+                        console.log("before: light " + control + " was " + visible);
+                        if (val === 'on') {
+                            this.controlstates[control] = true;
+                        }
+                        else {
+                            this.controlstates[control] = false;
+                        }
+                        visible = this.controlstates[control] ? 'on' : 'off';
+                        console.log("after change: light " + control + " is " + visible);
+                        return;
+                    }
                     this.controlstates[control] = !this.controlstates[control];
                     console.log("controlstates[" + control + "] = " + this.controlstates[control]);
                     switch (control) {

@@ -13,22 +13,25 @@ import {State} from '../../../services/state';
 import {Camera3d} from '../../../services/camera3d';
 import {Animation} from '../../../services/animation';
 
-// generative components
-import {Metaform3d} from '../generative/metaform3d';
+// leaf components
+import {Sphere} from '../leaf/sphere';
+import {Cone} from '../leaf/cone';
+import {Cube} from '../leaf/cube';
 
 
 @Component({
   selector: 'space',
-  directives: [Metaform3d],
+  directives: [Sphere, Cone, Cube],
   providers: [],
   template: `
-  <metaform3d [node]="node" [model]="model"></metaform3d>
+  <cone></cone>
+  <cube></cube>
+  <sphere id="sphereA" [model]="model"></sphere>
  `
 })
 export class Space2 {
   config:Config;
   model:Object;
-  node:Object;
   state:State;
   camera3d:Camera3d;
   animation:Animation;
@@ -48,21 +51,16 @@ export class Space2 {
     this.camera3d = camera3d;
     this.animation = animation;
 
-    console.log(`\n\n###### space2: state.path() = ${state.path()}`);
+    console.log(`state.path() = ${state.path()}`);
     this.templatename = state.template(state.path(), 'i3d');  // 'space2'
     this.modelname = state.model(state.path(), 'i3d');  // 'model2'
-    console.log(`this.templatename = ${this.templatename}`);
-    console.log(`this.modelname = ${this.modelname}`);
+    console.log(`######## this.templatename = ${this.templatename}`);
+    console.log(`######## this.modelname = ${this.modelname}`);
+    console.log(`models.get('i3d.${this.templatename}.${this.modelname}')`);
     this.model = models.get(`i3d.${this.templatename}.${this.modelname}`);
-    console.log('space2: this.model is:');
-    console.dir(this.model);
     if(this.model){
       this.shot = this.model['shot'];
     }
-    this.node = this.model['actors'];
-    this.node['children'] = this.model['actors']['metaforms'];  // [] or [{},...]
-    console.log('space2: this.node is:');
-    console.dir(this.node);
   }
 
 

@@ -16,16 +16,20 @@ export class Models {
   config: any;
   models:Object;
 
+  // NOTE: all templates must be listed and have defined ({}) sets of models
   constructor(@Inject(CONFIG) cfg:Config) {
     this.config = cfg;
-    this.models = {
+    this.models = { 
       i3d: {
         space: {model1: Model1},  // multiple models per template
         space2: {model2: Model2}
       },
-      i2d: {},
-      base: {},
-      ui: {}
+      i2d: {stage: {},
+            stage2: {}},
+      base: {bg: {},
+             bg2: {}},
+      ui: {display: {},
+           display2: {}}
     };
   }//ctor
 
@@ -54,7 +58,7 @@ export class Models {
     for(let s of keys){
       // ignore key = ''
       if(s.length > 0){
-        console.log(`branch: key = ${s}  branch = ${branch}`);
+        console.log(`branch: key = ${s}  branch = ${branch} branch[${s}] = ${branch[s]}`);
         branch = (branch[s] ? branch[s] : undefined);
         if(branch === undefined){
           console.log(`!!!!!!!!!!!!!!!!!! branch from ${name} is undefined!`);

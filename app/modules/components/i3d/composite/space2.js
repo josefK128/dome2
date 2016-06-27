@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../../../configs/@config', '../../../services/models', '../../../services/state', '../../../services/camera3d', '../../../services/animation', '../leaf/sphere', '../leaf/cone', '../leaf/cube'], function(exports_1, context_1) {
+System.register(['@angular/core', '../../../configs/@config', '../../../services/models', '../../../services/state', '../../../services/camera3d', '../../../services/animation', '../generative/metaform3d'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, _config_1, models_1, state_1, camera3d_1, animation_1, sphere_1, cone_1, cube_1;
+    var core_1, _config_1, models_1, state_1, camera3d_1, animation_1, metaform3d_1;
     var Space2;
     return {
         setters:[
@@ -35,14 +35,8 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
             function (animation_1_1) {
                 animation_1 = animation_1_1;
             },
-            function (sphere_1_1) {
-                sphere_1 = sphere_1_1;
-            },
-            function (cone_1_1) {
-                cone_1 = cone_1_1;
-            },
-            function (cube_1_1) {
-                cube_1 = cube_1_1;
+            function (metaform3d_1_1) {
+                metaform3d_1 = metaform3d_1_1;
             }],
         execute: function() {
             Space2 = (function () {
@@ -51,16 +45,21 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
                     this.state = state;
                     this.camera3d = camera3d;
                     this.animation = animation;
-                    console.log("state.path() = " + state.path());
+                    console.log("\n\n###### space2: state.path() = " + state.path());
                     this.templatename = state.template(state.path(), 'i3d'); // 'space2'
                     this.modelname = state.model(state.path(), 'i3d'); // 'model2'
-                    console.log("######## this.templatename = " + this.templatename);
-                    console.log("######## this.modelname = " + this.modelname);
-                    console.log("models.get('i3d." + this.templatename + "." + this.modelname + "')");
+                    console.log("this.templatename = " + this.templatename);
+                    console.log("this.modelname = " + this.modelname);
                     this.model = models.get("i3d." + this.templatename + "." + this.modelname);
+                    console.log('space2: this.model is:');
+                    console.dir(this.model);
                     if (this.model) {
                         this.shot = this.model['shot'];
                     }
+                    this.node = this.model['actors'];
+                    this.node['children'] = this.model['actors']['metaforms']; // [] or [{},...]
+                    console.log('space2: this.node is:');
+                    console.dir(this.node);
                 }
                 // lifecycle
                 // ordered sequence of component lifecycle phase-transitions:
@@ -86,9 +85,9 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
                 Space2 = __decorate([
                     core_1.Component({
                         selector: 'space',
-                        directives: [sphere_1.Sphere, cone_1.Cone, cube_1.Cube],
+                        directives: [metaform3d_1.Metaform3d],
                         providers: [],
-                        template: "\n  <cone></cone>\n  <cube></cube>\n  <sphere id=\"sphereA\" [model]=\"model\"></sphere>\n "
+                        template: "\n  <metaform3d [node]=\"node\" [model]=\"model\"></metaform3d>\n "
                     }),
                     __param(0, core_1.Inject(_config_1.CONFIG)), 
                     __metadata('design:paramtypes', [Object, models_1.Models, state_1.State, camera3d_1.Camera3d, animation_1.Animation])

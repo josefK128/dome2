@@ -6,11 +6,47 @@ System.register([], function(exports_1, context_1) {
         setters:[],
         execute: function() {
             exports_1("Model2", Model2 = { scene: 'scene2',
-                branches: {},
                 actors: {
-                    sphereA: { radius: 20 }
-                }
-            });
+                    metaforms: [
+                        {
+                            id: 'mf0',
+                            form: { type: 'cylinder' },
+                            transform: {},
+                            children: [{
+                                    id: 'mf00',
+                                    form: { type: 'torus' },
+                                    transform: {},
+                                    children: [{
+                                            id: 'mf000',
+                                            form: { type: 'cylinder' },
+                                            transform: {},
+                                            children: []
+                                        },
+                                        {
+                                            id: 'mf001',
+                                            form: { type: 'torus' },
+                                            transform: {},
+                                            children: [{
+                                                    id: 'mf0010',
+                                                    form: { type: 'torus' },
+                                                    transform: {},
+                                                    children: []
+                                                } //mf0010
+                                            ]
+                                        } //mf001
+                                    ]
+                                } //mf00
+                            ]
+                        },
+                        {
+                            id: 'mf1',
+                            form: { type: 'torus' },
+                            transform: {},
+                            children: []
+                        } //mf1
+                    ] //metaforms
+                } //actors
+            }); //Model2
         }
     }
 });

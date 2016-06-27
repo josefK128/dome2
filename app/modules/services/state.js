@@ -45,9 +45,6 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                     console.log("$$$$$$$$$$$ state.path: uudecoded _path = " + _path);
                     // if path.startsWith('/') remove it
                     if (/^\//.test(_path)) {
-                        //path = path.slice(1);
-                        //console.log(`state.path: path.slice(1) = ${path}`);
-                        //return path;  
                         return _path.slice(1);
                     }
                     return _path;

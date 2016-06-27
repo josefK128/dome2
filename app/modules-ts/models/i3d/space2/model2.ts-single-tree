@@ -1,0 +1,13 @@
+export var Model2 = {
+                      scene:'scene2',
+                      actors: {
+                        metaforms:[{    
+                            id:'tree0',
+                            form:{type:'cylinder'},
+                            transform:{},
+                            children:{}
+                          }
+                        ]
+                      }//actors
+                    };//Model2
+
