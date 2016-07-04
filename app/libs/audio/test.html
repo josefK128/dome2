@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>meSpeak.js &mdash; Multipart Example</title>
+<script type="text/javascript" src="mespeak.js"></script>
+<script type="text/javascript">
+meSpeak.loadConfig("mespeak_config.json");
+meSpeak.loadVoice("voices/en/en-us.json");
+meSpeak.loadVoice("voices/fr.json");
+meSpeak.loadVoice("voices/de.json");
+function mspeak(text){
+  var parts = [{ text: text,      voice: "en/en-us", variant: "m3" }];
+  meSpeak.speakMultipart(parts, {pitch: 30, speed: 120});
+}
+function jspeak(text){
+  var parts = [{ text: text,      voice: "fr", variant: "m3" }];
+  meSpeak.speakMultipart(parts, {pitch: 20, speed: 100});
+}
+function dspeak(text){
+  var parts = [{ text: text,      voice: "de", variant: "m3" },
+               { text: text,      voice: "de", variant: "m3" }];
+  meSpeak.speakMultipart(parts, {pitch: 30, speed: 130});
+}
+function fspeak(text){
+  var parts = [{ text: text,          voice: "fr",       variant: "f5" },
+               { text: text,          voice: "fr",       variant: "f5" }];
+  meSpeak.speakMultipart(parts, {pitch: 60, speed: 100});
+}
+</script>
+</head>
+
+<body>
+<p class="action"><button onclick="mspeak('one two three four');">Jack speaks</button></p>
+<p class="action"><button onclick="jspeak('un deux trois quatre');">Jean speaks</button></p>
+<p class="action"><button onclick="dspeak('eins swei drei fier');">Rudolph speaks</button></p>
+<p class="action"><button onclick="fspeak('un deux trois quatre');">Veronique speaks</button></p>
+<script type="text/javascript">
+  var count = 0;
+  setTimeout(function(){
+    setInterval(function(){
+      if(count%2 === 0){
+        dspeak("Achtung! Das Objekt ist nicht definiert");
+      }else{
+       fspeak("Attention! l'object est presentement nul");
+        //jspeak("Attention! l'object n'est pas definee");
+      }
+      count += 1;
+    }, 8000);
+  }, 1000);
+</script>
+</body>
+</html>

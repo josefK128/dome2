@@ -1,7 +1,12 @@
-export var Model2 = {scene: 'scene2',
-                     branches:{},
-                     actors: {
-                       sphereA:{radius:20}
-                     }
+export var Model2 = { scene: {
+                        name: 'scene2',
+                        camera: null,
+                        camerasphere: null,
+                        visible:{csphere:'on',key:'on',fill:'on',back:'on'}
+                      },
+                      branches:{},
+                      actors: {
+                        sphereA:{radius:20}
+                      }
                     };
 

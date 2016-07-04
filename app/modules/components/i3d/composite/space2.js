@@ -87,7 +87,7 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
                         selector: 'space',
                         directives: [metaform3d_1.Metaform3d],
                         providers: [],
-                        template: "\n  <metaform3d [node]=\"node\" [model]=\"model\"></metaform3d>\n "
+                        template: "\n  <metaform3d [node]=\"node\" [model]=\"model\" [parent]=\"node.children\"></metaform3d>\n "
                     }),
                     __param(0, core_1.Inject(_config_1.CONFIG)), 
                     __metadata('design:paramtypes', [Object, models_1.Models, state_1.State, camera3d_1.Camera3d, animation_1.Animation])

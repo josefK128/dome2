@@ -8,8 +8,9 @@ interface Config {
   metastate:string;
   substates:string[];
 
-  canvas_id: string;
   opening_scene: string;
+  canvas_id: string;
+  camerasphere:Object;
 
   unit_test: boolean;
   e2e_test: boolean;

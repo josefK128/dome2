@@ -24,16 +24,19 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Cylinder ngOnChanges`); }
                 Cylinder.prototype.ngOnInit = function () {
-                    var mfnodes = this.model['actors']['metaforms'];
-                    console.log("%%%% Cylinder ngOnInit wrote cylinder to Camera3d");
+                    console.log("%%%% Cylinder " + this.id + " ngOnInit");
+                    this.pid = this.parent['id'];
                     console.log("node = " + this.node);
+                    console.log("parent = " + this.parent);
+                    console.log("pid = " + this.pid);
                     console.log("node.form = " + this.node['form']);
                     console.log("node.form.type = " + this.node['form']['type']);
-                    for (var _i = 0, mfnodes_1 = mfnodes; _i < mfnodes_1.length; _i++) {
-                        var mf = mfnodes_1[_i];
-                        console.log("mf.form = " + mf['form']);
-                        console.log("mf.form.type = " + mf['form']['type']);
-                    }
+                };
+                //  ngDoCheck() { console.log(`Cylinder ngDoCheck`); }
+                //  ngAfterContentInit() { console.log(`Cylinder ngAfterContentInit`); }
+                //  ngAfterContentChecked() { console.log(`Cylinder ngAfterContentChecked`); }
+                Cylinder.prototype.ngAfterViewInit = function () {
+                    console.log("Cylinder " + this.id + " ngAfterViewInit");
                 };
                 __decorate([
                     core_1.Input(), 
@@ -43,6 +46,14 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                     core_1.Input(), 
                     __metadata('design:type', Object)
                 ], Cylinder.prototype, "node", void 0);
+                __decorate([
+                    core_1.Input(), 
+                    __metadata('design:type', Object)
+                ], Cylinder.prototype, "parent", void 0);
+                __decorate([
+                    core_1.Input(), 
+                    __metadata('design:type', String)
+                ], Cylinder.prototype, "id", void 0);
                 Cylinder = __decorate([
                     core_1.Component({
                         selector: 'cylinder',

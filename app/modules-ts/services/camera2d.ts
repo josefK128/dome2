@@ -7,6 +7,8 @@ import {CONFIG} from '../configs/@config';
 
 // services
 import {Mediator} from './mediator';
+
+// component (for typing)
 import {Narrative} from '../components/narrative';
 
 
@@ -402,6 +404,12 @@ export class Camera2d {
   }//ctor
 
 
+
+  set_narrative(narrative){
+    this.narrative = narrative;
+  }
+
+
   place(narrative) {
     this.narrative = narrative;
     this.plane = document.getElementById("plane");
@@ -431,7 +439,7 @@ export class Camera2d {
               }//tl
               }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
 
 
@@ -450,7 +458,7 @@ export class Camera2d {
               }//tl
               }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
 
 
@@ -469,7 +477,7 @@ export class Camera2d {
                             }//tl
                         }//delta
                 };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
   zoomcutBy(a) {   
     if(a.s !== undefined){this.scale *= a.s;}
@@ -484,7 +492,7 @@ export class Camera2d {
                             }//tl
                         }//delta
                 };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
 
   // fly - animate
@@ -501,7 +509,7 @@ export class Camera2d {
                             }//tl
                         }//delta
                 };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
   zoomflyBy(a) {   
     if(a.s !== undefined){this.scale *= a.s;}
@@ -516,7 +524,7 @@ export class Camera2d {
                             }//tl
                         }//delta
                 };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
 
 
@@ -535,7 +543,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
   rollcutBy(a) {  
     if(a.r !== undefined){this.angle += a.r;}
@@ -550,7 +558,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
 
   // fly - animate
@@ -567,7 +575,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
   rollflyBy(a) {  
     if(a.r !== undefined){this.angle += a.r;}
@@ -582,7 +590,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
 
 
@@ -605,7 +613,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
   dollycutBy(a) { 
     if(a.x !== undefined){this.x += a.x;}
@@ -623,7 +631,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
 
   // fly - animate
@@ -643,7 +651,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
   dollyflyBy(a) { 
     if(a.x !== undefined){this.x += a.x;}
@@ -661,7 +669,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
 
   // random 2d-bezier camera nav<br> 
@@ -717,7 +725,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.changeShot(this.shot);
+    this.narrative.setShot(this.shot);
   }
 }//Camera2D
 

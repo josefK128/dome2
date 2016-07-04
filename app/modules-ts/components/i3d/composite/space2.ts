@@ -22,7 +22,7 @@ import {Metaform3d} from '../generative/metaform3d';
   directives: [Metaform3d],
   providers: [],
   template: `
-  <metaform3d [node]="node" [model]="model"></metaform3d>
+  <metaform3d [node]="node" [model]="model" [parent]="node.children"></metaform3d>
  `
 })
 export class Space2 {

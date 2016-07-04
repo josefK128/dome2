@@ -1,4 +1,8 @@
-export var Model2 = { scene:'scene2',
+export var Model2 = { scene: {
+                        name: 'scene2',
+                        camerasphere: null,
+                        visible:{csphere:'on',key:'on',fill:'on',back:'on'}
+                      },
                       actors: {
                         metaforms:[
                           {    // root node

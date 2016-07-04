@@ -14,7 +14,8 @@ export const config:Config = {
 
   // recall that the ui radio-button is static - not dynamically created
   controls: ['i2d', 'i3d', 'base', 'fps', 'csphere', 'key', 'fill', 'back'],
-  controlstates: {ui: true, i2d: false, i3d: true, base: true, fps: true, csphere: true, key: true, fill: true, back: true},
+  controlstates: {ui: true, i2d: true, i3d: true, base: true, fps: true, 
+                  csphere: true, key: true, fill: true, back: true},
   scenes: ['scene1', 'scene2'],
   scenestates: {scene1:false, scene2:false},
   scenepaths: {opening: 'opening://///no-shot:',
@@ -27,8 +28,43 @@ export const config:Config = {
   metastate: '{scene}/{i3d}/{i2d}/{base}/{ui}/{shot}/',
   substates: ['scene', 'i3d', 'i2d', 'base', 'ui', 'shot'],
 
-  canvas_id: '3D',
   opening_scene: 'opening',
+  canvas_id: '3D',
+  camerasphere: {form: { radius:50.0, 
+                         wireframe:true,
+                         transparent:true, 
+                         opacity:0.5, 
+                         color:"blue" },
+                 transform:{},
+                 children:{
+                   camera: {form: { name: null,
+                              fov: 90,
+                              near: 1,
+                              far: 1000,
+                              position:[0,0,50]
+                   }},//camera
+                   key: {form: {type:"'spotlight'",
+                           color: 'orange', 
+                           intensity: 2.5,
+                           distance: 30.0,
+                           position: [20.0,20.0,20.0],
+                           target: [0,0,0]
+                   }},
+                   fill: {form: {type:"'spotlight'",
+                            color: 'blue', 
+                            intensity: 0.8,
+                            distance: 30.0,
+                            position: [20.0,20.0,20.0],
+                            target: [0,0,0]
+                   }},
+                   back: {form: {type:"'pointlight'",
+                            color: 'grey', 
+                            intensity: 2.0,
+                            distance: 50.0,
+                            position: [20.0,20.0,20.0],
+                   }}
+                 }//children
+  },//camerasphere
 
   unit_test: false,
   e2e_test: false,

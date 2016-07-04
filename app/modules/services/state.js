@@ -40,9 +40,7 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                 // relies on location.path
                 State.prototype.path = function () {
                     var _path = this.location.path();
-                    console.log("$$$$$$$$$$$ state.path: location.path() returns " + _path);
                     _path = decodeURI(_path);
-                    console.log("$$$$$$$$$$$ state.path: uudecoded _path = " + _path);
                     // if path.startsWith('/') remove it
                     if (/^\//.test(_path)) {
                         return _path.slice(1);
