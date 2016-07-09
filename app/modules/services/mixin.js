@@ -25,14 +25,14 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
             }],
         execute: function() {
             oa = ["object Array"], toString = Object.prototype.toString;
-            Mixin = (function () {
-                function Mixin(cfg) {
+            let Mixin = class Mixin {
+                constructor(cfg) {
                     this.config = cfg;
                 }
                 // Mixin.extend(o,m) => methods of m are singleton methods of object o<br>
                 // Mixin.extend(F,m) => methods of m are static methods of F<br>
                 // extend is a closure 
-                Mixin.prototype.extend = function (base, module) {
+                extend(base, module) {
                     base = base || {};
                     module = module || {};
                     for (var p in module) {
@@ -46,13 +46,13 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                             }
                         }
                     }
-                };
+                }
                 // Mixin.include(o,m) => methods of m are instance methods of 
                 // every object with prototype o.prototype<br>
                 // Object.include(F,m) => methods of m are instance methods of 
                 // all instances created by the constructor F<br>
                 // include is a closure 
-                Mixin.prototype.include = function (base, module) {
+                include(base, module) {
                     base = base || {};
                     base.prototype = base.prototype || {};
                     module = module || {};
@@ -67,9 +67,9 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                             }
                         }
                     }
-                };
+                }
                 // extend_all is extend but for all ancestor properties 
-                Mixin.prototype.extend_all = function (base, module) {
+                extend_all(base, module) {
                     base = base || {};
                     module = module || {};
                     for (var p in module) {
@@ -81,9 +81,9 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                             base[p] = module[p];
                         }
                     }
-                };
+                }
                 // include_all is include but for all ancestor properties 
-                Mixin.prototype.include_all = function (base, module) {
+                include_all(base, module) {
                     base = base || {};
                     base.prototype = base.prototype || {};
                     module = module || {};
@@ -96,18 +96,17 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                             base.prototype[p] = module[p];
                         }
                     }
-                };
+                }
                 // for unit test verification - does o contain property p
-                Mixin.prototype.verify = function (o, p) {
+                verify(o, p) {
                     return (o[p] ? true : false);
-                };
-                Mixin = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object])
-                ], Mixin);
-                return Mixin;
-            }());
+                }
+            };
+            Mixin = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object])
+            ], Mixin);
             exports_1("Mixin", Mixin); //Mixin
         }
     }

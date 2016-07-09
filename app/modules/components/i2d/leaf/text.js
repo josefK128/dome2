@@ -18,39 +18,36 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            Text = (function () {
-                function Text() {
-                }
+            let Text = class Text {
                 //vertical text with chars normal orientation
                 //style="writing-mode: tb;glyph-orientation-vertical: 0;"
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Text ngOnChanges`); }
-                Text.prototype.ngOnInit = function () { console.log("Text ngOnInit"); };
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', String)
-                ], Text.prototype, "id", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Text.prototype, "parent", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Text.prototype, "node", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Text.prototype, "model", void 0);
-                Text = __decorate([
-                    core_1.Component({
-                        selector: '[circle]',
-                        template: "\n    <svg:text [attr.x]=\"x\" \n              [attr.y]=\"y\"  \n              [attr.dx]=\"dx\" \n              [attr.dy]=\"dy\" \n              [attr.class]=\"class\"\n              [attr.style]=\"style\"\n              [attr.fill]=\"fill\" \n              [attr.stroke]=\"stroke\"\n              [attr.stroke-width]=\"stroke_width\"\n              [attr.font-family]=\"font_family\"\n              [attr.font-size]=\"font_size\" >\n    </svg:text>\n  "
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], Text);
-                return Text;
-            }());
+                ngOnInit() { console.log(`Text ngOnInit`); }
+            };
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', String)
+            ], Text.prototype, "id", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Text.prototype, "parent", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Text.prototype, "node", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Text.prototype, "model", void 0);
+            Text = __decorate([
+                core_1.Component({
+                    selector: 'text',
+                    template: ``
+                }), 
+                __metadata('design:paramtypes', [])
+            ], Text);
             exports_1("Text", Text);
         }
     }

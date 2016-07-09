@@ -11,7 +11,6 @@ import {CONFIG} from '../../../configs/@config';
 import {Models} from '../../../services/models';
 import {State} from '../../../services/state';
 import {Camera3d} from '../../../services/camera3d';
-import {Animation} from '../../../services/animation';
 
 // leaf components
 import {Sphere} from '../leaf/sphere';
@@ -34,7 +33,6 @@ export class Space {
   model:Object;
   state:State;
   camera3d:Camera3d;
-  animation:Animation;
   templatename:string;
   modelname:string;
   shot:Object;
@@ -43,26 +41,20 @@ export class Space {
   constructor(@Inject(CONFIG) cfg:Config, 
               models:Models,
               state:State, 
-              camera3d:Camera3d,
-              animation:Animation){
+              camera3d:Camera3d){
 
     this.config = cfg;
     this.state = state;
     this.camera3d = camera3d;
-    this.animation = animation;
 
-    console.log(`state.path() = ${state.path()}`);
+    console.log(`i3d composite space: state.path() = ${state.path()}`);
     this.templatename = state.template(state.path(), 'i3d');  // 'space'
     this.modelname = state.model(state.path(), 'i3d');  // 'model1'
-    console.log(`######## this.templatename = ${this.templatename}`);
-    console.log(`######## this.modelname = ${this.modelname}`);
     console.log(`models.get('i3d.${this.templatename}.${this.modelname}')`);
     this.model = models.get(`i3d.${this.templatename}.${this.modelname}`);
-    if(this.model){
-      this.shot = this.model['shot'];
-    }
+    console.log(`space: this.model is:`);
+    console.dir(this.model);
   }
-
 
   // lifecycle
   // ordered sequence of component lifecycle phase-transitions:
@@ -73,9 +65,10 @@ export class Space {
   //ngAfterContentChecked() { console.log(`Space ngAfterContentChecked`); }
   ngAfterViewInit() { 
     console.log(`Space ngAfterViewInit`); 
-    console.log(`i3d actors = ${this.camera3d.reportActors()}`);
-    if(this.shot){
-      this.animation.perform(this.shot);   // this.shot is Object
+    if(this.model['resolve']){
+      this.model['resolve']('i3d-space'); 
+    }else{
+      throw(new Error("i3dmodel['resolve'] not found!"));
     }
   }
   //ngAfterViewChecked() { console.log(`Space ngAfterViewChecked`); }

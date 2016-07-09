@@ -20,13 +20,13 @@ export const config:Config = {
   scenestates: {scene1:false, scene2:false},
   scenepaths: {opening: 'opening://///no-shot:',
     scene1:'scene1:/space:model1/stage:/bg:/display:/establishing:',
-    scene2:'scene2:/space2:model2/stage2:/bg2:/display2:/establishing:'
+    scene2:'scene2:/space2:model2/stage2:modelA/bg2:/display2:/establishing:'
   },
 
   // metastate: '{scene}/{i3d}/{shot}/',  // for VR
   // substates: ['scene', 'i3d', 'shot'],
   metastate: '{scene}/{i3d}/{i2d}/{base}/{ui}/{shot}/',
-  substates: ['scene', 'i3d', 'i2d', 'base', 'ui', 'shot'],
+  substates: ['scene', 'i3d', 'i2d', 'base', 'ui', 'shot'],  // shot last!
 
   opening_scene: 'opening',
   canvas_id: '3D',

@@ -27,8 +27,8 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
             // cameras
             //import {Camera1} from '../cameras/simple/camera1';
             //import {Camera2} from '../cameras/simple/camera2';
-            Cameras = (function () {
-                function Cameras(cfg) {
+            let Cameras = class Cameras {
+                constructor(cfg) {
                     this.config = cfg;
                     this.cameras = {};
                 } //ctor
@@ -36,67 +36,65 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                 // path can be simple string such as 'i3d'
                 // or a punctuated object-branch path such as 'simple.camera1'
                 // or an array of object-branch keys such as ['simple', 'camera1']
-                Cameras.prototype.branch = function (path) {
+                branch(path) {
                     var keys, branch = this.cameras;
-                    console.log("branch():path = " + path);
+                    console.log(`branch():path = ${path}`);
                     if (!Array.isArray(path)) {
                         keys = (path.includes('.') ? path.split('.') : [path]);
                         //keys = (pathstring.indexOf('.') > -1 ? pathstring.split('.') : [pathstring]);
-                        console.log("Array.isArray(keys) = " + Array.isArray(keys));
-                        console.log("keys = " + keys);
+                        console.log(`Array.isArray(keys) = ${Array.isArray(keys)}`);
+                        console.log(`keys = ${keys}`);
                     }
                     else {
                         keys = path;
                     }
                     // operate using array of branch keys
-                    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-                        var s = keys_1[_i];
+                    for (let s of keys) {
                         // ignore key = ''
                         if (s.length > 0) {
-                            console.log("branch: key = " + s + "  branch = " + branch);
+                            console.log(`branch: key = ${s}  branch = ${branch}`);
                             branch = (branch[s] ? branch[s] : undefined);
                             if (branch === undefined) {
-                                console.log("!!!!!!!!!!!!!!!!!! branch from " + name + " is undefined!");
+                                console.log(`!!!!!!!!!!!!!!!!!! branch from ${name} is undefined!`);
                                 return undefined;
                             }
                         }
                     }
                     return branch;
-                };
+                }
                 // example: get('simple.camera6')
                 // example: get([category, cameraname])
-                Cameras.prototype.get = function (path) {
+                get(path) {
                     return this.branch(path);
-                };
+                }
                 // example: add('simple', 'camera6', (f(){})())
                 // example: add('simple', 'camera6', {...})
                 // example: add([t], 'camera', (f(){})())
                 // example: add([t], 'camera6', {...})
-                Cameras.prototype.add = function (path, cameraname, camera) {
+                add(path, cameraname, camera) {
                     var branch = this.branch(path);
                     if (branch) {
                         branch[cameraname] = camera;
                         return true;
                     }
                     return undefined;
-                };
+                }
                 // example: remove('simple.camera6')
                 // example: remove([category, cameraname])
-                Cameras.prototype.remove = function (path) {
+                remove(path) {
                     var branch = this.branch(path);
                     if (branch) {
                         branch = undefined;
                         return true;
                     }
                     return undefined;
-                };
-                Cameras = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object])
-                ], Cameras);
-                return Cameras;
-            }());
+                }
+            };
+            Cameras = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object])
+            ], Cameras);
             exports_1("Cameras", Cameras);
         }
     }

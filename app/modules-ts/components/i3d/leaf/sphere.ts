@@ -35,10 +35,6 @@ export class Sphere {
 ngOnInit() {
   var node;
   console.log("\n\n%%%% Sphere ngOnInit:");
-  console.log(`%%%% this.camera3d = ${this.camera3d}`);
-  for(var p in this.model){
-    console.log(`this.model has property ${p} with val = ${this.model[p]}`);
-  }
   console.log(`%%%% this.id = ${this.id}`); 
   node = document.getElementById(this.id).parentNode;
   if (node){

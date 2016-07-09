@@ -1,7 +1,7 @@
 export default 
 `
 <div id="narrative" class="mediaweb" >
-  <div class="base" [style.display]="basedisplay" > 
+  <div class="base" [style.display]="display['base']" > 
 <dome-base id="base">
   <!-- NOTE: a-frame causes runtime error at zone.js:1115  
        Uncaught TypeError: Cannot assign to read only property 
@@ -20,7 +20,7 @@ export default
 <!-- NOTE: dome-i3d is the ViewContainerRef for adding/replacing i3d-component
      templates dynamically by i3d.ts fed by url-changes from narrative.ts 
      Templates are inserted just under <dome-i3d></dome-i3d> -->
-<div  [style.display]="i3ddisplay" >
+<div  [style.display]="display['i3d']" >
 <canvas id="3D" class="space" >
 </canvas> 
 <dome-i3d id="i3d" >
@@ -50,10 +50,11 @@ export default
      by ViewContainerRef.clear() - but it is not seen again unless
      an empty template is inserted under <dome-i2d></dome-i2d>
 -->
-<div id="2D" class="stage" [style.display]="i2ddisplay" > 
+<div id="2D" class="stage" [style.display]="display['i2d']" > 
 <dome-i2d></dome-i2d>
 <svg xmlns="http://www.w3.org/2000/svg" 
      xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:dome="http://i3Dmedia.org/2016/dome"
      preserveAspectRatio="none" 
      id="s" 
      width="100%" height="100%" 
@@ -90,7 +91,7 @@ export default
   <label>
     <input type="checkbox" checked="config.controlstates['ui']" (change)="changeControl('ui')">ui 
   </label>
-  <div [style.display]="uidisplay" > 
+  <div [style.display]="display['ui']" > 
 
   <!-- controls -->
   <div *ngFor="let c of config.controls" > 
@@ -115,7 +116,7 @@ export default
   <div style="padding-left:3%" ><font color="green">{{current_scene}}</font></div> -->
   
   <!-- three.js fps -->
-  <div id="stats"  [style.display]="fpsdisplay "style="position:absolute; transform:scaleY(0.85) translateY(5%) scaleX(0.7) translateX(-20%)"></div>
+  <div id="stats"  [style.display]="display['fps']" style="position:absolute; transform:scaleY(0.85) translateY(5%) scaleX(0.7) translateX(-20%)"></div>
 
   <br/><br/>
   <dome-ui>

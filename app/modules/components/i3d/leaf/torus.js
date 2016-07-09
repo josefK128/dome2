@@ -18,51 +18,48 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            Torus = (function () {
-                function Torus() {
-                }
+            let Torus = class Torus {
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Torus ngOnChanges`); }
-                Torus.prototype.ngOnInit = function () {
-                    console.log("%%%% Torus " + this.id + " ngOnInit");
+                ngOnInit() {
+                    console.log(`%%%% Torus ${this.id} ngOnInit`);
                     this.pid = this.parent['id'];
-                    console.log("node = " + this.node);
-                    console.log("parent = " + this.parent);
-                    console.log("pid = " + this.pid);
-                    console.log("node.form = " + this.node['form']);
-                    console.log("node.form.type = " + this.node['form']['type']);
-                };
+                    console.log(`node = ${this.node}`);
+                    console.log(`parent = ${this.parent}`);
+                    console.log(`pid = ${this.pid}`);
+                    console.log(`node.form = ${this.node['form']}`);
+                    console.log(`node.form.type = ${this.node['form']['type']}`);
+                }
                 //  ngDoCheck() { console.log(`Torus ngDoCheck`); }
                 //  ngAfterContentInit() { console.log(`Torus ngAfterContentInit`); }
                 //  ngAfterContentChecked() { console.log(`Torus ngAfterContentChecked`); }
-                Torus.prototype.ngAfterViewInit = function () {
-                    console.log("Torus " + this.id + " ngAfterViewInit");
-                };
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Torus.prototype, "model", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Torus.prototype, "node", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Torus.prototype, "parent", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', String)
-                ], Torus.prototype, "id", void 0);
-                Torus = __decorate([
-                    core_1.Component({
-                        selector: 'torus',
-                        template: ""
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], Torus);
-                return Torus;
-            }());
+                ngAfterViewInit() {
+                    console.log(`Torus ${this.id} ngAfterViewInit`);
+                }
+            };
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Torus.prototype, "model", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Torus.prototype, "node", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Torus.prototype, "parent", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', String)
+            ], Torus.prototype, "id", void 0);
+            Torus = __decorate([
+                core_1.Component({
+                    selector: 'torus',
+                    template: ``
+                }), 
+                __metadata('design:paramtypes', [])
+            ], Torus);
             exports_1("Torus", Torus);
         }
     }

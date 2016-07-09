@@ -11,7 +11,6 @@ import {CONFIG} from '../../../configs/@config';
 import {Models} from '../../../services/models';
 import {State} from '../../../services/state';
 import {Camera3d} from '../../../services/camera3d';
-import {Animation} from '../../../services/animation';
 
 // generative components
 import {Metaform3d} from '../generative/metaform3d';
@@ -31,7 +30,6 @@ export class Space2 {
   node:Object;
   state:State;
   camera3d:Camera3d;
-  animation:Animation;
   templatename:string;
   modelname:string;
   shot:Object;
@@ -40,27 +38,20 @@ export class Space2 {
   constructor(@Inject(CONFIG) cfg:Config, 
               models:Models,
               state:State, 
-              camera3d:Camera3d,
-              animation:Animation){
+              camera3d:Camera3d){
 
     this.config = cfg;
     this.state = state;
     this.camera3d = camera3d;
-    this.animation = animation;
 
-    console.log(`\n\n###### space2: state.path() = ${state.path()}`);
+    console.log(`i3d compositie space2: state.path() = ${state.path()}`);
     this.templatename = state.template(state.path(), 'i3d');  // 'space2'
     this.modelname = state.model(state.path(), 'i3d');  // 'model2'
-    console.log(`this.templatename = ${this.templatename}`);
-    console.log(`this.modelname = ${this.modelname}`);
     this.model = models.get(`i3d.${this.templatename}.${this.modelname}`);
     console.log('space2: this.model is:');
     console.dir(this.model);
-    if(this.model){
-      this.shot = this.model['shot'];
-    }
     this.node = this.model['actors'];
-    this.node['children'] = this.model['actors']['metaforms'];  // [] or [{},...]
+    this.node['children'] = this.model['actors']['metaforms']; // [] or [{},...]
     console.log('space2: this.node is:');
     console.dir(this.node);
   }
@@ -75,9 +66,10 @@ export class Space2 {
   //ngAfterContentChecked() { console.log(`Space2 ngAfterContentChecked`); }
   ngAfterViewInit() { 
     console.log(`Space2 ngAfterViewInit`); 
-    console.log(`i3d actors = ${this.camera3d.reportActors()}`);
-    if(this.shot){
-      this.animation.perform(this.shot);   // this.shot is Object
+    if(this.model['resolve']){
+      this.model['resolve']('i3d-space2'); 
+    }else{
+      throw(new Error("i3dmodel['resolve'] not found!"));
     }
   }
   //ngAfterViewChecked() { console.log(`Space2 ngAfterViewChecked`); }

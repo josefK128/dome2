@@ -61,7 +61,7 @@ var set_camera = function(cam:Object){
 
 // init lights
 var set_light = (type:string, light, form:Object) => {
-  var location:number[];
+  var location;
 
   console.log(`type=${type} lighttypes[${type}]=${lighttypes[type]} form:`);
   console.dir(form);
@@ -1032,7 +1032,7 @@ export class Camera3d {
 
 
   // initialize scene - 'place' camera in scene
-  place(i3dtemplatename, i3dmodel) {
+  place(i3dtemplatename:string, i3dmodel:Object):void {
     var sd = i3dmodel['scene'],  // scene-descriptor 'options' object
         i3dscene;               // possible procedural i3d-scene
 
@@ -1965,6 +1965,8 @@ export class Camera3d {
   }    
 
   actor(id){
+    console.log('Camera3d.actor(id=${id})!');
+    console.dir(c3d.actors[id]);
     return c3d.actors[id] || null;
   }
 
@@ -2004,18 +2006,20 @@ export class Camera3d {
   // turn light a.name on-off 
   // exp: a = {name:['key'|'fill'|'back'], val='on'/'off'}}
   actor_visibility(a, from_ui:boolean=false){
-    var actor = c3d.actors[a.name];
+    var actor = c3d.actors[a.name],
+        b:boolean;
 
     console.log(`c3d.actor_visibility name=${a.name} val=${a.val}`);
     console.log(`c3d.actor_visibility actor=${actor} from_ui=${from_ui}`);
     if(actor){
+      b = (a.val === 'on' ? true : false);
       console.log(`c3d.actor_visibility actor.material=${actor.material}`);
       if(actor.material){
         console.log(`c3d.actor_visibility setting actor.material.visible=${a.val}`);
-        actor.material.visible = a.val; // object - exp: csphere
+        actor.material.visible = b; // object - exp: csphere
       }else{
         console.log(`c3d.actor_visibility setting actor.visible=${a.val}`);
-        actor.visible = a.val;
+        actor.visible = b;
       }
       // narrative-ui ignores request for change of non-existing control
       if(from_ui === false){
@@ -2025,7 +2029,7 @@ export class Camera3d {
         // The four values comprise an e2e_spec cell
         // The cell-shot is detected by utility 'e2e_specg' as a shot (matches
         // '{"delta') but there is no exact 'delta' to trigger shot-processing
-        c3d.narrative.setShot({"delta-t":"camera3d", "f":"change_control", "a":{"name":a.name, "val":a.val}});
+        c3d.narrative.setShot({"delta-t":"camera3d", "f":"actor_visibility", "a":{"name":a.name, "val":a.val}});
       }
     }else{  //reset checkbox - attempt was made to toggle non-existent control
       let val = (a.val === true ? 'off' : 'on'); // send back 'undo' state

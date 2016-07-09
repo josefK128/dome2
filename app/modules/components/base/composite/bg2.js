@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../../../configs/@config', '../../../services/models', '../../../services/state', '../../../services/animation'], function(exports_1, context_1) {
+System.register(['@angular/core', '../../../configs/@config', '../../../services/models', '../../../services/state'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, _config_1, models_1, state_1, animation_1;
+    var core_1, _config_1, models_1, state_1;
     var Bg2;
     return {
         setters:[
@@ -28,26 +28,19 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
             },
             function (state_1_1) {
                 state_1 = state_1_1;
-            },
-            function (animation_1_1) {
-                animation_1 = animation_1_1;
             }],
         execute: function() {
-            Bg2 = (function () {
-                function Bg2(cfg, models, state, animation) {
+            let Bg2 = class Bg2 {
+                constructor(cfg, models, state) {
                     this.config = cfg;
                     this.state = state;
-                    this.animation = animation;
-                    console.log("state.path() = " + state.path());
+                    console.log(`base compositie display2: state.path() = ${state.path()}`);
                     this.templatename = state.template(state.path(), 'base'); // 'space'
                     this.modelname = state.model(state.path(), 'base'); // 'model1'
-                    console.log("######## this.templatename = " + this.templatename);
-                    console.log("######## this.modelname = " + this.modelname);
-                    console.log("models.get('base." + this.templatename + "." + this.modelname + "')");
-                    this.model = models.get("base." + this.templatename + "." + this.modelname);
-                    if (this.model) {
-                        this.shot = this.model['shot'];
-                    }
+                    console.log(`models.get('base.${this.templatename}.${this.modelname}')`);
+                    this.model = models.get(`base.${this.templatename}.${this.modelname}`);
+                    console.log(`bg2: this.model is:`);
+                    console.dir(this.model);
                 }
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(` Bg2 ngOnChanges`); }
@@ -55,23 +48,27 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
                 //  ngDoCheck() { console.log(` Bg2 ngDoCheck`); }
                 //  ngAfterContentInit() { console.log(` Bg2 ngAfterContentInit`); }
                 //  ngAfterContentChecked() { console.log(` Bg2 ngAfterContentChecked`); }
-                Bg2.prototype.ngAfterViewInit = function () {
-                    console.log("Bg2 ngAfterViewInit");
-                    if (this.shot) {
-                        this.animation.perform(this.shot); // this.shot is Object
+                ngAfterViewInit() {
+                    console.log(`Bg2 ngAfterViewInit`);
+                    if (this.model['resolve']) {
+                        this.model['resolve']('base-bg2');
                     }
-                };
-                Bg2 = __decorate([
-                    core_1.Component({
-                        selector: 'span',
-                        template: "\n  <div style=\"background: url('images/glad.png'); width:100%; height:100%; background-size:cover; background-repeat:no-repeat; background-position:50% 50%; opacity:0.6\">\n  </div>",
-                        providers: [],
-                    }),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object, models_1.Models, state_1.State, animation_1.Animation])
-                ], Bg2);
-                return Bg2;
-            }());
+                    else {
+                        throw (new Error("basemodel['resolve'] not found!"));
+                    }
+                }
+            };
+            Bg2 = __decorate([
+                core_1.Component({
+                    selector: 'span',
+                    template: `
+  <div style="background: url('images/glad.png'); width:100%; height:100%; background-size:cover; background-repeat:no-repeat; background-position:50% 50%; opacity:0.6">
+  </div>`,
+                    providers: [],
+                }),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object, models_1.Models, state_1.State])
+            ], Bg2);
             exports_1("Bg2", Bg2);
         }
     }

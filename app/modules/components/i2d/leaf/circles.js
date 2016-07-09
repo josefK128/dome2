@@ -18,23 +18,26 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            Circles = (function () {
-                function Circles() {
+            let Circles = class Circles {
+                constructor() {
                     this.circles = [
                         { x: 10, y: 10, radius: 5 },
                         { x: 20, y: 20, radius: 5 },
                         { x: 30, y: 30, radius: 5 }];
                     this.width = 10;
                 }
-                Circles = __decorate([
-                    core_1.Component({
-                        selector: '[circles]',
-                        template: "\n   <svg:circle *ngFor=\"c of circles\" stroke=\"black\" fill=\"red\"\n     [attr.x]=\"c.x\", [attr.y]=\"c.y\", [attr.r]=\"c.radius\" ></svg:circle>\n   <svg:rect x=\"-20\" y=\"-20\" [attr.width]=\"width\" height=\"10\" stroke=\"black\" fill=\"green\"></rect>\n  "
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], Circles);
-                return Circles;
-            }());
+            };
+            Circles = __decorate([
+                core_1.Component({
+                    selector: '[circles]',
+                    template: `
+   <svg:circle *ngFor="c of circles" stroke="black" fill="red"
+     [attr.x]="c.x", [attr.y]="c.y", [attr.r]="c.radius" ></svg:circle>
+   <svg:rect x="-20" y="-20" [attr.width]="width" height="10" stroke="black" fill="green"></rect>
+  `
+                }), 
+                __metadata('design:paramtypes', [])
+            ], Circles);
             exports_1("Circles", Circles);
         }
     }

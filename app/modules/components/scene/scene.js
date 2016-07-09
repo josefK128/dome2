@@ -28,35 +28,43 @@ System.register(['@angular/core', '@angular/common', '../../services/scores', '.
             }],
         execute: function() {
             // singleton instance
-            Scene = (function () {
-                function Scene(scores, mediator) {
+            let Scene = class Scene {
+                constructor(scores, mediator) {
                     scene = this;
                     scene.scores = scores;
                     scene.mediator = mediator;
                 }
-                Scene.changeState = function (templatename, score) {
-                    console.log("Scene.changeState: templatename = " + templatename);
-                    console.log("Scene.changeState: score = " + score);
-                    if (score[0] === '{') {
-                        score = JSON.parse(score);
+                static changeState(substate) {
+                    var scenename = substate['t'], score = substate['m'], scenep = substate['tp'], // previous scenename
+                    scorep = substate['mp']; // previous score
+                    // score is JSON sequence of actions or a string-name for scores service
+                    if ((scenename !== scenep) || (score !== scorep)) {
+                        if (score[0] === '{') {
+                            score = JSON.parse(score);
+                        }
+                        else {
+                            score = scene.scores.get([scenename, score]);
+                        }
+                        if (score !== undefined) {
+                            scene.mediator.perform(score);
+                        }
+                        else {
+                            console.log(`score with name = ${score} not found!`);
+                        }
                     }
-                    else {
-                        score = scene.scores.get([templatename, score]);
-                    }
-                    scene.mediator.perform(score);
-                };
-                Scene = __decorate([
-                    core_1.Component({
-                        selector: 'dome-scene',
-                        template: "",
-                        providers: [],
-                        directives: [common_1.CORE_DIRECTIVES],
-                        pipes: []
-                    }), 
-                    __metadata('design:paramtypes', [scores_1.Scores, mediator_1.Mediator])
-                ], Scene);
-                return Scene;
-            }());
+                    return Promise.resolve('scene');
+                }
+            };
+            Scene = __decorate([
+                core_1.Component({
+                    selector: 'dome-scene',
+                    template: ``,
+                    providers: [],
+                    directives: [common_1.CORE_DIRECTIVES],
+                    pipes: []
+                }), 
+                __metadata('design:paramtypes', [scores_1.Scores, mediator_1.Mediator])
+            ], Scene);
             exports_1("Scene", Scene);
         }
     }

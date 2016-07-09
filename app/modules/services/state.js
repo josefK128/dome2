@@ -30,15 +30,15 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                 url_template_js_1 = url_template_js_1_1;
             }],
         execute: function() {
-            State = (function () {
-                function State(cfg, location) {
+            let State = class State {
+                constructor(cfg, location) {
                     this.config = cfg;
                     this.pattern = url_template_js_1.default.parse(this.config.metastate);
                     this.location = location;
                 }
                 // return present address bar path (with leading '\' removed)
                 // relies on location.path
-                State.prototype.path = function () {
+                path() {
                     var _path = this.location.path();
                     _path = decodeURI(_path);
                     // if path.startsWith('/') remove it
@@ -46,23 +46,22 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                         return _path.slice(1);
                     }
                     return _path;
-                };
+                }
                 // execute Location.go(path) - changes address bar and adds history entry
-                State.prototype.go = function (path) {
+                go(path) {
                     this.location.go(path);
-                };
+                }
                 // substates object -> serialized state path
-                State.prototype.stringify = function (substates) {
+                stringify(substates) {
                     var state = {}, path;
-                    for (var _i = 0, _a = this.config.substates; _i < _a.length; _i++) {
-                        var s = _a[_i];
+                    for (let s of this.config.substates) {
                         state[s] = substates[s]['t'];
                         state[s] = substates[s]['t'] + ':';
                         substates[s]['m'] = substates[s]['m'] || '';
                         state[s] = substates[s]['t'] + ':' + substates[s]['m'];
                     }
                     path = this.pattern.expand(state);
-                    console.log("path = " + path);
+                    console.log(`path = ${path}`);
                     if (/\/$/.test(path)) {
                         path = path.substring(0, path.length - 1);
                     }
@@ -72,16 +71,15 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                     else {
                         return path;
                     }
-                };
+                }
                 // serialized state path -> substates object 
                 // path must be well-formed according to config.metastate, i.e
                 // scene/i3d/i2d/base/ui/shot where the substates are strings which could
                 // be empty - all empty is the identity stateChange - i.e. 'no-change'
                 // NOTE: '<scenename>/////' for the present scenename is also 'no-change'
-                State.prototype.parse = function (path) {
+                parse(path) {
                     var a = path.split('/'), substates = {}, index = 0, tuple, ta, template, ma, model;
-                    for (var _i = 0, _a = this.config.substates; _i < _a.length; _i++) {
-                        var p = _a[_i];
+                    for (let p of this.config.substates) {
                         // ''.split(':') yields [''] so tuple[0] = '' but tuple[1] undefined
                         // no more than a single split to 2 substrings in order to preserve
                         // models which are shots and thus contain ':' in their objects
@@ -91,10 +89,10 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                             if (tuple[1] && tuple[1].length > 0) {
                                 ta = tuple.slice(0, 1); //returns tuple[0]
                                 template = ta[0];
-                                console.log("state.parse: shot template=" + template);
+                                console.log(`state.parse: shot template=${template}`);
                                 ma = tuple.slice(1); //returns tuple[1,...]
                                 model = ma.join(":");
-                                console.log("state.parse: shot model=" + model);
+                                console.log(`state.parse: shot model=${model}`);
                                 tuple[0] = template;
                                 tuple[1] = model;
                             }
@@ -104,24 +102,23 @@ System.register(['@angular/core', '@angular/common', '../configs/@config', '../.
                         substates[p]['m'] = tuple[1] || ''; // needed
                     }
                     return substates;
-                };
+                }
                 // convenience method to get specific substate template-component name
-                State.prototype.template = function (path, substate) {
+                template(path, substate) {
                     return this.parse(path)[substate]['t'];
-                };
+                }
                 // convenience method to get specific substate model name
-                State.prototype.model = function (path, substate) {
+                model(path, substate) {
                     return this.parse(path)[substate]['m'];
-                };
-                State = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object, (typeof (_a = typeof common_1.Location !== 'undefined' && common_1.Location) === 'function' && _a) || Object])
-                ], State);
-                return State;
-                var _a;
-            }());
+                }
+            };
+            State = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object, (typeof (_a = typeof common_1.Location !== 'undefined' && common_1.Location) === 'function' && _a) || Object])
+            ], State);
             exports_1("State", State);
         }
     }
+    var _a;
 });

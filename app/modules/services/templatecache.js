@@ -48,8 +48,8 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
                 display2_1 = display2_1_1;
             }],
         execute: function() {
-            Templatecache = (function () {
-                function Templatecache(cfg) {
+            let Templatecache = class Templatecache {
+                constructor(cfg) {
                     this.config = cfg;
                     this.components = {
                         // i3d
@@ -78,65 +78,63 @@ System.register(['@angular/core', '../configs/@config', '../components/i3d/compo
                 // path can be simple string such as 'i3d'
                 // or a punctuated object-branch path such as 'i3d.space.model1'
                 // or an array of object-branch keys such as ['i3d', 'space', 'model1']
-                Templatecache.prototype.branch = function (path) {
+                branch(path) {
                     var keys, branch = this.components;
-                    console.log("branch():path = " + path);
+                    console.log(`branch():path = ${path}`);
                     if (!Array.isArray(path)) {
                         keys = (path.includes('.') ? path.split('.') : [path]);
                         //keys = (pathstring.indexOf('.') > -1 ? pathstring.split('.') : [pathstring]);
-                        console.log("Array.isArray(keys) = " + Array.isArray(keys));
-                        console.log("keys = " + keys);
+                        console.log(`Array.isArray(keys) = ${Array.isArray(keys)}`);
+                        console.log(`keys = ${keys}`);
                     }
                     else {
                         keys = path;
                     }
                     // operate using array of branch keys
-                    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-                        var s = keys_1[_i];
+                    for (let s of keys) {
                         // ignore key = ''
                         if (s.length > 0) {
-                            console.log("branch: key = " + s + "  branch = " + branch);
+                            console.log(`branch: key = ${s}  branch = ${branch}`);
                             branch = (branch[s] ? branch[s] : undefined);
                             if (branch === undefined) {
-                                console.log("!!!!!!!!!!!!!!!!!! branch from " + name + " is undefined!");
+                                console.log(`!!!!!!!!!!!!!!!!!! branch from ${name} is undefined!`);
                                 return undefined;
                             }
                         }
                     }
                     return branch;
-                };
+                }
                 // example: get('i3d.Space6')
                 // example: get(['i3d', componentname])
-                Templatecache.prototype.get = function (path) {
+                get(path) {
                     return this.branch(path);
-                };
+                }
                 // example: add('i3d.metaforms', 'MetaformK')
                 // example: add(['i3d', category], MetaformK)
-                Templatecache.prototype.add = function (path, modelname, model) {
+                add(path, modelname, model) {
                     var branch = this.branch(path);
                     if (branch) {
                         branch[modelname] = model;
                         return true;
                     }
                     return undefined;
-                };
+                }
                 // example: remove('i3d.metaforms.MetaformK')
                 // example: remove(['i3d', category, componentname])
-                Templatecache.prototype.remove = function (path) {
+                remove(path) {
                     var branch = this.branch(path);
                     if (branch) {
                         branch = undefined;
                         return true;
                     }
                     return undefined;
-                };
-                Templatecache = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object])
-                ], Templatecache);
-                return Templatecache;
-            }());
+                }
+            };
+            Templatecache = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object])
+            ], Templatecache);
             exports_1("Templatecache", Templatecache);
         }
     }

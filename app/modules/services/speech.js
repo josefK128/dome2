@@ -60,68 +60,67 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
             bracket = function (text) {
                 return Array.isArray(text) ? text : [text];
             };
-            Speech = (function () {
-                function Speech(cfg) {
+            let Speech = class Speech {
+                constructor(cfg) {
                     this.config = cfg;
                 }
                 // male/female(F)
                 // exp: english => male,  englishF => female
                 // english/englishF
-                Speech.prototype.english = function (text) {
+                english(text) {
                     var parts = [];
                     bracket(text).forEach(function (t, i) {
                         parts[i] = { text: t, voice: "en/en-us", variant: "m3" };
                     });
                     meSpeak.speakMultipart(parts, { pitch: 30, speed: 120 }, null, null);
-                };
-                Speech.prototype.englishF = function (text) {
+                }
+                englishF(text) {
                     var parts = [];
                     bracket(text).forEach(function (t, i) {
                         parts[i] = { text: t, voice: "en/en-us", variant: "f5" };
                     });
                     meSpeak.speakMultipart(parts, { pitch: 60, speed: 100 }, null, null);
-                };
+                }
                 // francais/francaisF
-                Speech.prototype.francais = function (text) {
+                francais(text) {
                     var parts = [];
                     bracket(text).forEach(function (t, i) {
                         parts[i] = { text: t, voice: "fr", variant: "m3" };
                     });
                     meSpeak.speakMultipart(parts, { pitch: 30, speed: 120 }, null, null);
-                };
-                Speech.prototype.francaisF = function (text) {
+                }
+                francaisF(text) {
                     var parts = [];
                     bracket(text).forEach(function (t, i) {
                         parts[i] = { text: t, voice: "fr", variant: "f5" };
                     });
                     meSpeak.speakMultipart(parts, { pitch: 60, speed: 100 }, null, null);
-                };
+                }
                 // deutsch/deutschF
-                Speech.prototype.deutsch = function (text) {
+                deutsch(text) {
                     var parts = [];
                     bracket(text).forEach(function (t, i) {
                         parts[i] = { text: t, voice: "de", variant: "m3" };
                     });
                     meSpeak.speakMultipart(parts, { pitch: 30, speed: 120 }, null, null);
-                };
-                Speech.prototype.deutschF = function (text) {
+                }
+                deutschF(text) {
                     var parts = [];
                     bracket(text).forEach(function (t, i) {
                         parts[i] = { text: t, voice: "de", variant: "f5" };
                     });
                     meSpeak.speakMultipart(parts, { pitch: 60, speed: 100 }, null, null);
-                };
+                }
                 // default - speak
-                Speech.prototype.speak = function (text) {
+                speak(text) {
                     this.english(text);
-                };
-                Speech = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object])
-                ], Speech);
-                return Speech;
-            }());
+                }
+            };
+            Speech = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object])
+            ], Speech);
             exports_1("Speech", Speech); //Audio;
         }
     }

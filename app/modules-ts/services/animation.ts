@@ -15,9 +15,9 @@ import {Camera2d} from './camera2d';
 
 @Injectable()
 export class Animation {
-  config: any;
-  camera3d: Camera3d;
-  camera2d: Camera2d;
+  config:Config;
+  camera3d:Camera3d;
+  camera2d:Camera2d;
   //timeline:any;
   //tweenmax:any;
 

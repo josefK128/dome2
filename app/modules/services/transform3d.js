@@ -48,30 +48,30 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                 _config_1 = _config_1_1;
             }],
         execute: function() {
-            Transform3d = (function () {
-                function Transform3d(cfg) {
+            let Transform3d = class Transform3d {
+                constructor(cfg) {
                     this.config = cfg;
                 }
-                Transform3d.prototype.apply = function (transform, actor) {
+                apply(transform, actor) {
                     var m = new THREE.Matrix4(), // identity matrix
                     mr = undefined, mt = undefined, ms = undefined;
                     // transform matrix component matrices
                     if (transform['q']) {
-                        var qa = transform.q;
-                        var q = new THREE.Quaternion(qa[0], qa[1], qa[2], qa[3]);
+                        let qa = transform.q;
+                        let q = new THREE.Quaternion(qa[0], qa[1], qa[2], qa[3]);
                         mr = (new THREE.Matrix4()).makeRotationFromQuaternion(q);
                     }
                     if (transform['e']) {
-                        var ea = transform.e;
-                        var euler = new THREE.Euler(ea[0], ea[1], ea[2]); //default pyr (xyz)
+                        let ea = transform.e;
+                        let euler = new THREE.Euler(ea[0], ea[1], ea[2]); //default pyr (xyz)
                         mr = (new THREE.Matrix4()).makeRotationFromEuler(euler);
                     }
                     if (transform['t']) {
-                        var ta = transform.t;
+                        let ta = transform.t;
                         mt = (new THREE.Matrix4()).makeTranslation(ta[0], ta[1], ta[2]);
                     }
                     if (transform['s']) {
-                        var sa = transform.s;
+                        let sa = transform.s;
                         ms = (new THREE.Matrix4()).makeScale(sa[0], sa[1], sa[2]);
                     }
                     // * transform matrix - first scale, then rotate, then translate
@@ -89,13 +89,13 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                     }
                     // return created matrix representing model transform input
                     return m;
-                };
+                }
                 // for unit test verification - does m1 equal m2?
                 // careful of precision - .01 error is very generous
                 // * NOTE: m.elements is given in column-major!
                 //   Thus m[i][j].elements = [m00, m10, m20, m30, m01, m11, m21, m31, ...]
                 //                            column0           , column1 etc...
-                Transform3d.prototype.verify = function (m, mm) {
+                verify(m, mm) {
                     var a = m.elements, aa = mm.elements, flag = true, d = [], sa = [], i;
                     for (i = 0; i < a.length; i++) {
                         d[i] = Math.abs(a[i] - aa[i]);
@@ -109,14 +109,13 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                         }
                     }
                     return flag;
-                };
-                Transform3d = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object])
-                ], Transform3d);
-                return Transform3d;
-            }());
+                }
+            };
+            Transform3d = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object])
+            ], Transform3d);
             exports_1("Transform3d", Transform3d);
         }
     }

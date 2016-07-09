@@ -18,19 +18,18 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            Rect = (function () {
-                function Rect() {
+            let Rect = class Rect {
+                constructor() {
                     this.width = 20;
                 }
-                Rect = __decorate([
-                    core_1.Component({
-                        selector: '[rect]',
-                        template: "<svg:rect x=\"20\" y=\"-20\" [attr.width]=\"width\" height=\"10\" stroke=\"black\" fill=\"blue\"></rect>"
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], Rect);
-                return Rect;
-            }());
+            };
+            Rect = __decorate([
+                core_1.Component({
+                    selector: '[rect]',
+                    template: `<svg:rect x="20" y="-20" [attr.width]="width" height="10" stroke="black" fill="blue"></rect>`
+                }), 
+                __metadata('design:paramtypes', [])
+            ], Rect);
             exports_1("Rect", Rect);
         }
     }

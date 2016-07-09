@@ -32,25 +32,24 @@ System.register(['@angular/core', '../configs/@config', './camera3d', './camera2
         execute: function() {
             // GSAP
             //
-            Animation = (function () {
+            let Animation = class Animation {
                 //timeline:any;
                 //tweenmax:any;
-                function Animation(cfg, camera3d, camera2d) {
+                constructor(cfg, camera3d, camera2d) {
                     this.config = cfg;
                     this.camera3d = camera3d;
                     this.camera2d = camera2d;
                 }
-                Animation.prototype.perform = function (shot) {
-                    console.log("Animation.perform: typeof shot = " + shot);
-                    console.log("Animation.perform: shot = " + JSON.stringify(shot));
-                };
-                Animation = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object, camera3d_1.Camera3d, camera2d_1.Camera2d])
-                ], Animation);
-                return Animation;
-            }());
+                perform(shot) {
+                    console.log(`Animation.perform: typeof shot = ${shot}`);
+                    console.log(`Animation.perform: shot = ${JSON.stringify(shot)}`);
+                }
+            };
+            Animation = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object, camera3d_1.Camera3d, camera2d_1.Camera2d])
+            ], Animation);
             exports_1("Animation", Animation);
         }
     }

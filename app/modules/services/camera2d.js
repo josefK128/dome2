@@ -27,8 +27,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                 mediator_1 = mediator_1_1;
             }],
         execute: function() {
-            Camera2d = (function () {
-                function Camera2d(cfg, mediator) {
+            let Camera2d = class Camera2d {
+                constructor(cfg, mediator) {
                     this.config = cfg;
                     this.mediator = mediator;
                     this.record_shots = this.config.recored_shots;
@@ -404,20 +404,20 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         }
                     });
                 } //ctor
-                Camera2d.prototype.set_narrative = function (narrative) {
+                set_narrative(narrative) {
                     this.narrative = narrative;
-                };
-                Camera2d.prototype.place = function (narrative) {
+                }
+                place(narrative) {
                     this.narrative = narrative;
                     this.plane = document.getElementById("plane");
                     this.zoom_plane = document.getElementById("zoom_plane");
                     console.assert(this.plane, 'error setting plane!');
                     console.assert(this.zoom_plane, 'error setting zoom_plane!');
-                };
-                Camera2d.prototype.actor = function (id) {
+                }
+                actor(id) {
                     return document.getElementById(id);
-                };
-                Camera2d.prototype.center = function (a) {
+                }
+                center(a) {
                     a.d = a.d || 0.0;
                     // shot
                     this.shot = { delta: {
@@ -432,8 +432,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
-                Camera2d.prototype.home = function (a) {
+                }
+                home(a) {
                     a.d = a.d || 0.0;
                     //shot
                     this.shot = { delta: {
@@ -448,10 +448,10 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
+                }
                 // ZOOM<br>
                 // cut - no animation
-                Camera2d.prototype.zoomcutTo = function (a) {
+                zoomcutTo(a) {
                     if (a.s !== undefined) {
                         this.scale = a.s;
                     }
@@ -466,8 +466,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
-                Camera2d.prototype.zoomcutBy = function (a) {
+                }
+                zoomcutBy(a) {
                     if (a.s !== undefined) {
                         this.scale *= a.s;
                     }
@@ -482,9 +482,9 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
+                }
                 // fly - animate
-                Camera2d.prototype.zoomflyTo = function (a) {
+                zoomflyTo(a) {
                     if (a.s !== undefined) {
                         this.scale = a.s;
                     }
@@ -499,8 +499,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
-                Camera2d.prototype.zoomflyBy = function (a) {
+                }
+                zoomflyBy(a) {
                     if (a.s !== undefined) {
                         this.scale *= a.s;
                     }
@@ -515,10 +515,10 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
+                }
                 // ROLL<br>
                 // cut - no animation
-                Camera2d.prototype.rollcutTo = function (a) {
+                rollcutTo(a) {
                     if (a.r !== undefined) {
                         this.angle = a.r;
                     }
@@ -533,8 +533,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
-                Camera2d.prototype.rollcutBy = function (a) {
+                }
+                rollcutBy(a) {
                     if (a.r !== undefined) {
                         this.angle += a.r;
                     }
@@ -549,9 +549,9 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
+                }
                 // fly - animate
-                Camera2d.prototype.rollflyTo = function (a) {
+                rollflyTo(a) {
                     if (a.r !== undefined) {
                         this.angle = a.r;
                     }
@@ -566,8 +566,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
-                Camera2d.prototype.rollflyBy = function (a) {
+                }
+                rollflyBy(a) {
                     if (a.r !== undefined) {
                         this.angle += a.r;
                     }
@@ -582,10 +582,10 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
+                }
                 // DOLLY<br>
                 // cut - no animation
-                Camera2d.prototype.dollycutTo = function (a) {
+                dollycutTo(a) {
                     if (a.x !== undefined) {
                         this.x = a.x;
                     }
@@ -605,8 +605,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
-                Camera2d.prototype.dollycutBy = function (a) {
+                }
+                dollycutBy(a) {
                     if (a.x !== undefined) {
                         this.x += a.x;
                     }
@@ -626,9 +626,9 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
+                }
                 // fly - animate
-                Camera2d.prototype.dollyflyTo = function (a) {
+                dollyflyTo(a) {
                     if (a.x !== undefined) {
                         this.x = a.x;
                     }
@@ -648,8 +648,8 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
-                Camera2d.prototype.dollyflyBy = function (a) {
+                }
+                dollyflyBy(a) {
                     if (a.x !== undefined) {
                         this.x += a.x;
                     }
@@ -669,11 +669,10 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
+                }
                 // random 2d-bezier camera nav<br> 
                 // use default 6 points and 'through' bezier curve type
-                Camera2d.prototype.bezier = function (a) {
-                    if (a === void 0) { a = { d: 10, n: 6 }; }
+                bezier(a = { d: 10, n: 6 }) {
                     var i, x = [], y = [], v = [], bezier;
                     // bezier 'through' curve points - y coords are made neg!
                     x[0] = 0.0;
@@ -719,14 +718,13 @@ System.register(['@angular/core', '../configs/@config', './mediator'], function(
                         } //delta
                     }; //shot
                     this.narrative.setShot(this.shot);
-                };
-                Camera2d = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object, mediator_1.Mediator])
-                ], Camera2d);
-                return Camera2d;
-            }());
+                }
+            };
+            Camera2d = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object, mediator_1.Mediator])
+            ], Camera2d);
             exports_1("Camera2d", Camera2d); //Camera2D
         }
     }

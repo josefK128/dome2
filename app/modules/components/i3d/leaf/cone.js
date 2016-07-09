@@ -18,23 +18,20 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            Cone = (function () {
-                function Cone() {
-                }
+            let Cone = class Cone {
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Cone ngOnChanges`); }
-                Cone.prototype.ngOnInit = function () {
-                    console.log("%%%% Cone ngOnInit: wrote cone to Camera3d");
-                };
-                Cone = __decorate([
-                    core_1.Component({
-                        selector: 'cone',
-                        template: ""
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], Cone);
-                return Cone;
-            }());
+                ngOnInit() {
+                    console.log(`%%%% Cone ngOnInit: wrote cone to Camera3d`);
+                }
+            };
+            Cone = __decorate([
+                core_1.Component({
+                    selector: 'cone',
+                    template: ``
+                }), 
+                __metadata('design:paramtypes', [])
+            ], Cone);
             exports_1("Cone", Cone);
         }
     }

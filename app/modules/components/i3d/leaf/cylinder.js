@@ -18,51 +18,48 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            Cylinder = (function () {
-                function Cylinder() {
-                }
+            let Cylinder = class Cylinder {
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Cylinder ngOnChanges`); }
-                Cylinder.prototype.ngOnInit = function () {
-                    console.log("%%%% Cylinder " + this.id + " ngOnInit");
+                ngOnInit() {
+                    console.log(`%%%% Cylinder ${this.id} ngOnInit`);
                     this.pid = this.parent['id'];
-                    console.log("node = " + this.node);
-                    console.log("parent = " + this.parent);
-                    console.log("pid = " + this.pid);
-                    console.log("node.form = " + this.node['form']);
-                    console.log("node.form.type = " + this.node['form']['type']);
-                };
+                    console.log(`node = ${this.node}`);
+                    console.log(`parent = ${this.parent}`);
+                    console.log(`pid = ${this.pid}`);
+                    console.log(`node.form = ${this.node['form']}`);
+                    console.log(`node.form.type = ${this.node['form']['type']}`);
+                }
                 //  ngDoCheck() { console.log(`Cylinder ngDoCheck`); }
                 //  ngAfterContentInit() { console.log(`Cylinder ngAfterContentInit`); }
                 //  ngAfterContentChecked() { console.log(`Cylinder ngAfterContentChecked`); }
-                Cylinder.prototype.ngAfterViewInit = function () {
-                    console.log("Cylinder " + this.id + " ngAfterViewInit");
-                };
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Cylinder.prototype, "model", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Cylinder.prototype, "node", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Cylinder.prototype, "parent", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', String)
-                ], Cylinder.prototype, "id", void 0);
-                Cylinder = __decorate([
-                    core_1.Component({
-                        selector: 'cylinder',
-                        template: ""
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], Cylinder);
-                return Cylinder;
-            }());
+                ngAfterViewInit() {
+                    console.log(`Cylinder ${this.id} ngAfterViewInit`);
+                }
+            };
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Cylinder.prototype, "model", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Cylinder.prototype, "node", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Cylinder.prototype, "parent", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', String)
+            ], Cylinder.prototype, "id", void 0);
+            Cylinder = __decorate([
+                core_1.Component({
+                    selector: 'cylinder',
+                    template: ``
+                }), 
+                __metadata('design:paramtypes', [])
+            ], Cylinder);
             exports_1("Cylinder", Cylinder);
         }
     }

@@ -30,9 +30,8 @@ System.register(['@angular/core', '../configs/@config', 'socket.io-client', './q
                 queue_1 = queue_1_1;
             }],
         execute: function() {
-            Mediator = (function () {
-                function Mediator(cfg, iqueue) {
-                    var _this = this;
+            let Mediator = class Mediator {
+                constructor(cfg, iqueue) {
                     this.config = cfg;
                     this.iqueue = iqueue;
                     // connect to server
@@ -42,33 +41,31 @@ System.register(['@angular/core', '../configs/@config', 'socket.io-client', './q
                     // dummy load
                     this.iqueue.push({ t: 'camera3d', f: 'reportActors', a: 'not-needed' });
                     // start queue checks - LATER - much smaller interval or use Clock
-                    setInterval(function () {
-                        if (_this.iqueue.ready) {
-                            _this.next();
+                    setInterval(() => {
+                        if (this.iqueue.ready) {
+                            this.next();
                         }
                     }, 5000);
                 }
-                Mediator.prototype.set_narrative = function (n) {
+                set_narrative(n) {
                     this.narrative = n;
-                    console.log("Mediator.set_narrative: this.narrtive = " + this.narrative);
-                };
+                    console.log(`Mediator.set_narrative: this.narrtive = ${this.narrative}`);
+                }
                 // connect to index.js server = config.server_host 
                 // on port config.channels_port (default is 8081)
                 // set up channels with names specified in config.channels
-                Mediator.prototype.connect = function () {
-                    var _this = this;
+                connect() {
                     var s_h = this.config.server_host, c_p = this.config.server_port;
                     this.socket = io.connect("http://" + s_h + ":" + c_p);
-                    for (var _i = 0, _a = this.config.channels; _i < _a.length; _i++) {
-                        var channel = _a[_i];
-                        console.log("Mediator created channel with name = " + channel);
-                        this.socket.on(channel, function (o) {
-                            _this.iqueue.push(o);
+                    for (let channel of this.config.channels) {
+                        console.log(`Mediator created channel with name = ${channel}`);
+                        this.socket.on(channel, (o) => {
+                            this.iqueue.push(o);
                         });
                     }
-                };
+                }
                 // broadcast usable by external services
-                Mediator.prototype.emit = function (channel, msg) {
+                emit(channel, msg) {
                     // guard
                     if (this.config.channels.indexOf(channel) !== -1) {
                         this.socket.emit(channel, msg);
@@ -76,35 +73,34 @@ System.register(['@angular/core', '../configs/@config', 'socket.io-client', './q
                     else {
                         return false;
                     }
-                };
+                }
                 // quick method for emit('actions', action)
                 // record to server - used to record interactive camera shots to stream
-                Mediator.prototype.record = function (action) {
+                record(action) {
                     this.socket.emit('actions', action);
-                };
+                }
                 // set queue.ready = true, and check queue for action
-                Mediator.prototype.iqueue_ready_next = function () {
+                iqueue_ready_next() {
                     this.iqueue.ready = true;
                     this.next();
-                };
+                }
                 // fetch next action Object from iqueue - removes action from queue
                 // if queue is empty returns undefined
-                Mediator.prototype.next = function () {
+                next() {
                     if (this.iqueue.peek()) {
                         this.narrative.exec(this.iqueue.pop()); // iqueue hold action Objects
                     }
-                };
+                }
                 // queue score actions and start Clock to time sends to narrative.exec
-                Mediator.prototype.perform = function (score) {
-                    console.log("mediator.perform: score = " + score);
-                };
-                Mediator = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object, queue_1.Queue])
-                ], Mediator);
-                return Mediator;
-            }());
+                perform(score) {
+                    console.log(`mediator.perform: score = ${score}`);
+                }
+            };
+            Mediator = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object, queue_1.Queue])
+            ], Mediator);
             exports_1("Mediator", Mediator); //class Mediator
         }
     }

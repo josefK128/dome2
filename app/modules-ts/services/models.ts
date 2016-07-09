@@ -5,9 +5,12 @@ import {Injectable, Inject} from '@angular/core';
 import Config from '../configs/config.interface';
 import {CONFIG} from '../configs/@config';
 
-// models
+// models - i3d
 import {Model1} from '../models/i3d/space/model1';
 import {Model2} from '../models/i3d/space2/model2';
+
+// models - i2d
+import {ModelA} from '../models/i2d/stage2/modelA';
 
 
 
@@ -25,7 +28,7 @@ export class Models {
         space2: {model2: Model2}
       },
       i2d: {stage: {},
-            stage2: {}},
+            stage2: {modelA: ModelA}},
       base: {bg: {},
              bg2: {}},
       ui: {display: {},

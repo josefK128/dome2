@@ -20,8 +20,10 @@ export class Shot {
   animation: Animation;
   models: Models;
 
-  static changeState(templatename:string, _model:string) {
-    var model:Object;
+  static changeState(substate:Object) {
+     var templatename = substate['t'],
+         _model = substate['m'],  // modelname
+         model:Object;
     
     console.log(`Shot.changeState: templatename = ${templatename}`); 
     console.log(`Shot.changeState: _model = ${_model}`); 

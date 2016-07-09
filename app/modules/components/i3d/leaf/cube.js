@@ -18,23 +18,20 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            Cube = (function () {
-                function Cube() {
-                }
+            let Cube = class Cube {
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Cube ngOnChanges`); }
-                Cube.prototype.ngOnInit = function () {
-                    console.log("%%%% Cube ngOnInit wrote cube to Camera3d");
-                };
-                Cube = __decorate([
-                    core_1.Component({
-                        selector: 'cube',
-                        template: ""
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], Cube);
-                return Cube;
-            }());
+                ngOnInit() {
+                    console.log(`%%%% Cube ngOnInit wrote cube to Camera3d`);
+                }
+            };
+            Cube = __decorate([
+                core_1.Component({
+                    selector: 'cube',
+                    template: ``
+                }), 
+                __metadata('design:paramtypes', [])
+            ], Cube);
             exports_1("Cube", Cube);
         }
     }

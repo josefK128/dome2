@@ -8,7 +8,6 @@ import {CONFIG} from '../../../configs/@config';
 // services
 import {Models} from '../../../services/models';
 import {State} from '../../../services/state';
-import {Animation} from '../../../services/animation';
 
 
 @Component({
@@ -24,30 +23,24 @@ export class Bg2 {
   config:Config;
   model:Object;
   state:State;
-  animation:Animation;
   templatename:string;
   modelname:string;
   shot:Object;
 
   constructor(@Inject(CONFIG) cfg:Config, 
               models:Models,
-              state:State, 
-              animation:Animation){
+              state:State){
 
     this.config = cfg;
     this.state = state;
-    this.animation = animation;
 
-    console.log(`state.path() = ${state.path()}`);
+    console.log(`base compositie display2: state.path() = ${state.path()}`);
     this.templatename = state.template(state.path(), 'base');  // 'space'
     this.modelname = state.model(state.path(), 'base');  // 'model1'
-    console.log(`######## this.templatename = ${this.templatename}`);
-    console.log(`######## this.modelname = ${this.modelname}`);
     console.log(`models.get('base.${this.templatename}.${this.modelname}')`);
     this.model = models.get(`base.${this.templatename}.${this.modelname}`);
-    if(this.model){
-      this.shot = this.model['shot'];
-    }
+    console.log(`bg2: this.model is:`);
+    console.dir(this.model);
   }
 
   // ordered sequence of component lifecycle phase-transitions:
@@ -58,10 +51,12 @@ export class Bg2 {
 //  ngAfterContentChecked() { console.log(` Bg2 ngAfterContentChecked`); }
   ngAfterViewInit() { 
     console.log(`Bg2 ngAfterViewInit`); 
-    if(this.shot){
-      this.animation.perform(this.shot);   // this.shot is Object
+    if(this.model['resolve']){
+      this.model['resolve']('base-bg2');
+    }else{
+      throw(new Error("basemodel['resolve'] not found!"));
     }
-  }
+}
 
 //  ngAfterViewChecked() { console.log(` Bg2 ngAfterViewChecked`); }
 //  ngOnDestroy() { console.log(` Bg2 ngOnDestroy`); }

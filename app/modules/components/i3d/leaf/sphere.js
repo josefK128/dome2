@@ -29,52 +29,47 @@ System.register(['@angular/core', '../../../services/camera3d'], function(export
                 camera3d_1 = camera3d_1_1;
             }],
         execute: function() {
-            Sphere = (function () {
-                function Sphere(_camera3d) {
+            let Sphere = class Sphere {
+                constructor(_camera3d) {
                     this.camera3d = _camera3d;
                 }
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Sphere ngOnChanges`); }
-                Sphere.prototype.ngOnInit = function () {
+                ngOnInit() {
                     var node;
                     console.log("\n\n%%%% Sphere ngOnInit:");
-                    console.log("%%%% this.camera3d = " + this.camera3d);
-                    for (var p in this.model) {
-                        console.log("this.model has property " + p + " with val = " + this.model[p]);
-                    }
-                    console.log("%%%% this.id = " + this.id);
+                    console.log(`%%%% this.id = ${this.id}`);
                     node = document.getElementById(this.id).parentNode;
                     if (node) {
                         this.parentElement = node.nodeName;
                         this.pid = node.id;
-                        console.log("%%%% this.parentElement = " + this.parentElement);
-                        console.log("%%%% this.pid = " + this.pid);
+                        console.log(`%%%% this.parentElement = ${this.parentElement}`);
+                        console.log(`%%%% this.pid = ${this.pid}`);
                     }
                     else {
-                        console.log("%%%% Note: there is no parentNode of this.id= " + this.id);
+                        console.log(`%%%% Note: there is no parentNode of this.id= ${this.id}`);
                     }
                     this.radius = this.model['actors'][this.id]['radius'];
-                    console.log("%%%% sphere.radius = " + this.radius);
-                    console.log("%%%% Sphere wrote sphere " + this.id + " to Camera3d");
-                };
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', String)
-                ], Sphere.prototype, "id", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Sphere.prototype, "model", void 0);
-                Sphere = __decorate([
-                    core_1.Component({
-                        selector: 'sphere',
-                        template: '',
-                        providers: []
-                    }), 
-                    __metadata('design:paramtypes', [camera3d_1.Camera3d])
-                ], Sphere);
-                return Sphere;
-            }());
+                    console.log(`%%%% sphere.radius = ${this.radius}`);
+                    console.log(`%%%% Sphere wrote sphere ${this.id} to Camera3d`);
+                }
+            };
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', String)
+            ], Sphere.prototype, "id", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Sphere.prototype, "model", void 0);
+            Sphere = __decorate([
+                core_1.Component({
+                    selector: 'sphere',
+                    template: '',
+                    providers: []
+                }), 
+                __metadata('design:paramtypes', [camera3d_1.Camera3d])
+            ], Sphere);
             exports_1("Sphere", Sphere);
         }
     }

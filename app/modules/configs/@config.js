@@ -24,7 +24,7 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 scenestates: { scene1: false, scene2: false },
                 scenepaths: { opening: 'opening://///no-shot:',
                     scene1: 'scene1:/space:model1/stage:/bg:/display:/establishing:',
-                    scene2: 'scene2:/space2:model2/stage2:/bg2:/display2:/establishing:'
+                    scene2: 'scene2:/space2:model2/stage2:modelA/bg2:/display2:/establishing:'
                 },
                 // metastate: '{scene}/{i3d}/{shot}/',  // for VR
                 // substates: ['scene', 'i3d', 'shot'],

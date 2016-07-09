@@ -18,20 +18,22 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            Circle = (function () {
-                function Circle() {
+            let Circle = class Circle {
+                constructor() {
                     this.radius = 10;
                     this.width = 10;
                 }
-                Circle = __decorate([
-                    core_1.Component({
-                        selector: '[circle]',
-                        template: "\n    <svg:circle [attr.r]=\"radius\" cx=\"20\" cy=\"20\" stroke=\"black\" fill=\"red\"></svg:circle>\n   <svg:rect x=\"-20\" y=\"-20\" [attr.width]=\"width\" height=\"10\" stroke=\"black\" fill=\"green\"></rect>\n  "
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], Circle);
-                return Circle;
-            }());
+            };
+            Circle = __decorate([
+                core_1.Component({
+                    selector: '[circle]',
+                    template: `
+    <svg:circle [attr.r]="radius" cx="20" cy="20" stroke="black" fill="red"></svg:circle>
+   <svg:rect x="-20" y="-20" [attr.width]="width" height="10" stroke="black" fill="green"></rect>
+  `
+                }), 
+                __metadata('design:paramtypes', [])
+            ], Circle);
             exports_1("Circle", Circle);
         }
     }

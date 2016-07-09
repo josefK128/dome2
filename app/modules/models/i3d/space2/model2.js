@@ -7,9 +7,11 @@ System.register([], function(exports_1, context_1) {
         execute: function() {
             exports_1("Model2", Model2 = { scene: {
                     name: 'scene2',
+                    procedural_actornames: [],
                     camerasphere: null,
-                    visible: { csphere: 'on', key: 'on', fill: 'on', back: 'on' }
+                    visible: { csphere: 'on', key: 'on', fill: 'on', back: 'on' },
                 },
+                shot: { a: 16 },
                 actors: {
                     metaforms: [
                         {

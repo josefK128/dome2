@@ -2,21 +2,8 @@
 import {Component, Input} from '@angular/core';
 
 @Component({
-  selector: '[circle]',
-  template: `
-    <svg:text [attr.x]="x" 
-              [attr.y]="y"  
-              [attr.dx]="dx" 
-              [attr.dy]="dy" 
-              [attr.class]="class"
-              [attr.style]="style"
-              [attr.fill]="fill" 
-              [attr.stroke]="stroke"
-              [attr.stroke-width]="stroke_width"
-              [attr.font-family]="font_family"
-              [attr.font-size]="font_size" >
-    </svg:text>
-  `
+  selector: 'text',
+  template: ``
 })
 export class Text {
   @Input() id:string;

@@ -8,7 +8,6 @@ import {CONFIG} from '../../../configs/@config';
 // services
 import {Models} from '../../../services/models';
 import {State} from '../../../services/state';
-import {Animation} from '../../../services/animation';
 
 
 
@@ -25,30 +24,24 @@ export class Display {
   config:any;
   model:Object;
   state:State;
-  animation:Animation;
   templatename:string;
   modelname:string;
   shot:Object;
 
   constructor(@Inject(CONFIG) cfg:Config,
               models:Models,
-              state:State, 
-              animation:Animation){
+              state:State){
 
     this.config = cfg;
     this.state = state;
-    this.animation = animation;
 
-    console.log(`state.path() = ${state.path()}`);
+    console.log(`ui composite display: state.path() = ${state.path()}`);
     this.templatename = state.template(state.path(), 'ui'); 
     this.modelname = state.model(state.path(), 'ui');  
-    console.log(`######## this.templatename = ${this.templatename}`);
-    console.log(`######## this.modelname = ${this.modelname}`);
     console.log(`models.get('ui.${this.templatename}.${this.modelname}')`);
     this.model = models.get(`ui.${this.templatename}.${this.modelname}`);
-    if(this.model){
-      this.shot = this.model['shot'];
-    }
+    console.log(`display: this.model is:`);
+    console.dir(this.model);
  }
 
   // ordered sequence of component lifecycle phase-transitions:
@@ -59,8 +52,10 @@ export class Display {
 //  ngAfterContentChecked() { console.log(` Display ngAfterContentChecked`); }
   ngAfterViewInit() { 
     console.log(`Display ngAfterViewInit`); 
-    if(this.shot){
-      this.animation.perform(this.shot);   // this.shot is Object
+    if(this.model['resolve']){
+      this.model['resolve']('ui-display');
+    }else{
+      throw(new Error("uimodel['resolve'] not found!"));
     }
   }
 

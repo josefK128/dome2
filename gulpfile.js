@@ -64,16 +64,16 @@ var devFiles = [
   './gulpfile.js', 
 ];
 var templateFiles = [
-  './app/views/templates/*.html', 
-  './app/views/templates/**/*.html' 
+  './app/views/templates/*.ts', 
+  './app/views/templates/**/*.ts' 
 ];
 var svgDefsFiles = [
   './app/views/svg/*.svg', 
   './app/views/svg/**/*.svg' 
 ];
 var webglDefsFiles = [
-  './app/views/webgl/*.html', 
-  './app/views/webgl/**/*.html' 
+  './app/views/webgl/*.ts', 
+  './app/views/webgl/**/*.ts' 
 ];
 var styleFiles = [
   './app/styles/scss/*.scss'
@@ -81,18 +81,18 @@ var styleFiles = [
 
 
 // write destinations
-var appDest = './app/modules/',
-    appDest_es6 = './app/modules_es6/',
-    testDest = './test/modules/',
-    testDest_es6 = './test/modules_es6/',
-    mockDest = './test/modules/mocks/',
-    mockDest_es6 = './test/modules_es6/mocks',
+var appDest_es5 = './app/modules_es5/',
+    appDest_es6 = './app/modules/',
+    testDest_es5 = './test/modules_es5/',
+    testDest_es6 = './test/modules/',
+    mockDest_es5 = './test/modules_es5/mocks/',
+    mockDest_es6 = './test/modules/mocks',
     docDest = './docs/app',
     docTestDest = './docs/test',
     docDevDest = './docs/dev';
     transpiledDest = './docs/transpiled/app';
     transpiledTestDest = './docs/transpiled/test';
-    templatesDest = './app/views/';
+    templatesDest = './app/modules-ts/views/';
 
 
 
@@ -121,7 +121,7 @@ gulp.task('ts2js', () => {
         .pipe(typescript(tsconfig.compilerOptions));
 
     if(tsconfig.compilerOptions.target === 'es5'){
-        return tsResult.js.pipe(gulp.dest(appDest));
+        return tsResult.js.pipe(gulp.dest(appDest_es5));
     }
     return tsResult.js.pipe(gulp.dest(appDest_es6));
 });
@@ -140,7 +140,7 @@ gulp.task('ts2js-spec', () => {
         .pipe(typescript(tsconfig.compilerOptions));
 
     if(tsconfig.compilerOptions.target === 'es5'){
-        return tsResult.js.pipe(gulp.dest(testDest));
+        return tsResult.js.pipe(gulp.dest(testDest_es5));
     }
     return tsResult.js.pipe(gulp.dest(testDest_es6));
 });
@@ -152,7 +152,7 @@ gulp.task('ts2js-spec-no-tslint', () => {
         .pipe(typescript(tsconfig.compilerOptions));
 
     if(tsconfig.compilerOptions.target === 'es5'){
-        return tsResult.js.pipe(gulp.dest(testDest));
+        return tsResult.js.pipe(gulp.dest(testDest_es5));
     }
     return tsResult.js.pipe(gulp.dest(testDest_es6));
 });
@@ -167,7 +167,7 @@ gulp.task('ts2js-mock', () => {
         .pipe(typescript(tsconfig.compilerOptions));
 
     if(tsconfig.compilerOptions.target === 'es5'){
-        return tsResult.js.pipe(gulp.dest(mockDest));
+        return tsResult.js.pipe(gulp.dest(mockDest_es5));
     }
     return tsResult.js.pipe(gulp.dest(mockDest_es6));
 });
@@ -177,7 +177,7 @@ gulp.task('ts2js-mock', () => {
 // concatenates individual html/svg/i3d templates into views/templates.html
 gulp.task('templates', ['svg-defs', 'webgl-defs'], () => {
   gulp.src(templateFiles)
-    .pipe(concat('templates.html'))
+    .pipe(concat('templates.ts'))
     .pipe(gulp.dest(templatesDest));
 });
 
@@ -193,7 +193,7 @@ gulp.task('svg-defs', () => {
 // concatenates individual shaders, etc. into views/webgl-defs.js
 gulp.task('webgl-defs', () => {
   gulp.src(webglDefsFiles)
-    .pipe(concat('webgl-defs.html'))
+    .pipe(concat('webgl-defs.ts'))
     .pipe(gulp.dest(templatesDest));
 });
 

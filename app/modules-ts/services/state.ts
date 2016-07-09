@@ -112,7 +112,7 @@ export class State {
 
 
   // convenience method to get specific substate template-component name
-  template(path:string, substate:string){
+  template(path:string, substate:string):string{
     return this.parse(path)[substate]['t'];
   }
 

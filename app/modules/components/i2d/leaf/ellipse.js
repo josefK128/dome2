@@ -18,37 +18,34 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            Ellipse = (function () {
-                function Ellipse() {
-                }
+            let Ellipse = class Ellipse {
                 // ordered sequence of component lifecycle phase-transitions:
                 //  ngOnChanges() { console.log(`Ellipse ngOnChanges`); }
-                Ellipse.prototype.ngOnInit = function () { console.log("Ellipse ngOnInit"); };
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', String)
-                ], Ellipse.prototype, "id", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Ellipse.prototype, "parent", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Ellipse.prototype, "node", void 0);
-                __decorate([
-                    core_1.Input(), 
-                    __metadata('design:type', Object)
-                ], Ellipse.prototype, "model", void 0);
-                Ellipse = __decorate([
-                    core_1.Component({
-                        selector: '[ellipse]',
-                        template: "\n    <svg:ellipse [attr.cx]=\"cx\" \n                [attr.cy]=\"cy\"  \n                [attr.rx]=\"rx\" \n                [attr.ry]=\"ry\" \n                [attr.class]=\"class\"\n                [attr.style]=\"style\"\n                [attr.fill]=\"fill\" \n                [attr.stroke]=\"stroke\"\n                [attr.strokewidth]=\"strokewidth\">\n    </svg:ellipse>\n  "
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], Ellipse);
-                return Ellipse;
-            }());
+                ngOnInit() { console.log(`Ellipse ngOnInit`); }
+            };
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', String)
+            ], Ellipse.prototype, "id", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Ellipse.prototype, "parent", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Ellipse.prototype, "node", void 0);
+            __decorate([
+                core_1.Input(), 
+                __metadata('design:type', Object)
+            ], Ellipse.prototype, "model", void 0);
+            Ellipse = __decorate([
+                core_1.Component({
+                    selector: 'ellipse',
+                    template: ``
+                }), 
+                __metadata('design:paramtypes', [])
+            ], Ellipse);
             exports_1("Ellipse", Ellipse);
         }
     }

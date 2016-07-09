@@ -20,20 +20,33 @@ export class Scene {
   mediator: Mediator;
   scores: Scores;
 
-  static changeState(templatename:string, score:string) {
+  static changeState(substate:Object):Promise<string> {
 
-    console.log(`Scene.changeState: templatename = ${templatename}`); 
-    console.log(`Scene.changeState: score = ${score}`); 
-    if(score[0] === '{'){
-      score = JSON.parse(score);
-    }else{
-      score = scene.scores.get([templatename, score]);
+     var scenename = substate['t'],
+         score = substate['m'],
+         scenep = substate['tp'],           // previous scenename
+         scorep = substate['mp'];          // previous score
+
+    // score is JSON sequence of actions or a string-name for scores service
+    if((scenename !== scenep) || (score !== scorep)){
+      if(score[0] === '{'){
+        score = JSON.parse(score);
+      }else{
+        score = scene.scores.get([scenename, score]);
+      }
+      if(score !== undefined){
+        scene.mediator.perform(score);
+      }else{
+        console.log(`score with name = ${score} not found!`);
+      }
     }
-    scene.mediator.perform(score);
+    return Promise.resolve('scene');
   }
+
 
   constructor(scores: Scores, 
               mediator: Mediator) {
+
     scene = this;
     scene.scores = scores;
     scene.mediator = mediator;

@@ -2,19 +2,8 @@
 import {Component, Input} from '@angular/core';
 
 @Component({
-  selector: '[ellipse]',
-  template: `
-    <svg:ellipse [attr.cx]="cx" 
-                [attr.cy]="cy"  
-                [attr.rx]="rx" 
-                [attr.ry]="ry" 
-                [attr.class]="class"
-                [attr.style]="style"
-                [attr.fill]="fill" 
-                [attr.stroke]="stroke"
-                [attr.strokewidth]="strokewidth">
-    </svg:ellipse>
-  `
+  selector: 'ellipse',
+  template: ``
 })
 export class Ellipse {
   @Input() id:string;

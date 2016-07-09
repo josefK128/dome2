@@ -4,6 +4,7 @@ import {CORE_DIRECTIVES} from '@angular/common';
 
 // services
 import {Templatecache} from '../../services/templatecache';
+import {Models} from '../../services/models';
 
 
 // singleton instance
@@ -21,31 +22,91 @@ export class I3d {
   compiler: ComponentResolver;
   view: ViewContainerRef;
   templates: Templatecache;
+  models: Models;
 
+  static changeState(substate:Object, 
+                     narrative,
+                     init_scene:boolean):Promise<string> {
 
-  static changeState(templatename:string) {
-    var template = i3d.templates.get(templatename),
-        componentref:ComponentRef;  // component = componentref.instance;
- 
-    console.log(`I3d.changeState: templatename = ${templatename}`); 
-    if(template){
-      i3d.view.clear();
-      i3d.compiler.resolveComponent(template).then((factory) => {
-        componentref = i3d.view.createComponent(factory, 0, i3d.view.injector);
-      });
+    var templatename = substate['t'],
+        modelname = substate['m'],
+        tp = substate['tp'],           // previous templatename
+        mp = substate['mp'],          // previous modelname
+        componentref:ComponentRef,   // component = componentref.instance;
+        i3dmodel:Object,
+        template;
+
+    // if neither the template or model has changed then no substate change
+    // however even if just a model change we assume a component reload needed
+    if((templatename === tp) && (modelname === mp)){  
+      return Promise.resolve('i3d');
     }else{
-      console.log(`template with name = ${templatename} not found!`);
+      console.log(`I3d.changeState: templatename = ${templatename} init_scene =
+                  ${init_scene}`); 
+
+      return new Promise((resolve, reject) => {
+        // note: modelname might be '' but then models['i3d'] object returned
+        i3dmodel = i3d.models.get(['i3d', templatename, modelname]);
+        template = i3d.templates.get(templatename);
+
+        // initialize the visibility of csphere and lights when init_scene=true
+        // In that case changeState is being called to create a new scene 
+        // (not fwd-back) 
+        // initialize the '3d-ui' (csphere,key,fill,back) according to 
+        // i3dmodel['scene']['visible'] 'on'/'off' settings
+        // i.e. set csphere & lights and their ui-controls 'on' or 'off'
+        // according to i3dmodel.scene.visible['csphere'] etc.
+        // NOTE: narrative.changeControl will set light.visible or 
+        // csphere.material.visible
+        if(init_scene){
+          for(let c of Object.keys(i3dmodel['scene']['visible'])){
+            console.log(`${c} visible = ${i3dmodel['scene']['visible'][c]}`);
+            narrative.changeControl(c, i3dmodel['scene']['visible'][c]);
+          }
+        }
+
+
+
+        //place promise resolution functions on i3dmodel for use by dynamically
+        // loaded composite-component after template initialization complete
+        if(i3dmodel){
+          i3dmodel['resolve'] = resolve; 
+          i3dmodel['reject'] = reject;
+        }else{
+          reject(`model i3d.${templatename}.${modelname} not found!`);
+        }
+  
+        // clear the i3d view and prepare three.js scene
+        // set csphere and lights visibility and then
+        // dynamically load composite-component
+        if(template){
+          i3d.view.clear();
+          narrative.camera3d.place(templatename, i3dmodel);
+          try{
+            i3d.compiler.resolveComponent(template).then((factory) => {
+              componentref = i3d.view.createComponent(factory, 0, i3d.view.injector);
+            });
+          }catch(e){
+            reject(e);
+          }
+        }else{
+          reject(`i3d template with name = ${templatename} not found!`);
+        }
+      });//return Promise
     }
   }
 
 
   constructor(compiler: ComponentResolver, 
               view: ViewContainerRef,
-              templates: Templatecache){
+              templates: Templatecache,
+              models:Models){
+                
     i3d = this;
     i3d.compiler = compiler;
     i3d.view = view;
     i3d.templates = templates;
+    i3d.models = models;
   }
 
 

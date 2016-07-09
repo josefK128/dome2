@@ -4,7 +4,137 @@ System.register([], function(exports_1, context_1) {
     return {
         setters:[],
         execute: function() {
-            exports_1("default","\n<div id=\"narrative\" class=\"mediaweb\" >\n  <div class=\"base\" [style.display]=\"basedisplay\" > \n<dome-base id=\"base\">\n  <!-- NOTE: a-frame causes runtime error at zone.js:1115  \n       Uncaught TypeError: Cannot assign to read only property \n       'detachedCallback' of object '#<a-node>' -->\n  <!-- <a-scene>\n    <a-box color=\"#6173F4\" width=\"4\" height=\"10\" depth=\"2\"></a-box>\n  </a-scene> -->\n</dome-base>\n<!-- <div style=\"background: url('images/Escher.png'); width:100%; height:100%; background-size:cover; background-repeat:no-repeat; background-position:center; opacity:0.7\"></div> -->\n</div>\n\n\n<!-- canvas-webgl for insertion into i3d-three.js 'singularity' via\n     procedural actions on Camera3d in component lifecycle phase-transitions\n     such as ngAfterViewInit() -->\n<!-- NOTE: dome-i3d is the ViewContainerRef for adding/replacing i3d-component\n     templates dynamically by i3d.ts fed by url-changes from narrative.ts \n     Templates are inserted just under <dome-i3d></dome-i3d> -->\n<div  [style.display]=\"i3ddisplay\" >\n<canvas id=\"3D\" class=\"space\" >\n</canvas> \n<dome-i3d id=\"i3d\" >\n</dome-i3d>\n</div><!-- hide -->\n\n\n<!-- 2D: svg plane optionally synchronized to 3D as HUD\n     viewBox creates a new coordinate system for the (visible) viewport\n     of children of svg.\n     NOTE: coordinates of elements range from 0 to 100 in x and y.\n     The viewBox defines a cell in an infinite coordinate space.\n     Since the viewport is anchored at (0,0) and is 100x100\n     units exactly match the viewport units 100vw x 100vh.\n     NOTE: children will scale as the window-viewport is re-sized.\n     aspect ratio clipping and justification are specified in \n     preserveAspectRatio. The default preserveAspectRatio is \n     mid-x mid-y and scales in this manner but does not crop\n     In order to keep a .stage 100x100 in vector space coordinates\n     for all viewport dimensions preserveAspectRatio = 'none'. -->\n<!-- elements in defs are prototypes able to re-used\n     their values are added to the values of the 'used' elements\n     thus it is easiest if their values are set to zero\n     they are not themselves displayed -->\n\n<!-- NOTE: original <svg>...</svg> i2d scene is never cleared\n     by ViewContainerRef.clear() - but it is not seen again unless\n     an empty template is inserted under <dome-i2d></dome-i2d>\n-->\n<div id=\"2D\" class=\"stage\" [style.display]=\"i2ddisplay\" > \n<dome-i2d></dome-i2d>\n<svg xmlns=\"http://www.w3.org/2000/svg\" \n     xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n     preserveAspectRatio=\"none\" \n     id=\"s\" \n     width=\"100%\" height=\"100%\" \n     viewBox=\"-50, -50, 100, 100\"> \n\n\n  <!-- plane is stage& axes vector space - used for scaling/translating -->\n  <g id=\"plane\" >\n  <g id=\"zoom_plane\" >\n\n    <g id=\"i2d\" >\n    </g>\n\n\n    <!-- 2D coordinate axes reference -->\n    <!-- turn on/off via top-left UI radio button -->\n    <!-- NOTE!!!!! correction in this case: should be x=\"-1000\" y=\"1000\" -->\n    <g id=\"axes\" style=\"display:block; pointer-events:none\" > \n      <!-- for i3Dmedia.org tosca and cav-localhost -->\n      <image x=\"-913.25\" y=\"-913.25\" width=\"2100\" height=\"2100\" xlink:href=\"./svg/axes.svg\"/>\n      <!-- NOTE: prev. correction for tosca - Nov20 2014 - no longer needed -->\n      <!-- <image x=\"-1005\" y=\"-1005\" width=\"2100\" height=\"2100\" xlink:href=\"./svg/axes.svg\"/> -->\n    </g><!-- axes -->\n\n  </g><!-- zoom_plane -->    \n  </g><!-- plane -->    \n</svg><!-- s -->\n</div><!-- 2D -->\n\n\n<!-- <div id=\"ui\" class=\"ui\" \n             style=\"z-index:100; x:0; y:0; pointer-events:auto; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, -30%)\"> -->\n<div id=\"display\" class=\"ui\" style=\"z-index:100; x:0; y:0; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, -30%)\" >\n  <label>\n    <input type=\"checkbox\" checked=\"config.controlstates['ui']\" (change)=\"changeControl('ui')\">ui \n  </label>\n  <div [style.display]=\"uidisplay\" > \n\n  <!-- controls -->\n  <div *ngFor=\"let c of config.controls\" > \n    <label>\n      <input type=\"checkbox\" [ngModel]=\"controlstates[c]\" (change)=\"changeControl(c)\">{{c}} \n    </label>\n  </div>\n\n  <!-- scenes -->\n  <br/>\n  <div *ngFor=\"let s of config.scenes\" > \n    <label>\n      <input type=\"checkbox\" [ngModel]=\"scenestates[s]\" (change)=\"changeState(config.scenepaths[s])\">{{s}} \n    </label>\n  </div> \n\n  <!-- <div *ngFor=\"let s of config.scenes\" style=\"scale(0.5)\" >\n    <span>\n      <input type=\"button\" (click)=\"changeScene(s)\">{{s}}\n    </span> \n  </div> \n  <div style=\"padding-left:3%\" ><font color=\"green\">{{current_scene}}</font></div> -->\n  \n  <!-- three.js fps -->\n  <div id=\"stats\"  [style.display]=\"fpsdisplay \"style=\"position:absolute; transform:scaleY(0.85) translateY(5%) scaleX(0.7) translateX(-20%)\"></div>\n\n  <br/><br/>\n  <dome-ui>\n  </dome-ui>\n  </div><!-- hide -->\n</div><!--ui-->\n\n<!-- to run component constructors -->\n<dome-scene></dome-scene>\n<dome-shot></dome-shot>\n\n</div><!--narrative-->\n");
+            exports_1("default",`
+<div id="narrative" class="mediaweb" >
+  <div class="base" [style.display]="display['base']" > 
+<dome-base id="base">
+  <!-- NOTE: a-frame causes runtime error at zone.js:1115  
+       Uncaught TypeError: Cannot assign to read only property 
+       'detachedCallback' of object '#<a-node>' -->
+  <!-- <a-scene>
+    <a-box color="#6173F4" width="4" height="10" depth="2"></a-box>
+  </a-scene> -->
+</dome-base>
+<!-- <div style="background: url('images/Escher.png'); width:100%; height:100%; background-size:cover; background-repeat:no-repeat; background-position:center; opacity:0.7"></div> -->
+</div>
+
+
+<!-- canvas-webgl for insertion into i3d-three.js 'singularity' via
+     procedural actions on Camera3d in component lifecycle phase-transitions
+     such as ngAfterViewInit() -->
+<!-- NOTE: dome-i3d is the ViewContainerRef for adding/replacing i3d-component
+     templates dynamically by i3d.ts fed by url-changes from narrative.ts 
+     Templates are inserted just under <dome-i3d></dome-i3d> -->
+<div  [style.display]="display['i3d']" >
+<canvas id="3D" class="space" >
+</canvas> 
+<dome-i3d id="i3d" >
+</dome-i3d>
+</div><!-- hide -->
+
+
+<!-- 2D: svg plane optionally synchronized to 3D as HUD
+     viewBox creates a new coordinate system for the (visible) viewport
+     of children of svg.
+     NOTE: coordinates of elements range from 0 to 100 in x and y.
+     The viewBox defines a cell in an infinite coordinate space.
+     Since the viewport is anchored at (0,0) and is 100x100
+     units exactly match the viewport units 100vw x 100vh.
+     NOTE: children will scale as the window-viewport is re-sized.
+     aspect ratio clipping and justification are specified in 
+     preserveAspectRatio. The default preserveAspectRatio is 
+     mid-x mid-y and scales in this manner but does not crop
+     In order to keep a .stage 100x100 in vector space coordinates
+     for all viewport dimensions preserveAspectRatio = 'none'. -->
+<!-- elements in defs are prototypes able to re-used
+     their values are added to the values of the 'used' elements
+     thus it is easiest if their values are set to zero
+     they are not themselves displayed -->
+
+<!-- NOTE: original <svg>...</svg> i2d scene is never cleared
+     by ViewContainerRef.clear() - but it is not seen again unless
+     an empty template is inserted under <dome-i2d></dome-i2d>
+-->
+<div id="2D" class="stage" [style.display]="display['i2d']" > 
+<dome-i2d></dome-i2d>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:dome="http://i3Dmedia.org/2016/dome"
+     preserveAspectRatio="none" 
+     id="s" 
+     width="100%" height="100%" 
+     viewBox="-50, -50, 100, 100"> 
+
+
+  <!-- plane is stage& axes vector space - used for scaling/translating -->
+  <g id="plane" >
+  <g id="zoom_plane" >
+
+    <g id="i2d" >
+    </g>
+
+
+    <!-- 2D coordinate axes reference -->
+    <!-- turn on/off via top-left UI radio button -->
+    <!-- NOTE!!!!! correction in this case: should be x="-1000" y="1000" -->
+    <g id="axes" style="display:block; pointer-events:none" > 
+      <!-- for i3Dmedia.org tosca and cav-localhost -->
+      <image x="-913.25" y="-913.25" width="2100" height="2100" xlink:href="./svg/axes.svg"/>
+      <!-- NOTE: prev. correction for tosca - Nov20 2014 - no longer needed -->
+      <!-- <image x="-1005" y="-1005" width="2100" height="2100" xlink:href="./svg/axes.svg"/> -->
+    </g><!-- axes -->
+
+  </g><!-- zoom_plane -->    
+  </g><!-- plane -->    
+</svg><!-- s -->
+</div><!-- 2D -->
+
+
+<!-- <div id="ui" class="ui" 
+             style="z-index:100; x:0; y:0; pointer-events:auto; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, -30%)"> -->
+<div id="display" class="ui" style="z-index:100; x:0; y:0; width:16vw; height:70vh; transform:scaleY(0.6) translate(3%, -30%)" >
+  <label>
+    <input type="checkbox" checked="config.controlstates['ui']" (change)="changeControl('ui')">ui 
+  </label>
+  <div [style.display]="display['ui']" > 
+
+  <!-- controls -->
+  <div *ngFor="let c of config.controls" > 
+    <label>
+      <input type="checkbox" [ngModel]="controlstates[c]" (change)="changeControl(c)">{{c}} 
+    </label>
+  </div>
+
+  <!-- scenes -->
+  <br/>
+  <div *ngFor="let s of config.scenes" > 
+    <label>
+      <input type="checkbox" [ngModel]="scenestates[s]" (change)="changeState(config.scenepaths[s])">{{s}} 
+    </label>
+  </div> 
+
+  <!-- <div *ngFor="let s of config.scenes" style="scale(0.5)" >
+    <span>
+      <input type="button" (click)="changeScene(s)">{{s}}
+    </span> 
+  </div> 
+  <div style="padding-left:3%" ><font color="green">{{current_scene}}</font></div> -->
+  
+  <!-- three.js fps -->
+  <div id="stats"  [style.display]="display['fps']" style="position:absolute; transform:scaleY(0.85) translateY(5%) scaleX(0.7) translateX(-20%)"></div>
+
+  <br/><br/>
+  <dome-ui>
+  </dome-ui>
+  </div><!-- hide -->
+</div><!--ui-->
+
+<!-- to run component constructors -->
+<dome-scene></dome-scene>
+<dome-shot></dome-shot>
+
+</div><!--narrative-->
+`);
         }
     }
 });

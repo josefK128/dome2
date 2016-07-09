@@ -24,28 +24,27 @@ System.register(['@angular/core', '../configs/@config'], function(exports_1, con
                 _config_1 = _config_1_1;
             }],
         execute: function() {
-            Queue = (function () {
-                function Queue(cfg) {
+            let Queue = class Queue {
+                constructor(cfg) {
                     this.config = cfg;
                     this.fifo = [];
                     this.ready = true;
                 }
-                Queue.prototype.push = function (s) {
+                push(s) {
                     this.fifo.push(s);
-                };
-                Queue.prototype.pop = function () {
+                }
+                pop() {
                     return (this.fifo.length > 0 ? this.fifo.shift() : undefined);
-                };
-                Queue.prototype.peek = function () {
+                }
+                peek() {
                     return (this.fifo.length > 0 ? this.fifo[0] : undefined);
-                };
-                Queue = __decorate([
-                    core_1.Injectable(),
-                    __param(0, core_1.Inject(_config_1.CONFIG)), 
-                    __metadata('design:paramtypes', [Object])
-                ], Queue);
-                return Queue;
-            }());
+                }
+            };
+            Queue = __decorate([
+                core_1.Injectable(),
+                __param(0, core_1.Inject(_config_1.CONFIG)), 
+                __metadata('design:paramtypes', [Object])
+            ], Queue);
             exports_1("Queue", Queue);
         }
     }

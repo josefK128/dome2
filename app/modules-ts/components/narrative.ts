@@ -78,16 +78,8 @@ export class Narrative {
   substates:string[];
   targets:Object;
 
-  // show/hide substates by display:block/display:none
-  uidisplay:string;
-  i2ddisplay:string;
-  i3ddisplay:string;
-  basedisplay:string;
-  fpsdisplay:string;
-  cspheredisplay:boolean;
-  keydisplay:boolean;
-  filldisplay:boolean;
-  backdisplay:boolean;
+  // show/hide substates by display:block/display:none or visible:t/f-on/off
+  display:Object={};
 
   // state -> previous state
   current_scene:string;
@@ -148,15 +140,15 @@ export class Narrative {
     this.targets['templatecache'] = templatecache;
 
     // display
-    this.uidisplay = (this.controlstates['ui'] ? 'block' : 'none');
-    this.i2ddisplay = (this.controlstates['i2d'] ? 'block' : 'none');
-    this.i3ddisplay = (this.controlstates['i3d'] ? 'block' : 'none');
-    this.basedisplay = (this.controlstates['base'] ? 'block' : 'none');
-    this.fpsdisplay = (this.controlstates['fps'] ? 'block' : 'none');
-    this.cspheredisplay = (this.controlstates['csphere'] ? true : false);
-    this.keydisplay = (this.controlstates['key'] ? true : false);
-    this.filldisplay = (this.controlstates['fill'] ? true : false);
-    this.backdisplay = (this.controlstates['back'] ? true : false);
+    this.display['ui'] = (this.controlstates['ui'] ? 'block' : 'none');
+    this.display['i2d'] = (this.controlstates['i2d'] ? 'block' : 'none');
+    this.display['i3d'] = (this.controlstates['i3d'] ? 'block' : 'none');
+    this.display['base'] = (this.controlstates['base'] ? 'block' : 'none');
+    this.display['fps'] = (this.controlstates['fps'] ? 'block' : 'none');
+    this.display['csphere'] = (this.controlstates['csphere'] ? 'on' : 'off');
+    this.display['key'] = (this.controlstates['key'] ? 'on' : 'off');
+    this.display['fill'] = (this.controlstates['fill'] ? 'on' : 'off');
+    this.display['back'] = (this.controlstates['back'] ? 'on' : 'off');
 
     // state
     this.current_scene = config.opening_scene;
@@ -191,8 +183,13 @@ export class Narrative {
       // scene - initial 'opening' scene is not revisitable! (default=true)
       // if a try is made to go back to opening go to state 1 which
       // is the first non-'opening' scene chosen
+      // 3rd arg ('init_scene') has default value true => initialize the scene,
+      // i.e turn 'on'/'off' csphere and each light according to 
+      // model.visibility settings - exp. model.visibility['fill'] is 'on' 
+      // Thus back/fwd return to their initial scene states, despite the state
+      // of the controls in the 'previous' scene.
       if(path !== this.config.scenepaths['opening']){
-        this.changeState(path, false);
+        this.changeState(path, false, false);
       }else{
         window.history.go(1);
       }
@@ -203,82 +200,63 @@ export class Narrative {
 
   // change appearance of display substates and controls
   changeControl(control:string, val?:string){
+    var actor;
 
     // ignore change on non-existent control
-    console.log(`narrative.changeControl(${control}) val? = ${val}`);
-    console.log(`this.controlstates[${control}] = ${this.controlstates[control]}`);
-    if(this.controlstates[control] !== undefined){
-      // action changeState(path, change_location)(default)
-      // value ('on'/'off')
-      if(val){
-        // set checkbox ('on' => checked(true),  'off' => unchecked(false))
-        this.controlstates[control] = (val === 'on' ? true : false);
-        console.log(`after change: ${control} on is ${this.controlstates[control]}`);
-        return;
-      }
+    console.log(`narrative.changeControl(${control}) val = ${val}`);
+    console.log(`controlstates[${control}] = ${this.controlstates[control]}`);
+    if(this.controlstates[control] === undefined){
+      console.log(`controlstates[${control}] is undefined!`);
+      return;
+    }
 
-      // from ui
-      console.log(`toggling controlstates[${control}]`);
+
+    // [1] val => called by action {t:'narrative' f:'changeControl' a:[c,val]} 
+    // or from init_scene in changeState -  val is 'on'/'off' so translate 
+    // val = 'on' to controlstates[control] = true and 'off' to false
+    // [2] no val => checkbox toggle => toggle controlstates[control'] boolean 
+    if(val){
+      // set checkbox ('on' => checked(true),  'off' => unchecked(false))
+      this.controlstates[control] = (val === 'on' ? true : false);
+    }else{
       this.controlstates[control] = !this.controlstates[control];
-      switch(control){
-        // string val - 'block'/'none' 
-        case 'ui':
-          console.log(`before: this.uidisplay = ${this.uidisplay}`);
-          this.uidisplay = (this.controlstates['ui'] ? 'block' : 'none');
-          console.log(`after: this.uidisplay = ${this.uidisplay}`);
-          break;
-        case 'i2d':
-          console.log(`before: this.i2ddisplay = ${this.i2ddisplay}`);
-          this.i2ddisplay = (this.controlstates['i2d'] ? 'block' : 'none');
-          console.log(`after: this.i2ddisplay = ${this.i2ddisplay}`);
-          break;
-        case 'i3d':
-          console.log(`before: this.i3ddisplay = ${this.i3ddisplay}`);
-          this.i3ddisplay = (this.controlstates['i3d'] ? 'block' : 'none');
-          console.log(`after: this.i3ddisplay = ${this.i3ddisplay}`);
-          break;
-        case 'base':
-          console.log(`before: this.basedisplay = ${this.basedisplay}`);
-          this.basedisplay = (this.controlstates['base'] ? 'inline' : 'none');
-          console.log(`after: this.basedisplay = ${this.basedisplay}`);
-          break;
-        case 'fps':
-          console.log(`before: this.fpsdisplay = ${this.fpsdisplay}`);
-          this.fpsdisplay = (this.controlstates['fps'] ? 'inline' : 'none');
-          console.log(`after: this.fpsdisplay = ${this.fpsdisplay}`);
-          break;
-  
-        // boolean  
-        case 'csphere':
-          console.log(`before: this.cspheredisplay = ${this.cspheredisplay}`);
-          this.cspheredisplay = this.controlstates['csphere']; // visible:boolean
-          console.log(`after: this.cspheredisplay = ${this.cspheredisplay}`);
-          this.camera3d.actor_visibility({name:'csphere', val:this.cspheredisplay}, true);
-          break;
-        case 'key':
-          console.log(`before: this.keydisplay = ${this.keydisplay}`);
-          this.keydisplay = this.controlstates['key']; // visible:boolean
-          console.log(`after: this.keydisplay = ${this.keydisplay}`);
-          this.camera3d.actor_visibility({name:'key', val:this.keydisplay}, true);
-          break;
-        case 'fill':
-          console.log(`before: this.filldisplay = ${this.filldisplay}`);
-          this.filldisplay = this.controlstates['fill']; // visible:boolean
-          console.log(`after: this.filldisplay = ${this.filldisplay}`);
-          this.camera3d.actor_visibility({name:'fill', val:this.filldisplay},true);
-          break;
-        case 'back':
-          console.log(`before: this.backdisplay = ${this.backdisplay}`);
-          this.backdisplay = this.controlstates['back']; // visible:boolean
-          console.log(`after: this.backdisplay = ${this.backdisplay}`);
-          this.camera3d.actor_visibility({name:'back', val:this.backdisplay}, true);
-          break;
-  
-        default:
-          break;
-      }//existing control
-    }//ignore non-existing control
-  }//changeControls
+    }
+
+
+    // depending on the control may need to change display[control] (ui)
+    // or set the visibility of corresponding actors (csphere, key, fill, back)
+    switch(control){
+      case 'ui':
+      case 'i3d':
+      case 'i2d':
+      case 'base':
+      case 'fps':
+        console.log(`before: display[${control}] = ${this.display[control]}`);
+        this.display[control] = (this.controlstates[control] ? 'block':'none');
+        console.log(`after: display[${control}] = ${this.display[control]}`);
+        break;
+
+      case 'csphere':
+      case 'key':
+      case 'fill':
+      case 'back':
+        actor = this.camera3d.actor(control);
+        console.log(`\nbefore: display[${control}] = ${this.display[control]}`);
+        console.log(`reportActors = ${this.camera3d.reportActors()}`);
+        this.display[control] = (this.controlstates[control] ? 'on' : 'off');
+        console.log(`after: display[${control}] = ${this.display[control]}`);
+        if(control === 'csphere'){
+          actor.material.visible = this.controlstates['csphere'];
+        }else{
+          actor.visible = this.controlstates[control];
+        }
+        console.dir(actor);
+        break;
+
+      default:
+        console.log(`unrecognized control = ${control} ?!`);
+    }//switch
+  }//changeControl
 
 
   // method to be called by action invoking a dynamic shot - shot is either:
@@ -302,8 +280,8 @@ export class Narrative {
     pa.pop();
     path = pa.join('/') + `/shot${this.shotindex++}:` + JSON.stringify(shot);
     console.log(`setShot: new absolute path = ${path}`);
-    // changeState(new-path, change-location)
-    this.changeState(path, true);
+    // changeState(new-path, change-location, init-scene)
+    this.changeState(path, true, false);
   }
 
 
@@ -334,8 +312,8 @@ export class Narrative {
     }
     path = dpa.join(':');
     console.log('setSubstates: changing state to absolute-path = ${path}');
-    // changeState(new-path, change-location)
-    this.changeState(path, true);
+    // changeState(new-path, change-location, init-scene)
+    this.changeState(path, true, false);
   }
 
 
@@ -345,18 +323,26 @@ export class Narrative {
   // in the path argument.
   // Also, the path appears in address bar and is available from state service
   changeState(path:string, 
-              change_location:boolean = true){
+              change_location:boolean = true,
+              init_scene:boolean = true) {
 
-    console.log(`\n\n\nchangeState! change_location = ${change_location}`);
+    var pstate:Object = {},     // previous state
+        substates:Object = {}; // substate current&prev templatename modelname
+
+
+    console.log(`\n\n\nchangeState! change_location = ${change_location} init_scene = ${init_scene}`);
     console.log(`new path = ${path}`);
     console.log(`current_path = ${this.current_path}`);
+
 
     // check substate changes only if path change => >=1 substate change
     if(path !== this.current_path){
       this.speech.deutsch("ein neuer zustand aufgetreten");
-      let pstate = this.current_state;  // save current state as previous
+
+      // save current state as previous - pstate
+      pstate = this.current_state; 
       
-      // update state
+      // update state and path
       this.current_state = this.state.parse(path);           // new state
       this.current_path = path;                               // new path
 
@@ -369,6 +355,31 @@ export class Narrative {
           this.scenestates[s] = false;
         }
         this.scenestates[this.current_scene] = true;
+      }
+
+      // sync ui control if 'init_scene' is true (default), in the case of
+      // changeState being called to create a new scene (not fwd-back), 
+      // initialize the html render of ui, i2d, i3d, base and fps using
+      // css display = 'block'/'none'
+      if(init_scene === true){
+        let val:string;
+        for(let c of Object.keys(this.config.controlstates)){
+          switch(c){
+            case 'ui':
+            case 'i3d':
+            case 'i2d':
+            case 'base':
+            case 'fps':
+              val = this.config.controlstates[c] ? 'on' : 'off';
+              console.log(`${c} display = ${val}`);
+              this.changeControl(c, val);
+              break;
+ 
+            // skip csphere, key, fill, back also in config.controlstates
+            // these are initialized in I3d.changeState()
+            default: 
+          }
+        }
       }
 
       // change address bar and register state in browser history.
@@ -391,113 +402,29 @@ export class Narrative {
       }
 
 
-      // load substate component if either template or model has changed
+      // prepare substates objects
       for(let s of this.substates){
-        let t = this.current_state[s]['t'];
-        let m = this.current_state[s]['m'];
-        let tp = pstate[s]['t'];
-        let mp = pstate[s]['m'];
+        substates[s] = {};
+        substates[s]['t'] = this.current_state[s]['t'];
+        substates[s]['m'] = this.current_state[s]['m'];
+        substates[s]['tp'] = pstate[s]['t'];
+        substates[s]['mp'] = pstate[s]['m'];
+      }
 
-        console.log(`substate = ${s}  t = ${t}  tp = ${tp}`); 
-        console.log(`substate = ${s}  m = ${m}  mp = ${mp}`); 
-
-
-        // if either a new template-component or even just a new model for the
-        // present template-component, must freshly load the template-component
-        // and apply the model.
-        // NOTE: for any substate, say 'i3d' for exp., only 'i3d' actors can be
-        // animated by a shot since there is no guarantee of other substates
-        // actors being loaded on ngAfterViewInit of 'i3d' composite
-        // template-component, which is dynamically loaded by I3d.
-        // Simultaneous sot-animations in two substates are not guaranteed to
-        // be synchronized - but probably are perceptually synchronous.
-        // NOTE: all animations are done b the animation service in the phase
-        // transition ngAfterViewInit of the dynamically loaded template 
-        // component - which guarantees all branch components are loaded before
-        // the shot-animation begins.
-        if((t !== tp) || (m !== mp)){
-          switch(s){
-            case 'i3d':
-              // 'i3d' modelname here does not require use of the State service
-              let i3dmodelname = this.current_state['i3d']['m'];
-              console.log(`i3dmodelname = ${i3dmodelname}`);
-              let i3dtemplatename = this.current_state['i3d']['t'];
-              console.log(`i3dtemplatename = ${i3dtemplatename}`);
-              let i3dmodel = this.models.get(['i3d', i3dtemplatename, i3dmodelname]);
-
-              // new scene - procedural (i3dscene) and/or declarative
-              console.log('\n\n\n\n ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-              console.log(`i3dtemplatename = ${t} i3dmodel = ${i3dmodel}`);
-              this.camera3d.place(t, i3dmodel);
-
-              // runs any i3d animation associated with i3dmodel['shot'] 
-              // runs Animation.perform(shot={}) in ngAfterViewInit for
-              // dynamically loaded composite template-component (exp: 'space') 
-              I3d.changeState(t);
-              break;
-
-            case 'i2d':
-            this.camera2d.place(this);  // send narrative ref to Camera2d
-              // runs any i2d animation associated with i2dmodel['shot'] 
-              // runs Animation.perform(shot={}) in ngAfterViewInit for
-              // dynamically loaded composite template-component 
-              I2d.changeState(t);
-              break;
-
-            case 'base':
-              // runs any base animation associated with basemodel['shot'] 
-              // runs Animation.perform(shot={}) in ngAfterViewInit for
-              // dynamically loaded composite template-component 
-              Base.changeState(t);
-              break;
-
-            case 'ui':
-              // runs any ui animation associated with uimodel['shot'] 
-              // runs Animation.perform(shot={}) in ngAfterViewInit for
-              // dynamically loaded composite template-component 
-              Ui.changeState(t);
-              break;
-
-            case 'scene':
-              // send m:string = score which is: 
-              // (1) a scorename, OR
-              // (2) a JSON-stringification of a javascript score array
-              // The javascript score array is found in either case and sent via
-              // Mediator.perform(score={}) which queues the score actions and
-              // checks periodically to fire narrative.exec(action) when an
-              // an action relative-timestamp is exceeded by the present
-              // relative clock time. 
-              if(m.length > 0){    // if non-empty score
-                // Scene will execute Mediator.perform(m);
-                Scene.changeState(t,m);
-              }
-              break;
-
-            case 'shot':
-              // runs dynamic shot-animations via narrative.setShot(shot). 
-              // NOTE: animations are run before any new template-components
-              // loaded, so shot-animations should use ONLY  previously loaded 
-              // actors! (actors loaded in templates during previous states)
-              // Generally the path used for dynamic shot-animations is
-              // '/////<shot> where <shot> is a string. Possibly the path
-              // could include non-'' path-substates which then load substate
-              // template-components which are NOT animated by <shot>
-              // NOTE: <shot> is either 
-              // (1) shotname 't:m' or 
-              // (2) a JSON serialization of a shot-object {...}
-              // If (1) get shot={} via models.get(['shot',t,m])
-              // If (2) get shot={} via JSON.parse(<shot>)
-              // Then for either (1) or (2) run Animation.perform(shot={})
-              if(m.length > 0){    // if non-empty shot-animation
-                Shot.changeState(t,m);
-              }
-              break;
-
-            default:
-              console.log(`substate ${s} is unrecognized ?!`);
-          }
-        }//t or m delta  
-      }//substates 
+      // wait for substates to initialize before executing shot/animation
+      // Each substate changeState function returns a Promise
+      Promise.all([
+        Scene.changeState(substates['scene']),
+        I3d.changeState(substates['i3d'], this, init_scene),
+        I2d.changeState(substates['i2d'], this),
+        Base.changeState(substates['base']),
+        Ui.changeState(substates['ui'])
+      ]).then((results) => {
+        console.log(`${results.join(':')} ready - begin shot/animation`);
+        Shot.changeState(substates['shot']);
+      }).catch((e) => {
+        console.log(`error!: ${e}`);
+      });
     }else{
       console.log(`no change of path! path = ${path}`);
     }
