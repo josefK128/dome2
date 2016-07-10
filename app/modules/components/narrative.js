@@ -299,7 +299,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                         // changeState being called to create a new scene (not fwd-back), 
                         // initialize the html render of ui, i2d, i3d, base and fps using
                         // css display = 'block'/'none'
-                        if (init_scene) {
+                        if (init_scene === true) {
                             let val;
                             for (let c of Object.keys(this.config.controlstates)) {
                                 switch (c) {

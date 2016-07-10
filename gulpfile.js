@@ -1,4 +1,4 @@
-// gulpfile.js - automated tasks
+// gulpfile.js - automated tasks - default ('gulp') is ts->js compile
 // run: $>gulp <taskname>
 //
 // * NOTE: There is no explicit task 'task-list'. 
@@ -27,54 +27,36 @@ require('gulp-task-list')(gulp);
 
 
 // directory/file glob-patterns
+// app - includes spec.ts unit-test files
 var tsFiles = [
   './app/modules-ts/*.ts', 
   './app/modules-ts/**/*.ts'
 ];
-var jsFiles = [
-  './app/modules/*.js', 
-  './app/modules/**/*.js'
-];
-var tsTestFiles = [
-  './test/modules-ts/*.spec.ts', 
-  './test/modules-ts/**/*.spec.ts' 
-];
-var jsTestFiles = [
-  './test/modules/*.js', 
-  './test/modules/**/*.js'
-];
-var tsTestMocks = [
-  './test/modules-ts/mocks/*.ts' 
-];
+
 // only for use by gulp docco - see README-docs-ts.md
 var tsjsFiles = [
   './app/modules-ts/*.ts.js', 
   './app/modules-ts/**/*.ts.js'
 ];
 var tsjsTestFiles = [
-  './test/modules-ts/*.spec.ts.js', 
-  './test/modules-ts/**/*.spec.ts.js', 
-  './test/modules-ts/**/*.ts.js' 
-];
-var testFiles = [
-  './test/modules/*.spec.js', 
-  './test/modules/**/*.spec.js' 
+  './test/*.spec.ts.js', 
+  './test/**/*.spec.ts.js' 
 ];
 var devFiles = [
   './gulpfile.js', 
 ];
-var templateFiles = [
-  './app/views/templates/*.ts', 
-  './app/views/templates/**/*.ts' 
-];
+
+// defs
 var svgDefsFiles = [
-  './app/views/svg/*.svg', 
-  './app/views/svg/**/*.svg' 
+  './app/svg/defs/*.svg', 
+  './app/svg/defs/**/*.svg' 
 ];
 var webglDefsFiles = [
-  './app/views/webgl/*.ts', 
-  './app/views/webgl/**/*.ts' 
+  './app/webgl/*.ts', 
+  './app/webgl/**/*.ts' 
 ];
+
+// styles
 var styleFiles = [
   './app/styles/scss/*.scss'
 ];
@@ -83,34 +65,22 @@ var styleFiles = [
 // write destinations
 var appDest_es5 = './app/modules_es5/',
     appDest_es6 = './app/modules/',
-    testDest_es5 = './test/modules_es5/',
-    testDest_es6 = './test/modules/',
-    mockDest_es5 = './test/modules_es5/mocks/',
+    unitDest_es5 = './test/modules_es5/',
+    unitDest_es6 = './test/modules/',
+    e2eDest_es5 = './e2e/modules_es5/',
+    e2eDest_es6 = './e2e/modules/',
+    mockDest_es5 = './test/modules_es5/mocks',
     mockDest_es6 = './test/modules/mocks',
     docDest = './docs/app',
     docTestDest = './docs/test',
     docDevDest = './docs/dev';
-    transpiledDest = './docs/transpiled/app';
-    transpiledTestDest = './docs/transpiled/test';
-    templatesDest = './app/modules-ts/views/';
+    defsDest = './app/modules-ts/views';
 
 
 
 // tasks
-
-// test - all
-gulp.task('test', () => {
-  exec('bash test.sh');
-});
-
-// test - unit tests only - doesn't require server startup
-gulp.task('test-unit', () => {
-  exec('bash test-unit.sh');
-});
-
-
-
 // task - ts2js: modules_ts/x.ts -> modules/x.js
+// NOTE: includes spec.ts unit-test files
 // NOTE: default task!
 gulp.task('default', ['ts2js']);
 gulp.task('ts2js', () => {
@@ -127,66 +97,30 @@ gulp.task('ts2js', () => {
 });
 
 
-// task - ts2js-test: 
-gulp.task('ts2js-test', ['ts2js-mock', 'ts2js-spec']);
 
-// task - ts2js-spec: test/modules_ts/x.spec.ts -> 
-// test/modules/x.spec.js
-gulp.task('ts2js-spec', () => {
-    var tsResult = gulp
-        .src(tsTestFiles)
-        .pipe(tslint())
-        .pipe(tslint.report("verbose"))
-        .pipe(typescript(tsconfig.compilerOptions));
-
-    if(tsconfig.compilerOptions.target === 'es5'){
-        return tsResult.js.pipe(gulp.dest(testDest_es5));
-    }
-    return tsResult.js.pipe(gulp.dest(testDest_es6));
-});
-// task - ts2js-spec: test/modules_ts/x.spec.ts -> 
-// test/modules/x.spec.js
-gulp.task('ts2js-spec-no-tslint', () => {
-    var tsResult = gulp
-        .src(tsTestFiles)
-        .pipe(typescript(tsconfig.compilerOptions));
-
-    if(tsconfig.compilerOptions.target === 'es5'){
-        return tsResult.js.pipe(gulp.dest(testDest_es5));
-    }
-    return tsResult.js.pipe(gulp.dest(testDest_es6));
+// test - unit and e2e - starts server for e2e 
+gulp.task('test', () => {
+  exec('bash test-unit.sh');
+  exec('bash test.sh');
 });
 
-// task - ts2js-mock: test/modules_ts/mocks/x.ts -> 
-// test/modules/mocks/x.js
-gulp.task('ts2js-mock', () => {
-    var tsResult = gulp
-        .src(tsTestMocks)
-        .pipe(tslint())
-        .pipe(tslint.report("verbose"))
-        .pipe(typescript(tsconfig.compilerOptions));
-
-    if(tsconfig.compilerOptions.target === 'es5'){
-        return tsResult.js.pipe(gulp.dest(mockDest_es5));
-    }
-    return tsResult.js.pipe(gulp.dest(mockDest_es6));
+// test - unit tests only - no server start 
+gulp.task('test-unit', () => {
+  exec('bash test-unit.sh');
 });
 
 
-// task - template-cache:<br>
-// concatenates individual html/svg/i3d templates into views/templates.html
-gulp.task('templates', ['svg-defs', 'webgl-defs'], () => {
-  gulp.src(templateFiles)
-    .pipe(concat('templates.ts'))
-    .pipe(gulp.dest(templatesDest));
-});
+
+// task - defs for webgl-textures and svg defs-files
+// concatenates individual i3d/svg defs into app/views/
+gulp.task('defs', ['svg-defs', 'webgl-defs']);
 
 // task - svg-defs:<br>
 // concatenates individual symbols, groups etc. into views/svg-defs.svg
 gulp.task('svg-defs', () => {
   gulp.src(svgDefsFiles)
     .pipe(concat('svg-defs.svg'))
-    .pipe(gulp.dest(templatesDest));
+    .pipe(gulp.dest(defsDest));
 });
 
 // task - webgl-defs:<br>
@@ -194,8 +128,9 @@ gulp.task('svg-defs', () => {
 gulp.task('webgl-defs', () => {
   gulp.src(webglDefsFiles)
     .pipe(concat('webgl-defs.ts'))
-    .pipe(gulp.dest(templatesDest));
+    .pipe(gulp.dest(defsDest));
 });
+
 
 
 // task - sass:<br>
@@ -209,30 +144,19 @@ gulp.task('sass', () => {
 });
 
 
+
 // task - docco:<br>
 // generate side-by-side: L comments with R source (configurable)
 // NOTE: docco does not process ts-files, so a temporary
 // ts.js-file is provided for docco-only processing usage
 // These files are in 'tsjsFiles' and 'tsjsTestFiles'
 gulp.task('docco', () =>{
-  gulp.src(jsFiles)
-    .pipe(docco())
-    .pipe(gulp.dest(transpiledDest));
-  gulp.src(jsTestFiles)
-    .pipe(docco())
-    .pipe(gulp.dest(transpiledTestDest));
   gulp.src(tsFiles)
     .pipe(docco())
     .pipe(gulp.dest(docDest));
-  gulp.src(tsTestFiles)
-    .pipe(docco())
-    .pipe(gulp.dest(docTestDest));
   gulp.src(tsjsFiles)
     .pipe(docco())
     .pipe(gulp.dest(docDest));
-  gulp.src(tsjsTestFiles)
-    .pipe(docco())
-    .pipe(gulp.dest(docTestDest));
   gulp.src(devFiles)
     .pipe(docco())
     .pipe(gulp.dest(docDevDest));
@@ -241,22 +165,19 @@ gulp.task('docco', () =>{
 
 // npm convenience tasks
 // task - npm-install
+// install all the packages listed in package.json
 gulp.task('npm-install', () =>{
-  //exec('npm outdated --dev --depth 0 --color', (err, stdout, stderr) => {
   exec('npm install', (err, stdout, stderr) => {
     if(err){console.log(err);}
   });
 });
 
-// task - npm-outdated:<br>
-// check for more recent dev-versions for node_modules
-// * NOTE: npm version > 1.6 default depth=0 and --dev=true no-color
-// * NOTE: --dev checks dev-dependencies also
-// * NOTE: --depth 0 ignores dependencies of loaded packages
-// * NOTE: --color displays non-breaking changes in red, breaking in yellow
-gulp.task('npm-outdated', () =>{
-  //exec('npm outdated --dev --depth 0 --color', (err, stdout, stderr) => {
-  exec('npm outdated', (err, stdout, stderr) => {
+// task - npm-update:<br>
+// check for more recent versions for node_modules.
+// update all the packages listed to the latest version 
+// specified by the tag config, and respecting semver.
+gulp.task('npm-update', () =>{
+  exec('npm update', (err, stdout, stderr) => {
     if(err){console.log(err);}
   });
 });
@@ -287,7 +208,7 @@ gulp.task('build-min', () => {
 gulp.task('generate', ['sass', 'templates', 'ts2js', 'build', 'build-min', 'docco']);
 
 
-
+// clean
 gulp.task('clean', (done) => {
     del(['./app/modules/*.js'], done);
     del(['./app/modules/**/*.js'], done);
