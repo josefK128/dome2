@@ -49,23 +49,6 @@ export class I3d {
         i3dmodel = i3d.models.get(['i3d', templatename, modelname]);
         template = i3d.templates.get(templatename);
 
-        // initialize the visibility of csphere and lights when init_scene=true
-        // In that case changeState is being called to create a new scene 
-        // (not fwd-back) 
-        // initialize the '3d-ui' (csphere,key,fill,back) according to 
-        // i3dmodel['scene']['visible'] 'on'/'off' settings
-        // i.e. set csphere & lights and their ui-controls 'on' or 'off'
-        // according to i3dmodel.scene.visible['csphere'] etc.
-        // NOTE: narrative.changeControl will set light.visible or 
-        // csphere.material.visible
-        if(init_scene){
-          for(let c of Object.keys(i3dmodel['scene']['visible'])){
-            console.log(`${c} visible = ${i3dmodel['scene']['visible'][c]}`);
-            narrative.changeControl(c, i3dmodel['scene']['visible'][c]);
-          }
-        }
-
-
 
         //place promise resolution functions on i3dmodel for use by dynamically
         // loaded composite-component after template initialization complete

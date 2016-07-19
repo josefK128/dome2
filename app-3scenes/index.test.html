@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner v2.4.1</title>
+  <base href="/dome2/app/"/> 
+
+  <!-- systemjs -->
+  <script src="../node_modules/systemjs/dist/system.src.js"></script>
+  <script src="./systemjs/systemjs-test-dynamic-ts.config.js"></script>
+  <!--<script src="systemjs/systemjs-static-es6.config.js"></script>-->
+
+  <link rel="shortcut icon" type="image/png" href="../node_modules/jasmine-core/images/jasmine_favicon.png">
+  <link rel="stylesheet" href="../node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
+
+  <script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+  <script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script> 
+  <script src="../node_modules/jasmine-core/lib/jasmine-core/boot.js"></script> 
+
+
+  <!-- angular2 scripts -->
+  <script src="../node_modules/zone.js/dist/zone.js"></script>
+  <script src="../node_modules/typescript/lib/typescript.js"></script>
+  <script src="../node_modules/reflect-metadata/Reflect.js"></script>
+
+  <!-- i3d/VR scripts -->
+  <script src="../node_modules/three.js/node_modules/three/three.js"></script>
+</head>
+
+
+<body>
+  <!-- <dome-narrative id='narrative'></dome-narrative> -->
+
+
+  <!-- import test-spec modules -->
+  <script>
+    "use strict";
+
+    // load all test-modules
+    Promise.all([
+        //'app',
+        'modules-ts/services/textures.spec'
+    ].map(x => System.import(x)))
+    .then((modules) => {
+      var p,q;
+      console.log('test modules loaded and running...');
+      console.log(`modules is array? = ${Array.isArray(modules)}`);
+      console.log(`running main test-function in each module`);
+      for(var p in modules){
+        console.log(`modules has property ${p}`);
+        for(var q in modules[p]){
+          console.log(`modules[${p}] has property ${q}`);
+        }
+        modules[p][q]();
+      }
+      // manually trigger jasmine tests
+      window.onload();
+     })
+    .catch((e) => {
+        console.log(`import of test modules caused error: ${e}`);
+    });
+  </script>
+
+</body>
+</html>

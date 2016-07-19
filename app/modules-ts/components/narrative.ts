@@ -1,4 +1,4 @@
-// narrative.ts - angular rc1.0
+// narrative.ts 
 import {Component, Injectable, Inject, provide} from '@angular/core';
 import {CORE_DIRECTIVES} from '@angular/common';
   
@@ -24,6 +24,7 @@ import {Camera2d} from '../services/camera2d';
 import {Animation} from '../services/animation';
 import {Speech} from '../services/speech';
 import {Cameras} from '../services/cameras';
+import {Textures} from '../services/textures';
 
 // composite template~components - dynamically loaded
 import {I3d} from './i3d/i3d';
@@ -59,7 +60,8 @@ import template from './narrative.html';
     provide(Camera2d, {useClass: Camera2d}),  
     provide(Animation, {useClass: Animation}),  
     provide(Speech, {useClass: Speech}),  
-    provide(Cameras, {useClass: Cameras})  
+    provide(Cameras, {useClass: Cameras}),  
+    provide(Textures, {useClass: Textures})  
   ],
   directives: [
     CORE_DIRECTIVES, 
@@ -189,7 +191,7 @@ export class Narrative {
       // Thus back/fwd return to their initial scene states, despite the state
       // of the controls in the 'previous' scene.
       if(path !== this.config.scenepaths['opening']){
-        this.changeState(path, false, false);
+        this.changeState(path, false);
       }else{
         window.history.go(1);
       }

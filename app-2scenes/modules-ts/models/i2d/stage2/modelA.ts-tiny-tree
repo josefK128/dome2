@@ -1,0 +1,43 @@
+//style:"font-family: calibri; font-size: 20; stroke: #00ff00; fill: #0000ff; writing-mode: tb; glyph-orientation-vertical: -90;",                                content:"SVG text styling"
+export var ModelA = { actors: {
+                        metaforms:[
+                          {    // root node
+                            id:'tree0',
+                            form:{type:'text',
+                              x:"20",
+                              y:"10",
+                              fill:"red",
+                              content:"svg abcd"
+},
+                            transform:{},
+                            children:[{
+                                id:'tree00',
+                                form:{type:'ellipse',
+                                  cx:"-30",
+                                  cy:"-20",
+                                  rx:"5",
+                                  ry:"10",
+                                  fill:"red",
+                                },
+                                transform:{},
+                                children:[]
+                              }
+                            ]
+                          },
+                          {    // root node
+                            id:'tree1',
+                            form:{type:'text',
+                              x:"-20",
+                              y:"-10",
+                              fill:"green",
+                              font_family:"calibri",
+                              font_size:"20",
+                              content:"SVG text styling"
+                            },
+                            transform:{},
+                            children:[]
+                          },
+                        ]//metaforms
+                      }//actors
+                    };//ModelA
+

@@ -32,5 +32,16 @@ export class Animation {
   perform(shot:Object){
     console.log(`Animation.perform: typeof shot = ${shot}`);
     console.log(`Animation.perform: shot = ${JSON.stringify(shot)}`);
+    // diagnostics
+    //this.camera3d.report_visibility();
+    console.log(`key.color.r = ${this.camera3d.light('key').color.r}`);
+    console.log(`key.color.g = ${this.camera3d.light('key').color.g}`);
+    console.log(`key.color.b = ${this.camera3d.light('key').color.b}`);
+    console.log(`fill.color.r = ${this.camera3d.light('fill').color.r}`);
+    console.log(`fill.color.g = ${this.camera3d.light('fill').color.g}`);
+    console.log(`fill.color.b = ${this.camera3d.light('fill').color.b}`);
+    console.log(`back.color.r = ${this.camera3d.light('back').color.r}`);
+    console.log(`back.color.g = ${this.camera3d.light('back').color.g}`);
+    console.log(`back.color.b = ${this.camera3d.light('back').color.b}`);
   }
 }

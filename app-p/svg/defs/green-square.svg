@@ -1,0 +1,6 @@
+<!-- these properties are not modifiable!
+     only additional properties are settable 
+     and the parent transform (x=, y=) of the origin
+     for the def elements x and y -->
+<rect id="green-square" width="10" height="10" fill="green" fill-opacity="0.5" />
+

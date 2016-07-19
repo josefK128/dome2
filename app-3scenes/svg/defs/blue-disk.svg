@@ -1,0 +1,6 @@
+<!-- these properties are not modifiable!
+     only additional properties are settable 
+     and the parent transform (x=, y=) of the origin
+     for the def elements x and y -->
+<circle id="blue-disk" r="10" fill="blue" fill-opacity="0.5" />
+

@@ -1,4 +1,4 @@
-// camera3d.ts - angular rc1.0
+// camera3d.ts 
 import {Injectable, Inject} from '@angular/core';
 // configuration
 import Config from '../configs/config.interface';
@@ -30,114 +30,174 @@ var record_shots:boolean = false;
 var matrixa = new THREE.Matrix4(),
     matrixb = new THREE.Matrix4();
 
-// permanent default csphere, camera and lights
-var csphere,
-    camera,
-    fov = 90.0,
-    near = 1,
-    far = 1000,
-    key,
-    fill,
-    back,
-    lighttypes;
+// scene, actors, billboards
+var scene:THREE.Scene = new THREE.Scene(),
+    actors:Object={},
+    billboards:Object={};
 
+// permanent default csphere, and possibly transient camera and lights
+var csphere:THREE.Mesh,
+    camera:THREE.Camera,
+    key:THREE.Light = new THREE.PointLight(0xffffff),
+    fill:THREE.Light = new THREE.PointLight(0xffffff),
+    back:THREE.Light = new THREE.PointLight(0xffffff);
 
-
-// init camera
-var set_camera = function(cam:Object){   
-
-   c3d.camera = cam['name'] ? c3d.cameras.get(cam['name']) || camera : camera;
-   c3d.camera.fov = cam['fov'] || fov;
-   c3d.camera.near = cam['near'] || near;
-   c3d.camera.far = cam['far'] || far;
-   c3d.camera.position.x = 
-     (cam['position'] && cam['position'][0] ? cam['position'][0] : 0.0);
-   c3d.camera.position.y = 
-     (cam['position'] && cam['position'][1] ? cam['position'][1] : 0.0);
-   c3d.camera.position.z = 
-     (cam['position'] && cam['position'][2] ? cam['position'][2] : 50.0);
-};
 
 
 // init lights
-var set_light = (type:string, light, form:Object) => {
-  var location;
+var set_light = (name:string, _l:Object={}) => {
+  var type:string = _l['type'] || 'pointlight',
+      lights:Object = {key:key, fill:fill, back:back};
 
-  console.log(`type=${type} lighttypes[${type}]=${lighttypes[type]} form:`);
-  console.dir(form);
-  for(let p of Object.keys(form)){
-    console.log(`p = ${p}`);
-    if(p === 'position' || p === 'target'){
-      if(p === 'target'){
-        light.target = new THREE.Object3D();
-        c3d.scene.add(light.target); // see Spotlight three.js docs
-      }
-      location = (p === 'target' ? light.target.position : light.position);
-      location.x = form[p][0] || 0.0;
-      location.y = form[p][1] || 0.0;
-      location.z = form[p][2] || 0.0;
-      continue;
-    }
-    if((p === 'type') && (form[p] !== lighttypes[type])){
-      if(form[p] === 'spotlight'){
-        light = new THREE.SpotLight(0x111111);
+  console.log(`\n\n %%% set_lights - name = ${name} type = ${type}`);
+  console.log('i3dmodel light params:');
+  console.dir(_l);
+  console.log(`_l['color'] = ${_l['color']}`);
+
+
+  // create light type (pointlight/spotlight)
+  switch(name){
+    case 'key':
+      if(type === 'spotlight'){
+        key = new THREE.SpotLight(_l['color']);
       }else{
-        light = new THREE.PointLight(0x111111);
+        key = new THREE.PointLight(_l['color']);
       }
-    }else{
-      light[p] = form[p];
-    }
+      for(let p in _l){
+        let val = _l[p];
+        if((p !== 'type') && (p !== 'position')){
+          if(p !== 'color'){
+            key[p] = val;
+          }
+        }else{
+          if(p === 'position'){
+            key.position.fromArray(val);
+          }
+        }
+      }
+      break;
+    case 'fill':
+      if(type === 'spotlight'){
+        fill = new THREE.SpotLight(_l['color']);
+      }else{
+        fill = new THREE.PointLight(_l['color']);
+      }
+      for(let p in _l){
+        let val = _l[p];
+        if((p !== 'type') && (p !== 'position')){
+          if(p !== 'color'){
+            fill[p] = val;
+          }
+        }else{
+          if(p === 'position'){
+            fill.position.fromArray(val);
+          }
+        }
+      }
+      break;
+    case 'back':
+      if(type === 'spotlight'){
+        back = new THREE.SpotLight(_l['color']);
+      }else{
+        back = new THREE.PointLight(_l['color']);
+      }
+      break;
+      for(let p in _l){
+        let val = _l[p];
+        if((p !== 'type') && (p !== 'position')){
+          if(p !== 'color'){
+            back[p] = val;
+          }
+        }else{
+          if(p === 'position'){
+            back.position.fromArray(val);
+          }
+        }
+      }
+
+    default:
+      console.log(`name ${name} is unrecognized`);
+  }
+
+  if(name === 'key'){
+    console.log(`key.color.r = ${key.color.r}`);
+    console.log(`key.color.g = ${key.color.g}`);
+    console.log(`key.color.b = ${key.color.b}`);
+  }
+  if(name === 'fill'){
+    console.log(`fill.color.r = ${fill.color.r}`);
+    console.log(`fill.color.g = ${fill.color.g}`);
+    console.log(`fill.color.b = ${fill.color.b}`);
+  }
+  if(name === 'back'){
+    console.log(`back.color.r = ${back.color.r}`);
+    console.log(`back.color.g = ${back.color.g}`);
+    console.log(`back.color.b = ${back.color.b}`);
   }
 };
 
 
 // init camera apparatus 
-var initializeCamerasphere = function(sd:Object = {}){
-  var csph = sd['camerasphere'] || c3d.config.camerasphere || {},
-      
-      // 1
-      form = csph['form'] || {},
-      ch = csph['children'] || {},
-      
-      // 2 - children: camera, key, fill, back - use form objects
-      cam = (ch['camera'] || {})['form'] || {},
-      k = (ch['key'] || {})['form'] || {},
-      f = (ch['fill'] || {})['form'] || {},
-      b = (ch['back'] || {})['form'] || {},
-      cs;
+var initializeCamerasphere = function(sd:Object = {}) {
+  // c3d.config
+  var csph_:Object = c3d.config.camerasphere,     // tmp
+      csphere_:Object = csph_['form'],
+      children_:Object = csph_['children'],       // tmp
+      camera_:Object = children_['camera']['form'],
+      key_:Object = children_['key']['form'],
+      fill_:Object = children_['fill']['form'],
+      back_:Object = children_['back']['form'];
+  // sd
+  var _csph:Object = sd['camerasphere'] || {},    // tmp    
+      _csphere:Object = _csph['form'] || csphere_,
+      children:Object = _csph['children'] || {},  // tmp
+      _camera:Object = (children['camera'] || {})['form'] || camera_,
+      _key:Object = (children['key'] || {})['form'] || key_,
+      _fill:Object = (children['fill'] || {})['form'] || fill_,
+      _back:Object = (children['back'] || {})['form'] || back_;
+  // csphere geometry and material
+  var sphereGeometry:THREE.Geometry,
+      sphereMaterial:THREE.Material;
 
-  // csphere - c3d.sphere is not presently necessary but retined for possible
-  // future use - as an alternate csphere (as c3d.camera is already used) 
-  c3d.csphere = csphere;
-  cs = csphere;
-  cs.geometry['radius'] = form['radius'] || cs.geometry['radius'] || 50.0;
-  cs.material['wireframe'] = form['wireframe'] || 
-    cs.material['wireframe'] || true;
-  cs.material['transparent'] = form['transparent'] || 
-    cs.material['transparent'] || true;
-  cs.material['opacity'] = form['opacity'] || cs.material['opacity'] || 0.5;
-  cs.material['color'].set(form['color'] || cs.material['color'] || "blue");
+
+  console.log('\n\n %%% initializeCamerasphere - sd:');
+  console.log(_key['color']);
+  console.log(_fill['color']);
+  console.log(_back['color']);
+  console.dir(_key);
+  console.dir(_fill);
+  console.dir(_back);
+
+
+  // final models are _csphere, _camera, _key, _fill and _back
+  // create csphere from config.camerasphere model
+  sphereGeometry = new THREE.SphereGeometry(_csphere['radius'] || 50, 20, 20);
+  sphereMaterial = new THREE.MeshBasicMaterial({
+    color: _csphere['color'] || 'blue',
+    wireframe: _csphere['wireframe'] || true,
+    transparent: _csphere['transparent'] || true,
+    opacity: _csphere['opacity'] || 0.5,
+    visible: _csphere['visible'] || true});
+  sphereMaterial.side = THREE.DoubleSide; 
+  csphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
 
   // camera
-  set_camera(cam);
+  camera = undefined;
+  if(_camera['name'] !== 'default'){
+    camera = c3d.cameras.get(_camera['name']);
+  }
+  camera = camera || new THREE.PerspectiveCamera(_camera['fov'] || 90.0,
+                                         window.innerWidth/window.innerHeight,
+                                         _camera['near'] || 1.0,
+                                         _camera['far'] || 1000.0);
+  camera.position.fromArray(_camera['position'] || [0,0,50]);
+
 
   // lights
-  set_light('key', key, k);
-  set_light('fill', fill, f);
-  set_light('back', back, b);
-
-
-  // add csphere to the scene - c3d.scene.name used as id in camera.place
-  // when scene was added as root of actors tree/list
-  c3d.addActorToScene('csphere', c3d.csphere, c3d.scene.name);
-
-  // add camera as child of csphere
-  c3d.addActorToScene('camera', c3d.camera, 'csphere');
-
-  // add lights as children of csphere
-  c3d.addActorToScene('key', key, 'csphere');
-  c3d.addActorToScene('fill', fill, 'csphere');
-  c3d.addActorToScene('back', back, 'csphere');
+  set_light('key', _key);
+  set_light('fill', _fill);
+  set_light('back', _back);
 };
 
 
@@ -147,8 +207,8 @@ var report_camera_world = function(){
     var cam_wp = new THREE.Vector3(),
         cam_up = new THREE.Vector3();
  
-    cam_wp.setFromMatrixPosition(c3d.camera.matrixWorld);
-    cam_up = c3d.csphere.localToWorld(c3d.camera.up); // destroys local camera.up !
+    cam_wp.setFromMatrixPosition(camera.matrixWorld);
+    cam_up = csphere.localToWorld(camera.up); // destroys local camera.up !
     console.log(`camera world position:`);
     console.dir(cam_wp);
     console.log(`camera world up is:`);
@@ -158,25 +218,25 @@ var report_camera_world = function(){
 // camera fov, position, rotation, up, and optional matrix information
 var report_camera = function(report_matrix:boolean=false):void {
     var i;
-    console.log("c3d.camera.fov is: " + c3d.camera.fov);
-    console.log("c3d.camera.position is: ");
-    console.log("x = " + c3d.camera.position.x);
-    console.log("y = " + c3d.camera.position.y);
-    console.log("z = " + c3d.camera.position.z);
-    console.log("c3d.camera.rotation is: ");
-    console.log("x = " + c3d.camera.rotation.x);
-    console.log("y = " + c3d.camera.rotation.y);
-    console.log("z = " + c3d.camera.rotation.z);
-    console.log("c3d.camera.rotation._order is: " + c3d.camera.rotation._order);
-    console.log("c3d.camera.up is: ");
-    console.log("x = " + c3d.camera.up.x);
-    console.log("y = " + c3d.camera.up.y);
-    console.log("z = " + c3d.camera.up.z);
+    console.log("camera.fov is: " + camera.fov);
+    console.log("camera.position is: ");
+    console.log("x = " + camera.position.x);
+    console.log("y = " + camera.position.y);
+    console.log("z = " + camera.position.z);
+    console.log("camera.rotation is: ");
+    console.log("x = " + camera.rotation.x);
+    console.log("y = " + camera.rotation.y);
+    console.log("z = " + camera.rotation.z);
+    console.log("camera.rotation._order is: " + camera.rotation._order);
+    console.log("camera.up is: ");
+    console.log("x = " + camera.up.x);
+    console.log("y = " + camera.up.y);
+    console.log("z = " + camera.up.z);
     if(report_matrix){
-      console.log("c3d.camera.matrix (in column-order): ");
-      for(i=0; i<c3d.camera.matrix.elements.length; i++){
-        console.log("c3d.camera.matrix.e[" + i + "] = " + 
-          c3d.camera.matrix.elements[i]);
+      console.log("camera.matrix (in column-order): ");
+      for(i=0; i<camera.matrix.elements.length; i++){
+        console.log("camera.matrix.e[" + i + "] = " + 
+          camera.matrix.elements[i]);
       }
     }
 };
@@ -214,8 +274,6 @@ export class Camera3d {
   transform3d:Transform3d;
   narrative:Narrative;
   canvas;
-  camera;
-  csphere;
   clearColor:number = 0x000000; // default - can be set by Camera3d.place()
   alpha:number = 0.0;          // default - can be set by Camera3d.place()
   fov:number = 90.0;          // default - can be set by Camera3d.place()
@@ -229,9 +287,6 @@ export class Camera3d {
   yaw:number = 0.0;       // examine-yaw (rotation of csphere around y-axis)
   roll:number = 0.0;      // roll - dynamic tracking
   renderer;
-  scene;
-  actors:Object={};
-  billboards:Object={};
   billboardsFace:boolean = false;
   billboardsTarget = new THREE.Vector3(); // world position of camera
   gl;
@@ -247,12 +302,7 @@ export class Camera3d {
               cameras:Cameras,
               transform3d:Transform3d){ 
 
-    var csph,
-        form,
-        cam,
-        sphereGeometry,
-        sphereMaterial;
-
+    console.log('\n\n\n^^^^^^^^^^^^^ Camera3d constructor !!!!');
     c3d = this;
     c3d.config = cfg;
     record_shots = c3d.config.record_shots; // faster conditional test
@@ -261,51 +311,34 @@ export class Camera3d {
     c3d.cameras = cameras;
     c3d.transform3d = transform3d;
 
-    // csphere and camera - brief references for long name-paths
-    csph = c3d.config.camerasphere;
-    form = csph.form;
-    cam = (csph['children'] || {})['camera'] || {};
 
-    // create csphere and camera
-    sphereGeometry = new THREE.SphereGeometry(form['r'] || 50, 20, 20);
-    sphereMaterial = new THREE.MeshBasicMaterial({
-      color: form['color'] || 'blue',
-      wireframe: form['wireframe'] || true,
-      transparent: form['transparent'] || true,
-      opacity: form['opacity'] || 0.5,
-      visible: form['visible'] || true});
-    sphereMaterial.side = THREE.DoubleSide; 
-    csphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    camera = new THREE.PerspectiveCamera(cam['fov'] || 90.0,
-                                         window.innerWidth/window.innerHeight,
-                                         cam['near'] || 1.0,
-                                         cam['far'] || 1000.0);
-    camera.position.set(0.0, 0.0, form['r'] || 50);
+    // init scene and children
+    scene = new THREE.Scene();  // initial  i3d scene - later, channels guide?
+    console.log(`opening scene is ${c3d.config.opening_scene}`);
+    c3d.addActorToScene(c3d.config.opening_scene, scene, null);
 
-    // create camera lights attached to csphere and their types state set
-    // NOTE:lights will be initialized (including color) in initialize_csphere
-    key = new THREE.SpotLight(0x111111);
-    fill = new THREE.SpotLight(0x111111);
-    back = new THREE.PointLight(0x111111);
-    lighttypes = {key: 'spotlight', fill: 'spotlight', back: 'pointlight'};
-
-    // init c3d.scene and children
-    c3d.scene = new THREE.Scene();  // initial empty scene - channels guide
-    c3d.addActorToScene(c3d.config.opening_scene, c3d.scene, null);
+    // initialize csphere, camera, key, fill and back
+    // no arg => use as model c3d.config.camerasphere
+    // results are written to closure vars csphere, camera, key, fill and back
+    initializeCamerasphere();
 
     // add csphere - enables ui for csphere
-    c3d.addActorToScene('csphere', csphere, 'opening');
+    c3d.addActorToScene('csphere', csphere, c3d.config.opening_scene);
+    console.log('added csphere');
 
     // add camera as child of csphere - done importantly in camera3d.place
-    // setting c3d.camera to camera other then camera3d closure 'camera'
-    // allows introduction of entirely new camera - here it is irrelevant
-    c3d.camera = camera;  
-    c3d.addActorToScene('camera', c3d.camera, 'csphere');
+    c3d.addActorToScene('camera', camera, 'csphere');
+    console.log('added camera');
 
     // add lights as children of csphere - enables ui for lights
+    console.log(`key = ${key}`);
+    console.dir(key);
     c3d.addActorToScene('key', key, 'csphere');
+    console.log('added key');
     c3d.addActorToScene('fill', fill, 'csphere');
+    console.log('added fill');
     c3d.addActorToScene('back', back, 'csphere');
+    console.log('added back');
 
 
 
@@ -323,16 +356,16 @@ export class Camera3d {
         case 56:
          if(e.altKey){     // alt => billboards
             // position and point the camera to the center of the scene
-            c3d.camera.position.x = 0;
-            c3d.camera.position.y = 0;
-            c3d.camera.position.z = 50;
-            c3d.camera.lookAt(c3d.scene.position);
+            camera.position.x = 0;
+            camera.position.y = 0;
+            camera.position.z = 50;
+            camera.lookAt(scene.position);
           }else{
             // position and point the camera to the center of the scene
-            c3d.camera.position.x = -40;
-            c3d.camera.position.y = 20;
-            c3d.camera.position.z = 100;
-            c3d.camera.lookAt(c3d.scene.position);
+            camera.position.x = -40;
+            camera.position.y = 20;
+            camera.position.z = 100;
+            camera.lookAt(scene.position);
           }
           break;
 
@@ -377,7 +410,7 @@ export class Camera3d {
           }else{            // l => camera
             if(e.shiftKey){
               // lookAt origin in absolute coords
-              c3d.camera.lookAt([0.0, 0.0, 0.0]);
+              camera.lookAt([0.0, 0.0, 0.0]);
              //log({t:'camera3d', f:'lookAt', a:[0.0,0.0,0.0]}); 
               if(record_shots){
                 c3d.mediator.record({t:'camera3d', f:'lookAt', a:[0.0,0.0,0.0]}); 
@@ -1034,36 +1067,66 @@ export class Camera3d {
   // initialize scene - 'place' camera in scene
   place(i3dtemplatename:string, i3dmodel:Object):void {
     var sd = i3dmodel['scene'],  // scene-descriptor 'options' object
-        i3dscene;               // possible procedural i3d-scene
+        i3dscene:THREE.Scene;   // possible procedural i3d-scene
 
 
     // diagnostics
     console.dir(i3dmodel);
 
     // clear actors and billboards associated with previous scene
-    if(c3d.scene){
-      console.log(`\n\n\n^^^^^^ breaking down c3d.scene ${c3d.scene.name}`); 
-      c3d.actors = {};
-      c3d.billboards = {};
+    if(scene){
+      console.log(`\n\n\n^^^^^^ breaking down scene ${scene.name}`); 
+      actors = {};
+      billboards = {};
       console.log(`after: c3d.reportActors = ${c3d.reportActors()}`);
     }
               
-    // set c3d.scene to procedural 'i3dscene' or to new empty scene
+    // set scene to procedural 'i3dscene' or to new empty scene
     if(sd['name']){              
       console.log(`procedural scene name = ${sd['name']}`);
       i3dscene = c3d.scenes.get(['i3d', sd['name']]);
     }
-    c3d.scene = i3dscene || (new THREE.Scene());
-    c3d.scene.name = i3dtemplatename || 'empty_scene';
+    scene = i3dscene || (new THREE.Scene());
+    scene.name = i3dtemplatename || 'empty_scene';
 
     // add scene as root of actors tree/list
-    console.log(`camera3d.place: c3d.scene.name = ${c3d.scene.name}`);
-    c3d.addActorToScene(c3d.scene.name, c3d.scene, undefined);
+    console.log(`camera3d.place: scene.name = ${scene.name}`);
+    c3d.addActorToScene(scene.name, scene, undefined);
+    scene.children.forEach((c) => {
+      console.log(`child of ${scene['name']} is ${c.name}`);
+    });
+    console.log(`new scene ${scene.name} actors = ${c3d.reportActors()}`);
 
-    // set properties of csphere, camera, and lights
+    // initialize csphere, camera, and lights using model sd
     initializeCamerasphere(sd);
     report_camera_world();
 
+    // add camera apparatus to scene and register individual parts as actors
+    // add csphere as child of scene
+    c3d.addActorToScene('csphere', csphere, scene);
+
+    // add camera as child of csphere 
+    c3d.addActorToScene('camera', camera, 'csphere');
+
+    // add lights as children of csphere 
+    c3d.addActorToScene('key', key, 'csphere');
+    c3d.addActorToScene('fill', fill, 'csphere');
+    c3d.addActorToScene('back', back, 'csphere');
+
+
+    // initialize the visibility of csphere and lights when init_scene=true
+    // In that case changeState is being called to create a new scene 
+    // (not fwd-back) 
+    // initialize the '3d-ui' (csphere,key,fill,back) according to 
+    // i3dmodel['scene']['visible'] 'on'/'off' settings
+    // i.e. set csphere & lights and their ui-controls 'on' or 'off'
+    // according to i3dmodel.scene.visible['csphere'] etc.
+    // NOTE: narrative.changeControl will set light.visible or 
+    // csphere.material.visible
+    for(let c of Object.keys(i3dmodel['scene']['visible'])){
+      console.log(`${c} visible = ${i3dmodel['scene']['visible'][c]}`);
+      c3d.narrative.changeControl(c, sd['visible'][c]);
+    }
 
     // initialize scene renderer - always full-size and transparent background
     // NOTE: transparent bg set by alpha:true arg for WebGLRenderer ctor
@@ -1077,7 +1140,7 @@ export class Camera3d {
 
 
     // actors added to new scene
-    console.log(`new scene ${c3d.scene.name} actors = ${c3d.reportActors()}`);
+    console.log(`new scene ${scene.name} actors = ${c3d.reportActors()}`);
     report_camera();
 
     // begin camera control animation - in sync with GSAP animation
@@ -1097,9 +1160,9 @@ export class Camera3d {
     }
 
     // animation update for directives registering update function via f=id
-//    if(c3d.scene['animations']){
-//      for(let f of Object.keys(c3d.scene['animations'])){
-//        c3d.scene['animations'][f]();
+//    if(scene['animations']){
+//      for(let f of Object.keys(scene['animations'])){
+//        scene['animations'][f]();
 //      }
 //    }
     requestAnimationFrame(c3d.animate);
@@ -1111,12 +1174,12 @@ export class Camera3d {
   // render scene using camera<br>
   // possibly orient billboards to face (lookAt) camera
   render() {
-//    if(c3d.billboardsFace){
-//      c3d.billboardsTarget.addVectors(csphere.position, camera.position);
-//      c3d.billboardsTarget.z *= zoom;  // world camera.pos.z follows the radius
+//    if(billboardsFace){
+//      billboardsTarget.addVectors(csphere.position, camera.position);
+//      billboardsTarget.z *= zoom;  // world camera.pos.z follows the radius
 //                                   // of csphere which corresponds to z*zoom
-//      Object.keys(c3d.billboards).forEach(function(id){
-//        c3d.billboards[id].lookAt(c3d.billboardsTarget);
+//      Object.keys(billboards).forEach(function(id){
+//        billboards[id].lookAt(billboardsTarget);
 //      });
 //    }
 //    if(c3d.stats){
@@ -1126,7 +1189,7 @@ export class Camera3d {
     if(c3d.stats){
       c3d.stats.update();
     }
-    c3d.renderer.render( c3d.scene, c3d.camera );
+    c3d.renderer.render( scene, camera );
   }
 
   // set_stats
@@ -1169,7 +1232,7 @@ export class Camera3d {
     if(c3d.config.unit_test){
       return a;
     }else{
-      c3d.camera.lookAt(new THREE.Vector3(a[0], a[1], a[2]));
+      camera.lookAt(new THREE.Vector3(a[0], a[1], a[2]));
       // result of narrative.setShot logs abs_url, delta_url and shot
       // The four values comprise an e2e_spec cell
       // The cell-shot is detected by utility 'e2e_specg' as a shot (matches
@@ -1183,12 +1246,12 @@ export class Camera3d {
   // no-arg default is to look at center of csphere - camerasphere
   lookAtId(id:string='csphere'){
     if(id === 'csphere'){
-      let v = c3d.csphere.position;
+      let v = csphere.position;
       let a = [v.x, v.y, v.z];
       if(c3d.config.unit_test){
         return a;
       }else{
-        c3d.camera.lookAt(v);
+        camera.lookAt(v);
         // see above
         c3d.narrative.setShot({"delta-t":"camera3d", "f":"lookAt", "a":{}});
       }
@@ -1196,8 +1259,8 @@ export class Camera3d {
     }
    
     // id other than 'csphere' should be present actor
-    if(c3d.actors[id]){
-      let v = c3d.actors[id].position;
+    if(actors[id]){
+      let v = actors[id].position;
       if(c3d.config.unit_test){
         let a;
         if(v){
@@ -1206,7 +1269,7 @@ export class Camera3d {
         return a;
       }else{
         if(v){
-          c3d.camera.lookAt(v);
+          camera.lookAt(v);
           c3d.narrative.setShot({"delta-t":"camera3d", "f":"lookAt", "a":id});
         }else{
           console.log(`!Camera3d.lookAt:actors[${id}].position is undefined`);
@@ -1253,17 +1316,17 @@ export class Camera3d {
     c3d.narrative.setShot(c3d.shot);
 
     // camera
-    c3d.camera.position.x = 0.0;
-    c3d.camera.position.y = 0.0;
-    c3d.camera.up.x = 0.0;
-    c3d.camera.up.y = 1.0;
-    c3d.camera.up.z = 0.0;
-    if(c3d.camera.fov !== c3d.fov){
-      c3d.camera.fov = c3d.fov;
-      c3d.camera.updateProjectionMatrix();
+    camera.position.x = 0.0;
+    camera.position.y = 0.0;
+    camera.up.x = 0.0;
+    camera.up.y = 1.0;
+    camera.up.z = 0.0;
+    if(camera.fov !== c3d.fov){
+      camera.fov = c3d.fov;
+      camera.updateProjectionMatrix();
     }
-    if(c3d.csphere.radius !== c3d.radius){          
-      c3d.csphere.radius = c3d.radius;     // radius is default 50 
+    if(csphere.radius !== c3d.radius){          
+      csphere.radius = c3d.radius;     // radius is default 50 
     }
 
     // dynamic trackers
@@ -1637,9 +1700,9 @@ export class Camera3d {
   // fly - animate (default dur=3.0)
   dollyflyTo(a) {  
     a.d = a.d || 3.0;
-    a.x = a.x || c3d.csphere.position.x;
-    a.y = a.y || c3d.csphere.position.y;
-    a.z = a.z || c3d.csphere.position.z;
+    a.x = a.x || csphere.position.x;
+    a.y = a.y || csphere.position.y;
+    a.z = a.z || csphere.position.z;
 
     // shot microstate-change
     c3d.shot = {delta: {
@@ -1660,9 +1723,9 @@ export class Camera3d {
     a.x = a.x || 0.0;
     a.y = a.y || 0.0;
     a.z = a.z || 0.0;
-    a.x = c3d.csphere.position.x + a.x; 
-    a.y = c3d.csphere.position.y + a.y; 
-    a.z = c3d.csphere.position.z + a.z; 
+    a.x = csphere.position.x + a.x; 
+    a.y = csphere.position.y + a.y; 
+    a.z = csphere.position.z + a.z; 
 
     // shot microstate-change
     c3d.shot = {delta: {
@@ -1681,9 +1744,9 @@ export class Camera3d {
 
   // cut - no animation (dur=0)
   dollycutTo(a) {  
-    a.x = a.x || c3d.csphere.position.x;
-    a.y = a.y || c3d.csphere.position.y;
-    a.z = a.z || c3d.csphere.position.z;
+    a.x = a.x || csphere.position.x;
+    a.y = a.y || csphere.position.y;
+    a.z = a.z || csphere.position.z;
 
     // shot microstate-change
     c3d.shot = {delta: {
@@ -1704,9 +1767,9 @@ export class Camera3d {
     a.x = a.x || 0.0;
     a.y = a.y || 0.0;
     a.z = a.z || 0.0;
-    a.x = c3d.csphere.position.x + a.x; 
-    a.y = c3d.csphere.position.y + a.y; 
-    a.z = c3d.csphere.position.z + a.z; 
+    a.x = csphere.position.x + a.x; 
+    a.y = csphere.position.y + a.y; 
+    a.z = csphere.position.z + a.z; 
 
     // shot microstate-change
     c3d.shot = {delta: {
@@ -1814,7 +1877,7 @@ export class Camera3d {
   // axis is Vector3 - will be normalized if not already
   translateAxisDistance(axis, d){
     axis.normalize();
-    c3d.csphere.translateOnAxis(axis, d);
+    csphere.translateOnAxis(axis, d);
   }
 
   // camera change with NO Substate change !!! - for studio usage only!
@@ -1825,7 +1888,7 @@ export class Camera3d {
     var roll = params.roll || 0.0;
 
     matrixa.makeRotationFromEuler(new THREE.Euler(pitch, yaw, roll));
-    c3d.csphere.applyMatrix(matrixa);
+    csphere.applyMatrix(matrixa);
   }
 
   // camera change with NO Substate change !!! - for studio usage only!
@@ -1834,7 +1897,7 @@ export class Camera3d {
   rotateAxisAngle(x,y,z, angle){
     var axis = new THREE.Vector3(x,y,z);
     axis.normalize();
-    c3d.csphere.rotateOnAxis(axis, angle);
+    csphere.rotateOnAxis(axis, angle);
   }
 
   // camera change with NO Substate change !!! - for studio usage only!
@@ -1854,7 +1917,7 @@ export class Camera3d {
     //examine_matrix(matrixa);
           
     // apply relative rotation-scale to csphere
-    c3d.csphere.applyMatrix(matrixa);
+    csphere.applyMatrix(matrixa);
     //examine_matrix(csphere.matrix);
   }
 
@@ -1876,16 +1939,16 @@ export class Camera3d {
     //  console.log(`params[${p}] = ${params[p]}`);
     //});
 
-    // examine initial c3d.csphere matrix
-    //examine_matrix(c3d.csphere.matrix);
+    // examine initial csphere matrix
+    //examine_matrix(csphere.matrix);
 
     // absolute translation - matrixb
     matrixb.makeTranslation(x, y, z);
     //examine_matrix(matrixb);
     
     // apply absolute translation to csphere
-    c3d.csphere.applyMatrix(matrixb);
-    //examine_matrix(c3d.csphere.matrix);
+    csphere.applyMatrix(matrixb);
+    //examine_matrix(csphere.matrix);
 
     // rotate-scale-translate (by x/y/z* scale)
     matrixa.makeRotationFromEuler(new THREE.Euler(pitch, yaw, roll));
@@ -1893,8 +1956,8 @@ export class Camera3d {
     //examine_matrix(matrixa);
           
     // apply relative rotation-scale to csphere
-    c3d.csphere.applyMatrix(matrixa);
-    examine_matrix(c3d.csphere.matrix);
+    csphere.applyMatrix(matrixa);
+    examine_matrix(csphere.matrix);
   }//transform - no substate change!
 
 
@@ -1914,11 +1977,9 @@ export class Camera3d {
   // the scene is an Object3d and is the root of the scenegraph tree
   addActorToScene(id:string, o3d:THREE.Object3d, pid:string){
 
-    console.log(`\nc3d.addActorToScene: id = ${id} o3d = ${o3d} pid = ${pid}`);
-
     // o3d is scene - not really needed but creates canonical root actor
-    if(o3d === c3d.scene){
-      c3d.actors[id] = o3d; // add scene as root with id i3d-templatename
+    if(o3d === scene){
+      actors[id] = o3d; // add scene as root with id i3d-templatename
       o3d.name = id; 
       console.log(`added scene with id = ${id} o3d.name = ${o3d.name}`);
       return true;
@@ -1926,8 +1987,8 @@ export class Camera3d {
 
     // if id is already present, begin replacement by removing the 
     // corresponding o3d from its parent in the tree, and from the actors list
-    for(let name of Object.keys(c3d.scene.children)){
-      console.log(`c3d.scene contains ${name} with val = ${c3d.scene[name]}`);
+    for(let name of Object.keys(scene.children)){
+      //console.log(`scene contains ${name} with val = ${scene[name]}`);
       if(name === id){
         console.log(`actor ${id} === ${name} is duplicate! did not add!`);
         c3d.removeActorFromScene(id);
@@ -1936,21 +1997,21 @@ export class Camera3d {
 
     // add new actor to parent in tree and to actors list
     o3d.name = id;
-    if(pid && c3d.actors[pid]){
-      c3d.actors[pid].add(o3d); // add to parent
+    if(pid && actors[pid]){
+      actors[pid].add(o3d); // add to parent
     }else{
-      c3d.scene.add(o3d);       // add as root to scene
+      scene.add(o3d);       // add as root to scene
     }
-    c3d.actors[id] = o3d;       // add node itself
+    actors[id] = o3d;       // add node itself
     o3d.updateMatrix(); //needed?
     console.log(`added actor ${id} = ${o3d} with pid = ${pid} to scene`);
-    console.log(`c3d.actors[${id}] = ${c3d.actors[id]}`);
+    //console.log(`actors[${id}] = ${actors[id]}`);
     return true;
   }
 
   // remove actor Object3d from the scene
   removeActorFromScene(id:string){
-    var node = c3d.actors[id],
+    var node = actors[id],
         p;
 
     if(node){
@@ -1958,21 +2019,21 @@ export class Camera3d {
         p = node.parent;
         p.remove(node);
       }else{
-        c3d.scene.remove(node);
+        scene.remove(node);
       }
-      delete c3d.actors[id];
+      delete actors[id];
     }
   }    
 
   actor(id){
-    console.log('Camera3d.actor(id=${id})!');
-    console.dir(c3d.actors[id]);
-    return c3d.actors[id] || null;
+    console.log(`Camera3d.actor(id=${id})!`);
+    console.dir(actors[id]);
+    return actors[id] || null;
   }
 
   reportActors(){
     console.log('Camera3d.reportActors()!');
-    return Object.keys(c3d.actors); // ids
+    return Object.keys(actors); // ids
   }
 
 
@@ -1980,22 +2041,22 @@ export class Camera3d {
   addBillboardToScene(id, o3d, pid){
     // addActor returns true if no webgl duplicate found => can add to bb list
     if(c3d.addActorToScene(id, o3d, pid)){
-      c3d.billboards[id] = o3d;
+      billboards[id] = o3d;
     }
   }
   // remove actor/billboard Object3d from the scene
   removeBillboardFromScene(id){
-    if(c3d.billboards[id]){
-      delete c3d.billboards[id];
+    if(billboards[id]){
+      delete billboards[id];
     }
     c3d.removeActorFromScene(id);
   }
 
   billboard(id){
-    return c3d.billboards[id] || null;
+    return billboards[id] || null;
   }
   reportBillboards(){
-    return Object.keys(c3d.billboards); // ids
+    return Object.keys(billboards); // ids
   }
 
 
@@ -2006,7 +2067,7 @@ export class Camera3d {
   // turn light a.name on-off 
   // exp: a = {name:['key'|'fill'|'back'], val='on'/'off'}}
   actor_visibility(a, from_ui:boolean=false){
-    var actor = c3d.actors[a.name],
+    var actor = actors[a.name],
         b:boolean;
 
     console.log(`c3d.actor_visibility name=${a.name} val=${a.val}`);
@@ -2037,13 +2098,73 @@ export class Camera3d {
     }
   }
 
+  // diagnostics
+  report_visibility(){
+    // globals visibility
+    var report:string="";
+
+    console.log('camera3d.report_visibility:');
+    if(!csphere ){
+      report = report + "csphere undefined;";
+    }else{
+      if(!csphere.material){
+        report = report + "csphere.material undefined;";
+      }else{
+        console.log(`csphere.material.visible = ${csphere.material.visible}`);
+      }
+    }
+    if(!key){
+      report = report + "key undefined;";
+    }else{
+      console.log(`key.visible = ${key.visible}`);
+    }
+    if(!fill){
+      report = report + "fill undefined;";
+    }else{
+      console.log(`fill.visible = ${fill.visible}`);
+    }
+    if(!back){
+      report = report + "back undefined;";
+    }else{
+      console.log(`back.visible = ${back.visible}`);
+    }
+
+    // matches and actor visibility
+    if(c3d.actor('csphere')){
+      console.log(`c3d.actor('csphere') === csphere is ${c3d.light('csphere') === csphere}`);
+      console.log(`c3d.actor('csphere').material.visible is ${c3d.actor('csphere').material.visible}`);
+    }else{
+      report = report + "actor csphere undefined;";
+    }
+    if(c3d.light('key')){
+      console.log(`c3d.light('key') === key is ${c3d.light('key') === key}`);
+      console.log(`c3d.light('key').visible = ${c3d.light('key').visible}`);
+    }else{
+      report = report + "actor key undefined;";
+    }
+    if(c3d.light('fill')){
+      console.log(`c3d.light('fill') === fill is ${c3d.light('fill') === fill}`);
+      console.log(`c3d.light('fill').visible = ${c3d.light('fill').visible}`);
+    }else{
+      report = report + "actor fill undefined;";
+    }
+    if(c3d.light('back')){
+      console.log(`c3d.light('back') === back is ${c3d.light('back') === back}`);
+      console.log(`c3d.light('back').visible = ${c3d.light('back').visible}`);
+    }else{
+      report = report + "actor back undefined;";
+    }
+
+    console.log(`report = ${report}`);
+    console.log(`new scene ${scene.name} actors = ${c3d.reportActors()}`);
+  }
 
   light(id){
     return c3d.actor(id);
   }
 
   get_csphere(){
-    return c3d.csphere;
+    return csphere;
   }
 
   // get webgl rendering context
@@ -2053,7 +2174,7 @@ export class Camera3d {
 
   // get scene
   get_scene(){
-    return c3d.scene;
+    return scene;
   }
 
 

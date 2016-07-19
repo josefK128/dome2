@@ -1,4 +1,4 @@
-System.register(['@angular/core', '@angular/common', '@angular/router', '../configs/@config', '../services/camera3d', '../services/state', '../services/models', '../services/scenes', '../services/scores', '../services/templatecache', '../services/queue', '../services/mediator', '../services/transform3d', '../services/camera2d', '../services/animation', '../services/speech', '../services/cameras', './i3d/i3d', './i2d/i2d', './base/base', './ui/ui', './scene/scene', './shot/shot', './narrative.html'], function(exports_1, context_1) {
+System.register(['@angular/core', '@angular/common', '@angular/router', '../configs/@config', '../services/camera3d', '../services/state', '../services/models', '../services/scenes', '../services/scores', '../services/templatecache', '../services/queue', '../services/mediator', '../services/transform3d', '../services/camera2d', '../services/animation', '../services/speech', '../services/cameras', '../services/textures', './i3d/i3d', './i2d/i2d', './base/base', './ui/ui', './scene/scene', './shot/shot', './narrative.html'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, common_1, router_1, _config_1, camera3d_1, state_1, models_1, scenes_1, scores_1, templatecache_1, queue_1, mediator_1, transform3d_1, camera2d_1, animation_1, speech_1, cameras_1, i3d_1, i2d_1, base_1, ui_1, scene_1, shot_1, narrative_html_1;
+    var core_1, common_1, router_1, _config_1, camera3d_1, state_1, models_1, scenes_1, scores_1, templatecache_1, queue_1, mediator_1, transform3d_1, camera2d_1, animation_1, speech_1, cameras_1, textures_1, i3d_1, i2d_1, base_1, ui_1, scene_1, shot_1, narrative_html_1;
     var Narrative;
     return {
         setters:[
@@ -67,6 +67,9 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
             },
             function (cameras_1_1) {
                 cameras_1 = cameras_1_1;
+            },
+            function (textures_1_1) {
+                textures_1 = textures_1_1;
             },
             function (i3d_1_1) {
                 i3d_1 = i3d_1_1;
@@ -160,7 +163,7 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                         // Thus back/fwd return to their initial scene states, despite the state
                         // of the controls in the 'previous' scene.
                         if (path !== this.config.scenepaths['opening']) {
-                            this.changeState(path, false, false);
+                            this.changeState(path, false);
                         }
                         else {
                             window.history.go(1);
@@ -576,7 +579,8 @@ System.register(['@angular/core', '@angular/common', '@angular/router', '../conf
                         core_1.provide(camera2d_1.Camera2d, { useClass: camera2d_1.Camera2d }),
                         core_1.provide(animation_1.Animation, { useClass: animation_1.Animation }),
                         core_1.provide(speech_1.Speech, { useClass: speech_1.Speech }),
-                        core_1.provide(cameras_1.Cameras, { useClass: cameras_1.Cameras })
+                        core_1.provide(cameras_1.Cameras, { useClass: cameras_1.Cameras }),
+                        core_1.provide(textures_1.Textures, { useClass: textures_1.Textures })
                     ],
                     directives: [
                         common_1.CORE_DIRECTIVES,
