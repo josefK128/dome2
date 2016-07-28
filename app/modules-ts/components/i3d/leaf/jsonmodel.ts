@@ -48,6 +48,7 @@ export class Jsonmodel {
   opacity: number;
   transparent: boolean; 
   wireframe: boolean;
+  fog:boolean;
   transform: Object;
   material: THREE.Material;
   geometry: THREE.Geometry;
@@ -103,30 +104,23 @@ export class Jsonmodel {
     console.log(`Jsonmodel basic_material() phong = ${jm.phong}`);
 
     if(jm.phong){
-//      jm.material = new THREE.MeshPhongMaterial({
-//        emissive: jm.emissive_color,
-//        emissiveIntensity: jm.emissiveIntensity,
-//        specular: jm.specular_color,
-//        shininess: jm.shininess, 
-//        reflectivity: jm.reflectivity,
-//        shading:true,
-//        fog:true});
       jm.material = new THREE.MeshPhongMaterial( { 
-        color: 0xdddddd, 
-        specular: 0x009900, 
-        shininess: 30, 
+        specular: jm.specular_color,
+        emissive: jm.emissive_color,
+        emissiveIntensity: jm.emissiveIntensity,
+        shininess: jm.shininess,
+        reflectivity: jm.reflectivity,
+        fog: jm.fog,
         shading: THREE.FlatShading } );
     }else{
       jm.material = new THREE.MeshBasicMaterial({});
     }
-    console.log(`Jsonmodel basic_material() jm.material = ${jm.material}`);
 
-    // common material properties
+    // shared material properties - override ctor args
     jm.material.color = jm.color; 
     jm.material.wireframe = jm.wireframe;
     jm.material.transparent = jm.transparent;
     jm.material.opacity = jm.opacity;
-    //jm.material.shading = THREE.FlatShading;
 
 
     // three.js blending<br>
@@ -200,7 +194,7 @@ export class Jsonmodel {
     //console.log(`parent = ${jm.parent}`);
 
     // properties with defaults - 
-    jm.phong = form['phong'] || true;
+    jm.phong = form['phong'] || false;
     jm.jsonmodel = form['jsonmodel'];  // default undefined
     jm.color = form['color'] || 0xffffff; // default undefined
     jm.emissive_color = form['emissive_color'] || 0x000000; // default undefined
@@ -208,9 +202,10 @@ export class Jsonmodel {
     jm.specular_color = form['specular_color'] || 0xffffff; // default undefined
     jm.shininess = form['shininess'] || 30;
     jm.reflectivity = form['reflectivity'] || 1;
-    jm.transparent = form['transparent'] || true;
+    jm.transparent = (form['transparent'] === undefined ? true : form['transparent']);
     jm.opacity = form['opacity'] || 1.0;
     jm.wireframe = form['wireframe'] || false;
+    jm.fog = (form['fog'] ? true : form['fog']);
     jm.texture = form['texture'];  // default undefined
     jm.transform = jm.node['transform'] || {};
 

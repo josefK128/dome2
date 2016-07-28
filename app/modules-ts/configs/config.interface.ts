@@ -24,8 +24,6 @@ interface Config {
   record_shots:boolean;
   channels:string[];
 
-  targets:Object;
-
   provider_overrides: any[];
 };
 export default Config;

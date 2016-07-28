@@ -16,6 +16,10 @@ import {Transform3d} from '../../../services/transform3d';
 import {Textures} from '../../../services/textures';
 
 
+//instance
+var cube;
+
+
 
 @Component({
   selector: 'cube',
@@ -42,6 +46,13 @@ export class Cube {
   opacity: number;
   transparent: boolean; 
   wireframe: boolean;
+  phong:boolean;
+  emissive_color:number;
+  emissiveIntensity:number;
+  specular_color:number;
+  shininess:number;
+  reflectivity:number;
+  fog:boolean;
   transform: Object;
   material: THREE.Material;
   geometry: THREE.Geometry;
@@ -49,26 +60,39 @@ export class Cube {
 
 
   constructor(camera3d: Camera3d, transform3d:Transform3d, textures:Textures) {
-    this.camera3d = camera3d;
-    this.transform3d = transform3d;
-    this.textures = textures;
+    cube = this;
+    cube.camera3d = camera3d;
+    cube.transform3d = transform3d;
+    cube.textures = textures;
   }
 
 
   mesh_geometry(){
     console.log('Cube mesh_geometry()');
-    this.geometry = new THREE.BoxGeometry(this.width, this.height, this.depth, 
-             this.widthSegments, this.heightSegments, this.depthSegments);
+    cube.geometry = new THREE.BoxGeometry(cube.width, cube.height, cube.depth, 
+             cube.widthSegments, cube.heightSegments, cube.depthSegments);
   }
 
 
   basic_material() {
     console.log('Cube basic_material()');
-    this.material = new THREE.MeshBasicMaterial({
-      color: this.color, 
-      transparent: this.transparent, 
-      opacity: this.opacity, 
-      wireframe:this.wireframe});
+
+    if(cube.phong){
+      cube.material = new THREE.MeshPhongMaterial( { 
+        specular: cube.specular_color,
+        emissive: cube.emissive_color,
+        emissiveIntensity: cube.emissiveIntensity,
+        shininess: cube.shininess,
+        reflectivity: cube.reflectivity,
+        fog: cube.fog,
+        shading: THREE.FlatShading } );
+    }else{
+      cube.material = new THREE.MeshBasicMaterial({
+        color: cube.color, 
+        transparent: cube.transparent, 
+        opacity: cube.opacity, 
+        wireframe:cube.wireframe});
+    }
 
     // three.js blending<br>
     // * NOTE! - brightening of opaque image intersections 
@@ -77,14 +101,14 @@ export class Cube {
     //   sphereMaterial.blendDst = THREE.OneMinusSrcAlphaFactor;
     // * NOTE! brightening does occur with:<br>
     //   sphereMaterial.blendDst = THREE.DstAlphaFactor;
-    this.material.depthTest = false;
-    this.material.blending = THREE.CustomBlending;
-    this.material.blendSrc = THREE.SrcAlphaFactor;
-    //this.material.blendDst = THREE.DstAlphaFactor;
-    this.material.blendDst = THREE.OneMinusSrcAlphaFactor;
-    this.material.blendEquation = THREE.AddEquation; // default
+    cube.material.depthTest = false;
+    cube.material.blending = THREE.CustomBlending;
+    cube.material.blendSrc = THREE.SrcAlphaFactor;
+    //cube.material.blendDst = THREE.DstAlphaFactor;
+    cube.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+    cube.material.blendEquation = THREE.AddEquation; // default
 
-    this.realize();
+    cube.realize();
   }
 
 
@@ -93,9 +117,9 @@ export class Cube {
         path = texture[name];
         
     console.log('Cube texture_material()');
-    this.textures.get(name, path).then((material) => {
-      this.material = material;
-      this.realize();
+    cube.textures.get(name, path).then((material) => {
+      cube.material = material;
+      cube.realize();
     });
   }
 
@@ -105,14 +129,14 @@ export class Cube {
     console.log(`%%%% Cube realize: writing cube to scene`); 
 
     // create a webgl sphere-node
-    this.o3d = new THREE.Mesh(this.geometry, this.material);
-    this.o3d.material.side = THREE.DoubleSide;
+    cube.o3d = new THREE.Mesh(cube.geometry, cube.material);
+    cube.o3d.material.side = THREE.DoubleSide;
   
     // add the Object3d to the scene and store in Camera3d actors by id
-    this.camera3d.addActorToScene(this.id, this.o3d, this.pid);
+    cube.camera3d.addActorToScene(cube.id, cube.o3d, cube.pid);
   
     // transform sphere - relative to parent in THREE.js scene !!!
-    this.transform3d.apply(this.transform, this.o3d);
+    cube.transform3d.apply(cube.transform, cube.o3d);
   }
 
 
@@ -120,36 +144,43 @@ export class Cube {
   // ordered sequence of component lifecycle phase-transitions:
   //ngOnChanges() { console.log(`Cube ngOnChanges`); }
   ngOnInit() { 
-    var form = this.node['form'];
+    var form = cube.node['form'];
 
-    this.pid = this.parent['id'];
-    console.log(`%%%% ngOnInit - Cube id=${this.id} pid=${this.pid}`); 
+    cube.pid = cube.parent['id'];
+    console.log(`%%%% ngOnInit - Cube id=${cube.id} pid=${cube.pid}`); 
     console.log(`node.form.type = ${form['type']}`);
-    //console.log(`node = ${this.node}`);
-    //console.log(`parent = ${this.parent}`);
+    //console.log(`node = ${cube.node}`);
+    //console.log(`parent = ${cube.parent}`);
 
     // properties with defaults
-    this.width = form['width'] || 5;
-    this.height = form['height'] || 10;
-    this.depth = form['depth'] || 5;
-    this.widthSegments = form['widthSegments'] || 1;
-    this.heightSegments = form['heightSegments'] || 1;
-    this.depthSegments = form['depthSegments'] || 1;
-    this.color = form['color'] || 'red';
-    this.transparent = form['transparent'] || true;
-    this.opacity = form['opacity'] || 1.0;
-    this.wireframe = form['wireframe'] || false;
-    this.texture = form['texture'];  // default undefined
-    this.transform = this.node['transform'] || {};
+    cube.width = form['width'] || 5;
+    cube.height = form['height'] || 10;
+    cube.depth = form['depth'] || 5;
+    cube.widthSegments = form['widthSegments'] || 1;
+    cube.heightSegments = form['heightSegments'] || 1;
+    cube.depthSegments = form['depthSegments'] || 1;
+    cube.color = form['color'] || 'red';
+    cube.transparent = form['transparent'] || true;
+    cube.opacity = form['opacity'] || 1.0;
+    cube.wireframe = form['wireframe'] || false;
+    cube.phong = form['phong'] || false;
+    cube.emissive_color = form['emissive_color'] || 0x000000; // default undefined
+    cube.emissiveIntensity = form['emissiveIntensity'] || 1;
+    cube.specular_color = form['specular_color'] || 0xffffff; // default undefined
+    cube.shininess = form['shininess'] || 30;
+    cube.reflectivity = form['reflectivity'] || 1;
+    cube.fog = (form['fog'] === undefined ? true : form['fog']);
+    cube.texture = form['texture'];  // default undefined
+    cube.transform = cube.node['transform'] || {};
 
     // geometry
-    this.mesh_geometry();
+    cube.mesh_geometry();
 
     // material
-    if(this.texture !== undefined){
-      this.texture_material(this.texture);
+    if(cube.texture !== undefined){
+      cube.texture_material(cube.texture);
     }else{
-      this.basic_material();
+      cube.basic_material();
     }
   }
 

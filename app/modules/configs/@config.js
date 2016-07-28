@@ -20,12 +20,14 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 controls: ['i2d', 'i3d', 'base', 'fps', 'csphere', 'key', 'fill', 'back'],
                 controlstates: { ui: true, i2d: true, i3d: true, base: true, fps: true,
                     csphere: true, key: true, fill: true, back: true },
-                scenes: ['scene1', 'scene2', 'scene3'],
-                scenestates: { scene1: false, scene2: false, scene3: false },
+                scenes: ['scene1', 'scene2', 'scene3', 'scene4'],
+                scenestates: { scene1: false, scene2: false, scene3: false, scene4: false },
                 scenepaths: { opening: 'opening://///no-shot:',
-                    scene1: 'scene1:/space:model1/stage:/bg:/display:/establishing:',
-                    scene2: 'scene2:/space:model2/stage2:modelA/bg2:/display2:/establishing:',
-                    scene3: 'scene3:/space:modelhead/stage:/bg3:/display2:/establishing:'
+                    scene1: 'scene1:/space:model1/stage:/bg:/display:/camera:yawflyByPIo3',
+                    scene2: 'scene2:/space:model2/stage2:modelA/bg2:/display2:/camera:yawcutByPIo3',
+                    scene3: 'scene3:/space:modelhead/stage:/bg3:/display2:/camera:s0',
+                    //scene3:'scene3:/space:modelteapot/stage:/bg3:/display2:/establishing:'
+                    scene4: 'scene4:/space:modelhead/stage:/bg3:/display2:/camera:yawflyByNegPIo6'
                 },
                 // metastate: '{scene}/{i3d}/{shot}/',  // for VR
                 // substates: ['scene', 'i3d', 'shot'],
@@ -81,9 +83,6 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                 record_stream: false,
                 record_shots: false,
                 channels: ['actions'],
-                // targets for action execs
-                targets: { narrative: {}, camera3d: {}, camera2d: {}, mediator: {}, animation: {},
-                    models: {}, scenes: {}, templatecache: {} },
                 provider_overrides: [core_1.provide(PI, { useValue: 3.14 })]
             });
         }

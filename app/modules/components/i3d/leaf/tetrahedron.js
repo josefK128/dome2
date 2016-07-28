@@ -19,7 +19,7 @@ System.register(['@angular/core', '../../../services/camera3d', '../../../servic
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, camera3d_1, transform3d_1, textures_1;
-    var Tetrahedron;
+    var tetra, Tetrahedron;
     return {
         setters:[
             function (core_1_1) {
@@ -35,23 +35,37 @@ System.register(['@angular/core', '../../../services/camera3d', '../../../servic
                 textures_1 = textures_1_1;
             }],
         execute: function() {
+            //instance
             let Tetrahedron = class Tetrahedron {
                 constructor(camera3d, transform3d, textures) {
-                    this.camera3d = camera3d;
-                    this.transform3d = transform3d;
-                    this.textures = textures;
+                    tetra = this;
+                    tetra.camera3d = camera3d;
+                    tetra.transform3d = transform3d;
+                    tetra.textures = textures;
                 }
                 mesh_geometry() {
                     console.log('Tetrahedron mesh_geometry()');
-                    this.geometry = new THREE.TetrahedronGeometry(this.radius, this.detail);
+                    tetra.geometry = new THREE.TetrahedronGeometry(tetra.radius, tetra.detail);
                 }
                 basic_material() {
                     console.log('Tetrahedron basic_material()');
-                    this.material = new THREE.MeshBasicMaterial({
-                        color: this.color,
-                        transparent: this.transparent,
-                        opacity: this.opacity,
-                        wireframe: this.wireframe });
+                    if (tetra.phong) {
+                        tetra.material = new THREE.MeshPhongMaterial({
+                            specular: tetra.specular_color,
+                            emissive: tetra.emissive_color,
+                            emissiveIntensity: tetra.emissiveIntensity,
+                            shininess: tetra.shininess,
+                            reflectivity: tetra.reflectivity,
+                            fog: tetra.fog,
+                            shading: THREE.FlatShading });
+                    }
+                    else {
+                        tetra.material = new THREE.MeshBasicMaterial({
+                            color: tetra.color,
+                            transparent: tetra.transparent,
+                            opacity: tetra.opacity,
+                            wireframe: tetra.wireframe });
+                    }
                     // three.js blending<br>
                     // * NOTE! - brightening of opaque image intersections 
                     //   sometimes occurs (?!)<br>
@@ -59,60 +73,67 @@ System.register(['@angular/core', '../../../services/camera3d', '../../../servic
                     //   tetrahedronMaterial.blendDst = THREE.OneMinusSrcAlphaFactor;
                     // * NOTE! brightening does occur with:<br>
                     //   tetrahedronMaterial.blendDst = THREE.DstAlphaFactor;
-                    this.material.depthTest = false;
-                    this.material.blending = THREE.CustomBlending;
-                    this.material.blendSrc = THREE.SrcAlphaFactor;
-                    //this.material.blendDst = THREE.DstAlphaFactor;
-                    this.material.blendDst = THREE.OneMinusSrcAlphaFactor;
-                    this.material.blendEquation = THREE.AddEquation; // default
-                    this.realize();
+                    tetra.material.depthTest = false;
+                    tetra.material.blending = THREE.CustomBlending;
+                    tetra.material.blendSrc = THREE.SrcAlphaFactor;
+                    //tetra.material.blendDst = THREE.DstAlphaFactor;
+                    tetra.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+                    tetra.material.blendEquation = THREE.AddEquation; // default
+                    tetra.realize();
                 }
                 texture_material(texture) {
                     var name = Object.keys(texture)[0], path = texture[name];
                     console.log('Tetrahedron texture_material()');
-                    this.textures.get(name, path).then((material) => {
-                        this.material = material;
-                        this.realize();
+                    tetra.textures.get(name, path).then((material) => {
+                        tetra.material = material;
+                        tetra.realize();
                     });
                 }
                 // write to THREE.js scene
                 realize() {
                     console.log(`%%%% Tetrahedron realize: writing tetrahedron to scene`);
                     // create a webgl tetrahedron-node
-                    this.o3d = new THREE.Mesh(this.geometry, this.material);
-                    this.o3d.material.side = THREE.DoubleSide;
+                    tetra.o3d = new THREE.Mesh(tetra.geometry, tetra.material);
+                    tetra.o3d.material.side = THREE.DoubleSide;
                     // add the Object3d to the scene and store in Camera3d actors by id
-                    this.camera3d.addActorToScene(this.id, this.o3d, this.pid);
+                    tetra.camera3d.addActorToScene(tetra.id, tetra.o3d, tetra.pid);
                     // transform tetrahedron - relative to parent in THREE.js scene !!!
-                    this.transform3d.apply(this.transform, this.o3d);
+                    tetra.transform3d.apply(tetra.transform, tetra.o3d);
                 }
                 // ordered sequence of component lifecycle phase-transitions:
                 // ngOnChanges() { console.log(`Tetrahedron ngOnChanges`); }
                 // calculate properties of tetrahedron from model on node
                 ngOnInit() {
-                    var form = this.node['form'];
-                    this.pid = this.parent['id'];
-                    console.log(`%%%% ngOnInit - Tetrahedron id=${this.id} pid=${this.pid}`);
+                    var form = tetra.node['form'];
+                    tetra.pid = tetra.parent['id'];
+                    console.log(`%%%% ngOnInit - Tetrahedron id=${tetra.id} pid=${tetra.pid}`);
                     console.log(`node.form.type = ${form['type']}`);
-                    //console.log(`node = ${this.node}`);
-                    //console.log(`parent = ${this.parent}`);
+                    //console.log(`node = ${tetra.node}`);
+                    //console.log(`parent = ${tetra.parent}`);
                     // properties with defaults
-                    this.radius = form['radius'] || 10;
-                    this.detail = form['detail'] || 0;
-                    this.texture = form['texture']; // default undefined
-                    this.color = form['color'] || 'red';
-                    this.transparent = form['transparent'] || true;
-                    this.opacity = form['opacity'] || 1.0;
-                    this.wireframe = form['wireframe'] || false;
-                    this.transform = this.node['transform'] || {};
+                    tetra.radius = form['radius'] || 10;
+                    tetra.detail = form['detail'] || 0;
+                    tetra.texture = form['texture']; // default undefined
+                    tetra.color = form['color'] || 'red';
+                    tetra.transparent = form['transparent'] || true;
+                    tetra.opacity = form['opacity'] || 1.0;
+                    tetra.wireframe = form['wireframe'] || false;
+                    tetra.phong = form['phong'] || false;
+                    tetra.emissive_color = form['emissive_color'] || 0x000000; // default undefined
+                    tetra.emissiveIntensity = form['emissiveIntensity'] || 1;
+                    tetra.specular_color = form['specular_color'] || 0xffffff; // default undefined
+                    tetra.shininess = form['shininess'] || 30;
+                    tetra.reflectivity = form['reflectivity'] || 1;
+                    tetra.fog = (form['fog'] === undefined ? true : form['fog']);
+                    tetra.transform = tetra.node['transform'] || {};
                     // geometry
-                    this.mesh_geometry();
+                    tetra.mesh_geometry();
                     // material
-                    if (this.texture !== undefined) {
-                        this.texture_material(this.texture);
+                    if (tetra.texture !== undefined) {
+                        tetra.texture_material(tetra.texture);
                     }
                     else {
-                        this.basic_material();
+                        tetra.basic_material();
                     }
                 }
                 //  ngDoCheck() { console.log(`Tetrahedron ngDoCheck`); }

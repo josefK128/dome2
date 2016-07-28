@@ -19,7 +19,7 @@ System.register(['@angular/core', '../../../services/camera3d', '../../../servic
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, camera3d_1, transform3d_1, textures_1;
-    var Cylinder;
+    var cyl, Cylinder;
     return {
         setters:[
             function (core_1_1) {
@@ -35,23 +35,37 @@ System.register(['@angular/core', '../../../services/camera3d', '../../../servic
                 textures_1 = textures_1_1;
             }],
         execute: function() {
+            //instance
             let Cylinder = class Cylinder {
                 constructor(camera3d, transform3d, textures) {
-                    this.camera3d = camera3d;
-                    this.transform3d = transform3d;
-                    this.textures = textures;
+                    cyl = this;
+                    cyl.camera3d = camera3d;
+                    cyl.transform3d = transform3d;
+                    cyl.textures = textures;
                 }
                 mesh_geometry() {
                     console.log('Cylinder mesh_geometry()');
-                    this.geometry = new THREE.CylinderGeometry(this.radiusTop, this.radiusBottom, this.height, this.radiusSegments, this.heightSegments, this.openEnded);
+                    cyl.geometry = new THREE.CylinderGeometry(cyl.radiusTop, cyl.radiusBottom, cyl.height, cyl.radiusSegments, cyl.heightSegments, cyl.openEnded);
                 }
                 basic_material() {
                     console.log('Cylinder basic_material()');
-                    this.material = new THREE.MeshBasicMaterial({
-                        color: this.color,
-                        transparent: this.transparent,
-                        opacity: this.opacity,
-                        wireframe: this.wireframe });
+                    if (cyl.phong) {
+                        cyl.material = new THREE.MeshPhongMaterial({
+                            specular: cyl.specular_color,
+                            emissive: cyl.emissive_color,
+                            emissiveIntensity: cyl.emissiveIntensity,
+                            shininess: cyl.shininess,
+                            reflectivity: cyl.reflectivity,
+                            fog: cyl.fog,
+                            shading: THREE.FlatShading });
+                    }
+                    else {
+                        cyl.material = new THREE.MeshBasicMaterial({
+                            color: cyl.color,
+                            transparent: cyl.transparent,
+                            opacity: cyl.opacity,
+                            wireframe: cyl.wireframe });
+                    }
                     // three.js blending<br>
                     // * NOTE! - brightening of opaque image intersections 
                     //   sometimes occurs (?!)<br>
@@ -59,67 +73,74 @@ System.register(['@angular/core', '../../../services/camera3d', '../../../servic
                     //   sphereMaterial.blendDst = THREE.OneMinusSrcAlphaFactor;
                     // * NOTE! brightening does occur with:<br>
                     //   sphereMaterial.blendDst = THREE.DstAlphaFactor;
-                    this.material.depthTest = false;
-                    this.material.blending = THREE.CustomBlending;
-                    this.material.blendSrc = THREE.SrcAlphaFactor;
-                    //this.material.blendDst = THREE.DstAlphaFactor;
-                    this.material.blendDst = THREE.OneMinusSrcAlphaFactor;
-                    this.material.blendEquation = THREE.AddEquation; // default
-                    this.realize();
+                    cyl.material.depthTest = false;
+                    cyl.material.blending = THREE.CustomBlending;
+                    cyl.material.blendSrc = THREE.SrcAlphaFactor;
+                    //cyl.material.blendDst = THREE.DstAlphaFactor;
+                    cyl.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+                    cyl.material.blendEquation = THREE.AddEquation; // default
+                    cyl.realize();
                 }
                 texture_material(texture) {
                     var name = Object.keys(texture)[0], path = texture[name];
                     console.log('Cylinder texture_material()');
-                    this.textures.get(name, path).then((material) => {
-                        this.material = material;
-                        this.realize();
+                    cyl.textures.get(name, path).then((material) => {
+                        cyl.material = material;
+                        cyl.realize();
                     });
                 }
                 // write to THREE.js scene
                 realize() {
                     console.log(`%%%% Cylinder realize: writing cylinder to scene`);
                     // create a webgl sphere-node
-                    this.o3d = new THREE.Mesh(this.geometry, this.material);
-                    this.o3d.material.side = THREE.DoubleSide;
+                    cyl.o3d = new THREE.Mesh(cyl.geometry, cyl.material);
+                    cyl.o3d.material.side = THREE.DoubleSide;
                     // add the Object3d to the scene and store in Camera3d actors by id
-                    this.camera3d.addActorToScene(this.id, this.o3d, this.pid);
+                    cyl.camera3d.addActorToScene(cyl.id, cyl.o3d, cyl.pid);
                     // transform sphere - relative to parent in THREE.js scene !!!
-                    this.transform3d.apply(this.transform, this.o3d);
+                    cyl.transform3d.apply(cyl.transform, cyl.o3d);
                 }
                 // ordered sequence of component lifecycle phase-transitions:
                 //ngOnChanges() { console.log(`Cylinder ngOnChanges`); }
                 ngOnInit() {
-                    var form = this.node['form'];
-                    this.pid = this.parent['id'];
-                    console.log(`%%%% ngOnInit - Cylinder id=${this.id} pid=${this.pid}`);
+                    var form = cyl.node['form'];
+                    cyl.pid = cyl.parent['id'];
+                    console.log(`%%%% ngOnInit - Cylinder id=${cyl.id} pid=${cyl.pid}`);
                     console.log(`node.form.type = ${form['type']}`);
                     console.log(`node.form.color = ${form['color']}`);
-                    //console.log(`node = ${this.node}`);
-                    //console.log(`parent = ${this.parent}`);
+                    //console.log(`node = ${cyl.node}`);
+                    //console.log(`parent = ${cyl.parent}`);
                     // properties with defaults
-                    this.radiusTop = form['radiusTop'] || 10;
-                    this.radiusBottom = form['radiusBottom'] || 10;
-                    this.height = form['height'] || 20;
-                    this.radiusSegments = form['radiusSegments'] || 8;
-                    this.heightSegments = form['heightSegments'] || 1;
-                    this.openEnded = form['openEnded'] || false;
-                    this.color = form['color'] || 'red';
-                    this.transparent = form['transparent'] || true;
-                    this.opacity = form['opacity'] || 1.0;
-                    this.wireframe = form['wireframe'] || false;
-                    this.texture = form['texture']; // default undefined
-                    this.transform = this.node['transform'] || {};
+                    cyl.radiusTop = form['radiusTop'] || 10;
+                    cyl.radiusBottom = form['radiusBottom'] || 10;
+                    cyl.height = form['height'] || 20;
+                    cyl.radiusSegments = form['radiusSegments'] || 8;
+                    cyl.heightSegments = form['heightSegments'] || 1;
+                    cyl.openEnded = form['openEnded'] || false;
+                    cyl.color = form['color'] || 'red';
+                    cyl.transparent = form['transparent'] || true;
+                    cyl.opacity = form['opacity'] || 1.0;
+                    cyl.wireframe = form['wireframe'] || false;
+                    cyl.phong = form['phong'] || false;
+                    cyl.emissive_color = form['emissive_color'] || 0x000000; // default undefined
+                    cyl.emissiveIntensity = form['emissiveIntensity'] || 1;
+                    cyl.specular_color = form['specular_color'] || 0xffffff; // default undefined
+                    cyl.shininess = form['shininess'] || 30;
+                    cyl.reflectivity = form['reflectivity'] || 1;
+                    cyl.fog = (form['fog'] === undefined ? true : form['fog']);
+                    cyl.texture = form['texture']; // default undefined
+                    cyl.transform = cyl.node['transform'] || {};
                     // geometry
-                    this.mesh_geometry();
+                    cyl.mesh_geometry();
                     // material
-                    if (this.texture !== undefined) {
-                        this.texture_material(this.texture);
+                    if (cyl.texture !== undefined) {
+                        cyl.texture_material(cyl.texture);
                     }
                     else {
-                        this.basic_material();
+                        cyl.basic_material();
                     }
                 }
-                ngAfterViewInit() { console.log(`Cylinder ${this.id} ngAfterViewInit`); }
+                ngAfterViewInit() { console.log(`Cylinder ${cyl.id} ngAfterViewInit`); }
             };
             __decorate([
                 core_1.Input(), 

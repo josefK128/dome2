@@ -3,7 +3,7 @@
 export var Model1 = { scene: {
                         name: 'scene1',
                         camerasphere: null,
-                        visible:{csphere:'on',key:'on',fill:'on',back:'on'}
+                        visible:{csphere:'off',key:'on',fill:'on',back:'on'}
                       },
                       shot:{},
                       branches:{},

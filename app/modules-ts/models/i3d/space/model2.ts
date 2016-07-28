@@ -9,7 +9,7 @@ export var Model2 = { scene: {
                         name: 'scene2',
                         procedural_actornames: [],
                         camerasphere: null,
-                        visible:{csphere:'on',key:'on',fill:'on',back:'on'},
+                        visible:{csphere:'off',key:'on',fill:'on',back:'on'},
                       },
                       shot:{a:16},
                       actors: [

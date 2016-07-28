@@ -25,8 +25,7 @@ export class I3d {
   models: Models;
 
   static changeState(substate:Object, 
-                     narrative,
-                     init_scene:boolean):Promise<string> {
+                     narrative):Promise<string> {
 
     var templatename = substate['t'],
         modelname = substate['m'],
@@ -41,8 +40,7 @@ export class I3d {
     if((templatename === tp) && (modelname === mp)){  
       return Promise.resolve('i3d');
     }else{
-      console.log(`I3d.changeState: templatename = ${templatename} init_scene =
-                  ${init_scene}`); 
+      console.log(`I3d.changeState: templatename = ${templatename}`); 
 
       return new Promise((resolve, reject) => {
         // note: modelname might be '' but then models['i3d'] object returned

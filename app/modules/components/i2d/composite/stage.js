@@ -84,7 +84,6 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
      width="100%" height="100%" 
      viewBox="-50, -50, 100, 100"> 
 
-
   <!-- plane is stage& axes vector space - used for scaling/translating -->
   <g id="plane" >
   <g id="zoom_plane" >
@@ -107,7 +106,8 @@ System.register(['@angular/core', '../../../configs/@config', '../../../services
     </g><!-- axes -->
 
   </g><!-- zoom_plane -->    
-  </g><!-- plane -->    
+  </g><!-- plane --> 
+
 </svg><!-- s -->
  `
                 }),

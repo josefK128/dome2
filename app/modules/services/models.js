@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../configs/@config', '../models/i3d/space/model1', '../models/i3d/space/model2', '../models/i3d/space/modelhead', '../models/i3d/space/modelteapot', '../models/i2d/stage2/modelA'], function(exports_1, context_1) {
+System.register(['@angular/core', '../configs/@config', '../models/i3d/space/model1', '../models/i3d/space/model2', '../models/i3d/space/modelhead', '../models/i3d/space/modelteapot', '../models/i2d/stage2/modelA', '../models/shot/camera/s0', '../models/shot/camera/yawflyByPIo3', '../models/shot/camera/yawflyByNegPIo3', '../models/shot/camera/yawflyByPIo6', '../models/shot/camera/yawflyByNegPIo6', '../models/shot/camera/yawcutByPIo3', '../models/shot/camera/yawcutByNegPIo3'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -13,7 +13,7 @@ System.register(['@angular/core', '../configs/@config', '../models/i3d/space/mod
     var __param = (this && this.__param) || function (paramIndex, decorator) {
         return function (target, key) { decorator(target, key, paramIndex); }
     };
-    var core_1, _config_1, model1_1, model2_1, modelhead_1, modelteapot_1, modelA_1;
+    var core_1, _config_1, model1_1, model2_1, modelhead_1, modelteapot_1, modelA_1, s0_1, yawflyByPIo3_1, yawflyByNegPIo3_1, yawflyByPIo6_1, yawflyByNegPIo6_1, yawcutByPIo3_1, yawcutByNegPIo3_1;
     var Models;
     return {
         setters:[
@@ -37,6 +37,27 @@ System.register(['@angular/core', '../configs/@config', '../models/i3d/space/mod
             },
             function (modelA_1_1) {
                 modelA_1 = modelA_1_1;
+            },
+            function (s0_1_1) {
+                s0_1 = s0_1_1;
+            },
+            function (yawflyByPIo3_1_1) {
+                yawflyByPIo3_1 = yawflyByPIo3_1_1;
+            },
+            function (yawflyByNegPIo3_1_1) {
+                yawflyByNegPIo3_1 = yawflyByNegPIo3_1_1;
+            },
+            function (yawflyByPIo6_1_1) {
+                yawflyByPIo6_1 = yawflyByPIo6_1_1;
+            },
+            function (yawflyByNegPIo6_1_1) {
+                yawflyByNegPIo6_1 = yawflyByNegPIo6_1_1;
+            },
+            function (yawcutByPIo3_1_1) {
+                yawcutByPIo3_1 = yawcutByPIo3_1_1;
+            },
+            function (yawcutByNegPIo3_1_1) {
+                yawcutByNegPIo3_1 = yawcutByNegPIo3_1_1;
             }],
         execute: function() {
             let Models = class Models {
@@ -56,7 +77,17 @@ System.register(['@angular/core', '../configs/@config', '../models/i3d/space/mod
                             bg2: {},
                             bg3: {} },
                         ui: { display: {},
-                            display2: {} }
+                            display2: {} },
+                        shot: {
+                            camera: { s0: s0_1.s0,
+                                yawflyByPIo3: yawflyByPIo3_1.yawflyByPIo3,
+                                yawflyByNegPIo3: yawflyByNegPIo3_1.yawflyByNegPIo3,
+                                yawflyByPIo6: yawflyByPIo6_1.yawflyByPIo6,
+                                yawflyByNegPIo6: yawflyByNegPIo6_1.yawflyByNegPIo6,
+                                yawcutByPIo3: yawcutByPIo3_1.yawcutByPIo3,
+                                yawcutByNegPIo3: yawcutByNegPIo3_1.yawcutByNegPIo3
+                            } //camera
+                        }
                     };
                 } //ctor
                 // if needed,create array of keys from dotted path string

@@ -8,7 +8,6 @@ import {Animation} from '../../services/animation';
 // singleton instance
 var shot:Shot;
 
-
 @Component({
   selector: 'dome-shot',
   template: ``,
@@ -20,11 +19,12 @@ export class Shot {
   animation: Animation;
   models: Models;
 
-  static changeState(substate:Object) {
+  static changeState(substate:Object, reverse:boolean) {
      var templatename = substate['t'],
          _model = substate['m'],  // modelname
          model:Object;
     
+    console.log('\n\n\n\n ###########################################');
     console.log(`Shot.changeState: templatename = ${templatename}`); 
     console.log(`Shot.changeState: _model = ${_model}`); 
     console.log(`Shot.changeState: _model[0] = ${_model[0]}`); 
@@ -38,7 +38,10 @@ export class Shot {
       console.log(`Shot.changeState: _model is a shot-name`);;
       model = shot.models.get(['shot', templatename, _model]);
     }
-    shot.animation.perform(model);
+    console.log(`reverse = ${reverse} shot is:`);
+    console.dir(model);
+    console.log('###########################################');
+    shot.animation.perform(model, reverse);
   }
 
   constructor(models: Models, 
@@ -50,12 +53,12 @@ export class Shot {
 
 
   // ordered sequence of component lifecycle phase-transitions:
-//  ngOnChanges() { console.log(`Ui ngOnChanges`); }
-//  ngOnInit() { console.log(`Ui ngOnInit`); }
-//  ngDoCheck() { console.log(` Ui ngDoCheck`); }
-//  ngAfterContentInit() { console.log(` Ui ngAfterContentInit`);}
-//  ngAfterContentChecked() { console.log(` Ui ngAfterContentChecked`); }
-//  ngAfterViewInit() { console.log(` Ui ngAfterViewInit`); }
-//  ngAfterViewChecked() { console.log(` Ui ngAfterViewChecked`); }
-//  ngOnDestroy() { console.log(` Ui ngOnDestroy`); }
+//  ngOnChanges() { console.log(`Shot ngOnChanges`); }
+//  ngOnInit() { console.log(`Shot ngOnInit`); }
+//  ngDoCheck() { console.log(` Shot ngDoCheck`); }
+//  ngAfterContentInit() { console.log(` Shot ngAfterContentInit`);}
+//  ngAfterContentChecked() { console.log(` Shot ngAfterContentChecked`); }
+//  ngAfterViewInit() { console.log(` Shot ngAfterViewInit`); }
+//  ngAfterViewChecked() { console.log(` Shot ngAfterViewChecked`); }
+  //ngOnDestroy() { console.log(` Shot ngOnDestroy`);} 
 }

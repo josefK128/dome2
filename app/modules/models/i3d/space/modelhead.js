@@ -27,20 +27,20 @@ System.register([], function(exports_1, context_1) {
                                 } },
                             key: { form: { type: "'pointlight'",
                                     color: 'rgb(255,165,0)',
-                                    intensity: 5.0,
+                                    intensity: 2.0,
                                     distance: 100.0,
                                     position: [40.0, 20.0, 20.0]
                                 } },
                             fill: { form: { type: "'pointlight'",
                                     color: 'rgb(0,0,255)',
-                                    intensity: 7.8,
+                                    intensity: 2.8,
                                     distance: 100.0,
                                     position: [-50.0, -10.0, 0.0]
                                 } },
                             back: { form: { type: "'pointlight'",
-                                    color: 'rgb(30,30,30)',
-                                    intensity: 2.0,
-                                    distance: 40.0,
+                                    color: 'rgb(100,100,100)',
+                                    intensity: 9.0,
+                                    distance: 100.0,
                                     position: [-40.0, -10.0, -50.0]
                                 } }
                         } //children
@@ -51,16 +51,17 @@ System.register([], function(exports_1, context_1) {
                 actors: [
                     { id: 'head',
                         form: { type: 'jsonmodel',
-                            phong: false,
+                            phong: true,
                             color: 0xffffff,
                             emissive_color: 0x000000,
                             emissiveIntensity: 1,
                             specular_color: 0xffa500,
                             reflectivity: 1,
+                            fog: true,
                             shininess: 3.0,
                             jsonmodel: { head: './webgl/models/teapot/teapot.json' } },
                         //'./webgl/models/head_scan/head_scan.json'}}, 
-                        transform: { t: [0.0, 0.0, -10.0], e: [0.0, 0.185, 0.0], s: [1.0, 1.0, 1.0] },
+                        transform: { t: [0.0, 0.0, -10.0], e: [0.0, 0.185, 0.0], s: [1.5, 2.0, 1.5] },
                         children: [] },
                 ] //actors
             }); //Modelhead

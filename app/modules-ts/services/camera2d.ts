@@ -13,6 +13,11 @@ import {Narrative} from '../components/narrative';
 
 
 
+// Camera2d instance var (avoid losing execution context - 'this')
+var c2d;
+
+
+
 @Injectable()
 export class Camera2d {
   config: any;
@@ -33,23 +38,24 @@ export class Camera2d {
 
   constructor(@Inject(CONFIG) cfg:Config, mediator:Mediator){
 
-    this.config = cfg;
-    this.mediator = mediator;
-    this.record_shots = this.config.recored_shots;
-    this.tl = {};
-    this.tlp = {};
-    this.action = {};
-    this.shot = {};
+    c2d = this;
+    c2d.config = cfg;
+    c2d.mediator = mediator;
+    c2d.record_shots = c2d.config.record_shots;
+    c2d.tl = {};
+    c2d.tlp = {};
+    c2d.action = {};
+    c2d.shot = {};
    
     // dolly - plane
-    this.plane = undefined;
-    this.x = 0.0;      // plane (webgl y-coord!)
-    this.y = 0.0;
+    c2d.plane = undefined;
+    c2d.x = 0.0;      // plane (webgl y-coord!)
+    c2d.y = 0.0;
 
     // zoom and roll - zoom_plane child of plane
-    this.zoom_plane = undefined;
-    this.angle = 0.0;  // zoom_plane - angle degrees
-    this.scale = 1.0;
+    c2d.zoom_plane = undefined;
+    c2d.angle = 0.0;  // zoom_plane - angle degrees
+    c2d.scale = 1.0;
 
 
     // key controls<br>
@@ -69,16 +75,16 @@ export class Camera2d {
         case 82: 
           a = {d:3};
           if(e.shiftKey){ // sh => home
-            this.home(a);  
-            //log({t:'this', f:'home', a:a});
-            if(this.record_shots){
-              this.mediator.record({t:'this', f:'home', a:a});
+            c2d.home(a);  
+            //log({t:'camera2d', f:'home', a:a});
+            if(c2d.record_shots){
+              c2d.mediator.record({t:'camera2d', f:'home', a:a});
             }
           }else{          // no-sh => center - no change to zoom
-            this.center(a);
-            //log({t:'this', f:'center', a:a});
-            if(this.record_shots){
-              this.mediator.record({t:'this', f:'center', a:a});
+            c2d.center(a);
+            //log({t:'camera2d', f:'center', a:a});
+            if(c2d.record_shots){
+              c2d.mediator.record({t:'camera2d', f:'center', a:a});
             }
           }
           break;
@@ -89,33 +95,33 @@ export class Camera2d {
           if(e.altKey){     // alt => fly
             if(e.shiftKey){ // sh => abs transform ('to')
               a = {s:2.0, d:3};
-              this.zoomflyTo(a);  
-              //log({t:'this', f:'zoomflyTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'zoomflyTo', a:a});
+              c2d.zoomflyTo(a);  
+              //log({t:'camera2d', f:'zoomflyTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'zoomflyTo', a:a});
               }
             }else{          // no-sh => rel transform ('by')
               a = {s:1.1111, d:3};
-              this.zoomflyBy(a);
-              //log({t:'this', f:'zoomflyBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'zoomflyBy', a:a});
+              c2d.zoomflyBy(a);
+              //log({t:'camera2d', f:'zoomflyBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'zoomflyBy', a:a});
               }
             }
           }else{            // no-alt => cut
             if(e.shiftKey){ // shift  => 'to'
               a = {s:2.0};
-              this.zoomcutTo(a);
-              //log({t:'this', f:'zoomcutTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'zoomcutTo', a:a});
+              c2d.zoomcutTo(a);
+              //log({t:'camera2d', f:'zoomcutTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'zoomcutTo', a:a});
               }
             }else{         
               a = {s:1.1111};
-              this.zoomcutBy(a); // 1.0/0.9 = 1.1111
-              //log({t:'this', f:'zoomcutBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'zoomcutBy', a:a});
+              c2d.zoomcutBy(a); // 1.0/0.9 = 1.1111
+              //log({t:'camera2d', f:'zoomcutBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'zoomcutBy', a:a});
               }
             }
           }
@@ -126,33 +132,33 @@ export class Camera2d {
           if(e.altKey){     // alt => fly
             if(e.shiftKey){ // sh => abs transform ('to')
               a = {s:0.5, d:3};
-              this.zoomflyTo(a);  
-              //log({t:'this', f:'zoomflyTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'zoomflyTo', a:a});
+              c2d.zoomflyTo(a);  
+              //log({t:'camera2d', f:'zoomflyTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'zoomflyTo', a:a});
               }
             }else{          // no-sh => rel transform ('by')
               a = {s:0.9, d:3};
-              this.zoomflyBy(a);
-              //log({t:'this', f:'zoomflyBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'zoomflyBy', a:a});
+              c2d.zoomflyBy(a);
+              //log({t:'camera2d', f:'zoomflyBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'zoomflyBy', a:a});
               }
             }
           }else{            // no-alt => cut
             if(e.shiftKey){ // shift  => 'to'
               a = {s:0.5};
-              this.zoomcutTo(a);
-              //log({t:'this', f:'zoomcutTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'zoomcutTo', a:a});
+              c2d.zoomcutTo(a);
+              //log({t:'camera2d', f:'zoomcutTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'zoomcutTo', a:a});
               }
             }else{         
               a = {s:0.9};
-              this.zoomcutBy(a); 
-              //log({t:'this', f:'zoomcutBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'zoomcutBy', a:a});
+              c2d.zoomcutBy(a); 
+              //log({t:'camera2d', f:'zoomcutBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'zoomcutBy', a:a});
               }
             }
           }
@@ -165,33 +171,33 @@ export class Camera2d {
           if(e.altKey){     // alt => fly
             if(e.shiftKey){ // sh => abs transform ('to')
               a = {r:-90, d:3};
-              this.rollflyTo(a);  
-              //log({t:'this', f:'rollflyTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'rollflyTo', a:a});
+              c2d.rollflyTo(a);  
+              //log({t:'camera2d', f:'rollflyTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'rollflyTo', a:a});
               }
             }else{          // no-sh => rel transform ('by')
               a = {r:-22.5, d:3};
-              this.rollflyBy(a);
-              //log({t:'this', f:'rollflyBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'rollflyBy', a:a});
+              c2d.rollflyBy(a);
+              //log({t:'camera2d', f:'rollflyBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'rollflyBy', a:a});
               }
             }
           }else{            // no-alt => cut
             if(e.shiftKey){ // shift  => 'to'
               a = {r:-90};
-              this.rollcutTo(a);
-              //log({t:'this', f:'rollcutTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'rollcutTo', a:a});
+              c2d.rollcutTo(a);
+              //log({t:'camera2d', f:'rollcutTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'rollcutTo', a:a});
               }
             }else{         
               a = {r:-22.5};
-              this.rollcutBy(a); 
-              //log({t:'this', f:'rollcutBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'rollcutBy', a:a});
+              c2d.rollcutBy(a); 
+              //log({t:'camera2d', f:'rollcutBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'rollcutBy', a:a});
               }
             }
           }
@@ -202,33 +208,33 @@ export class Camera2d {
           if(e.altKey){     // alt => fly
             if(e.shiftKey){ // sh => abs transform ('to')
               a = {r:90, d:3};
-              this.rollflyTo(a);  
-              //log({t:'this', f:'rollflyTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'rollflyTo', a:a});
+              c2d.rollflyTo(a);  
+              //log({t:'camera2d', f:'rollflyTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'rollflyTo', a:a});
               }
             }else{          // no-sh => rel transform ('by')
               a = {r:22.5, d:3};
-              this.rollflyBy(a);
-              //log({t:'this', f:'rollflyBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'rollflyBy', a:a});
+              c2d.rollflyBy(a);
+              //log({t:'camera2d', f:'rollflyBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'rollflyBy', a:a});
               }
             }
           }else{            // no-alt => cut
             if(e.shiftKey){ // shift  => 'to'
               a = {r:90};
-              this.rollcutTo(a);
-              //log({t:'this', f:'rollcutTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'rollcutTo', a:a});
+              c2d.rollcutTo(a);
+              //log({t:'camera2d', f:'rollcutTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'rollcutTo', a:a});
               }
             }else{         
               a = {r:22.5};
-              this.rollcutBy(a); 
-              //log({t:'this', f:'rollcutBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'rollcutBy', a:a});
+              c2d.rollcutBy(a); 
+              //log({t:'camera2d', f:'rollcutBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'rollcutBy', a:a});
               }
             }
           }
@@ -241,33 +247,33 @@ export class Camera2d {
           if(e.altKey){     // alt => fly
             if(e.shiftKey){ // sh => abs transform ('to')
               a = {x:20, d:3};
-              this.dollyflyTo(a);  
-              //log({t:'this', f:'dollyflyTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollyflyTo', a:a});
+              c2d.dollyflyTo(a);  
+              //log({t:'camera2d', f:'dollyflyTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollyflyTo', a:a});
               }
             }else{          // no-sh => rel transform ('by')
               a = {x:10, d:3};
-              this.dollyflyBy(a);
-              //log({t:'this', f:'dollyflyBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollyflyBy', a:a});
+              c2d.dollyflyBy(a);
+              //log({t:'camera2d', f:'dollyflyBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollyflyBy', a:a});
               }
             }
           }else{            // no-alt => cut
             if(e.shiftKey){ // shift  => 'to'
               a = {x:20};
-              this.dollycutTo(a);
-              //log({t:'this', f:'dollycutTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollycutTo', a:a});
+              c2d.dollycutTo(a);
+              //log({t:'camera2d', f:'dollycutTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollycutTo', a:a});
               }
             }else{         
               a = {x:10};
-              this.dollycutBy(a); 
-              //log({t:'this', f:'dollycutBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollycutBy', a:a});
+              c2d.dollycutBy(a); 
+              //log({t:'camera2d', f:'dollycutBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollycutBy', a:a});
               }
             }
           }
@@ -278,33 +284,33 @@ export class Camera2d {
           if(e.altKey){     // alt => fly
             if(e.shiftKey){ // sh => abs transform ('to')
               a = {x:-20, d:3};
-              this.dollyflyTo(a);  
-              //log({t:'this', f:'dollyflyTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollyflyTo', a:a});
+              c2d.dollyflyTo(a);  
+              //log({t:'camera2d', f:'dollyflyTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollyflyTo', a:a});
               }
             }else{          // no-sh => rel transform ('by')
               a = {x:-10, d:3};
-              this.dollyflyBy(a);
-              //log({t:'this', f:'dollyflyBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollyflyBy', a:a});
+              c2d.dollyflyBy(a);
+              //log({t:'camera2d', f:'dollyflyBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollyflyBy', a:a});
               }
             }
           }else{            // no-alt => cut
             if(e.shiftKey){ // shift  => 'to'
               a = {x:-20};
-              this.dollycutTo(a);
-              //log({t:'this', f:'dollyCutTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollycutTo', a:a});
+              c2d.dollycutTo(a);
+              //log({t:'camera2d', f:'dollyCutTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollycutTo', a:a});
               }
             }else{         
               a = {x:-10};
-              this.dollycutBy(a); 
-              //log({t:'this', f:'dollyCutBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollycutBy', a:a});
+              c2d.dollycutBy(a); 
+              //log({t:'camera2d', f:'dollyCutBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollycutBy', a:a});
               }
             }
           }
@@ -315,33 +321,33 @@ export class Camera2d {
           if(e.altKey){     // alt => fly
             if(e.shiftKey){ // sh => abs transform ('to')
               a = {y:20, d:3};
-              this.dollyflyTo(a);  
-              //log({t:'this', f:'dollyflyTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollyflyTo', a:a});
+              c2d.dollyflyTo(a);  
+              //log({t:'camera2d', f:'dollyflyTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollyflyTo', a:a});
               }
             }else{          // no-sh => rel transform ('by')
               a = {y:10, d:3};
-              this.dollyflyBy(a);
-              //log({t:'this', f:'dollyflyBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollyflyBy', a:a});
+              c2d.dollyflyBy(a);
+              //log({t:'camera2d', f:'dollyflyBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollyflyBy', a:a});
               }
             }
           }else{            // no-alt => cut
             if(e.shiftKey){ // shift  => 'to'
               a = {y:20};
-              this.dollycutTo(a);
-              //log({t:'this', f:'dollycutTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollycutTo', a:a});
+              c2d.dollycutTo(a);
+              //log({t:'camera2d', f:'dollycutTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollycutTo', a:a});
               }
             }else{         
               a = {y:10};
-              this.dollycutBy(a); 
-              //log({t:'this', f:'dollycutBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollycutBy', a:a});
+              c2d.dollycutBy(a); 
+              //log({t:'camera2d', f:'dollycutBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollycutBy', a:a});
               }
             }
           }
@@ -352,33 +358,33 @@ export class Camera2d {
           if(e.altKey){     // alt => fly
             if(e.shiftKey){ // sh => abs transform ('to')
               a = {y:-20, d:3};
-              this.dollyflyTo(a);  
-              //log({t:'this', f:'dollyflyTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollyflyTo', a:a});
+              c2d.dollyflyTo(a);  
+              //log({t:'camera2d', f:'dollyflyTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollyflyTo', a:a});
               }
             }else{          // no-sh => rel transform ('by')
               a = {y:-10, d:3};
-              this.dollyflyBy(a);
-              //log({t:'this', f:'dollyflyBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollyflyBy', a:a});
+              c2d.dollyflyBy(a);
+              //log({t:'camera2d', f:'dollyflyBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollyflyBy', a:a});
               }
             }
           }else{            // no-alt => cut
             if(e.shiftKey){ // shift  => 'to'
               a = {y:-20};
-              this.dollycutTo(a);
-              //log({t:'this', f:'dollycutTo', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollycutTo', a:a});
+              c2d.dollycutTo(a);
+              //log({t:'camera2d', f:'dollycutTo', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollycutTo', a:a});
               }
             }else{         
               a = {y:-10};
-              this.dollycutBy(a); 
-              //log({t:'this', f:'dollycutBy', a:a});
-              if(this.record_shots){
-                this.mediator.record({t:'this', f:'dollycutBy', a:a});
+              c2d.dollycutBy(a); 
+              //log({t:'camera2d', f:'dollycutBy', a:a});
+              if(c2d.record_shots){
+                c2d.mediator.record({t:'camera2d', f:'dollycutBy', a:a});
               }
             }
           }
@@ -391,10 +397,10 @@ export class Camera2d {
         //   one run will never match another.
         case 57: 
           // uses default dur=10 npoints=5 
-          this.bezier(); 
-          //log({t:'this', f:'bezier', a:{d:10}});
-          if(this.record_shots){
-            this.mediator.record({t:'this', f:'bezier', a:{d:10}});
+          c2d.bezier(); 
+          //log({t:'camera2d', f:'bezier', a:{d:10}});
+          if(c2d.record_shots){
+            c2d.mediator.record({t:'camera2d', f:'bezier', a:{d:10}});
           }
           break;
 
@@ -406,16 +412,16 @@ export class Camera2d {
 
 
   set_narrative(narrative){
-    this.narrative = narrative;
+    c2d.narrative = narrative;
   }
 
 
   place(narrative) {
-    this.narrative = narrative;
-    this.plane = document.getElementById("plane");
-    this.zoom_plane = document.getElementById("zoom_plane");
-    console.assert(this.plane, 'error setting plane!');
-    console.assert(this.zoom_plane, 'error setting zoom_plane!');
+    c2d.narrative = narrative;
+    c2d.plane = document.getElementById("plane");
+    c2d.zoom_plane = document.getElementById("zoom_plane");
+    console.assert(c2d.plane, 'error setting plane!');
+    console.assert(c2d.zoom_plane, 'error setting zoom_plane!');
   }
 
 
@@ -428,7 +434,7 @@ export class Camera2d {
     a.d = a.d || 0.0;
 
     // shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
         timeline: {p: {paused:true, repeat:0},
                actors:{
                  'i2d:plane':[{dur:a.d, 
@@ -439,7 +445,7 @@ export class Camera2d {
               }//tl
               }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
 
 
@@ -447,7 +453,7 @@ export class Camera2d {
     a.d = a.d || 0.0;
 
     //shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
         timeline: {p: {paused:true, repeat:0},
                actors:{
                  'i2d:plane':[{dur:a.d, 
@@ -458,139 +464,139 @@ export class Camera2d {
               }//tl
               }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
 
 
   // ZOOM<br>
   // cut - no animation
   zoomcutTo(a) {  
-    if(a.s !== undefined){this.scale = a.s;}
+    if(a.s !== undefined){c2d.scale = a.s;}
 
     // shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
                   timeline: {p: {paused:true, repeat:0, tweens:[]},
                              actors:{
-                              'i2d:zoom_plane':[{dur:0, p:{'scale':this.scale,
+                              'i2d:zoom_plane':[{dur:0, p:{'scale':c2d.scale,
                                 svgOrigin:'0% 0%', immediateRender:false}}]
                              }
                             }//tl
                         }//delta
                 };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
   zoomcutBy(a) {   
-    if(a.s !== undefined){this.scale *= a.s;}
+    if(a.s !== undefined){c2d.scale *= a.s;}
 
     // shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
                   timeline: {p: {paused:true, repeat:0, tweens:[]},
                              actors:{
-                              'i2d:zoom_plane':[{dur:0, p:{'scale':this.scale,
+                              'i2d:zoom_plane':[{dur:0, p:{'scale':c2d.scale,
                                 svgOrigin:'0% 0%', immediateRender:false}}]
                              }
                             }//tl
                         }//delta
                 };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
 
   // fly - animate
   zoomflyTo(a) {   
-    if(a.s !== undefined){this.scale = a.s;}
+    if(a.s !== undefined){c2d.scale = a.s;}
 
     // shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
                   timeline: {p: {paused:true, repeat:0, tweens:[]},
                              actors:{
-                              'i2d:zoom_plane':[{dur:a.d, p:{'scale':this.scale,
+                              'i2d:zoom_plane':[{dur:a.d, p:{'scale':c2d.scale,
                                 svgOrigin:'0% 0%', immediateRender:false}}]
                              }
                             }//tl
                         }//delta
                 };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
   zoomflyBy(a) {   
-    if(a.s !== undefined){this.scale *= a.s;}
+    if(a.s !== undefined){c2d.scale *= a.s;}
 
     // shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
                   timeline: {p: {paused:true, repeat:0, tweens:[]},
                              actors:{
-                              'i2d:zoom_plane':[{dur:a.d, p:{'scale':this.scale,
+                              'i2d:zoom_plane':[{dur:a.d, p:{'scale':c2d.scale,
                                 svgOrigin:'0% 0%', immediateRender:false}}]
                              }
                             }//tl
                         }//delta
                 };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
 
 
   // ROLL<br>
   // cut - no animation
   rollcutTo(a) {  
-    if(a.r !== undefined){this.angle = a.r;}
+    if(a.r !== undefined){c2d.angle = a.r;}
 
     // shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
       timeline: {p: {paused:true, repeat:0, tweens:[]},
                  actors:{
-                   'i2d:zoom_plane':[{dur:0, p:{'rotation':this.angle,
+                   'i2d:zoom_plane':[{dur:0, p:{'rotation':c2d.angle,
                       svgOrigin:'0% 0%', immediateRender:false}}]
                  }
                 }//tl
                 }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
   rollcutBy(a) {  
-    if(a.r !== undefined){this.angle += a.r;}
+    if(a.r !== undefined){c2d.angle += a.r;}
 
     // shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
       timeline: {p: {paused:true, repeat:0, tweens:[]},
                  actors:{
-                   'i2d:zoom_plane':[{dur:0, p:{'rotation':this.angle,
+                   'i2d:zoom_plane':[{dur:0, p:{'rotation':c2d.angle,
                       svgOrigin:'0% 0%', immediateRender:false}}]
                  }
                 }//tl
                 }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
 
   // fly - animate
   rollflyTo(a) {  
-    if(a.r !== undefined){this.angle = a.r;}
+    if(a.r !== undefined){c2d.angle = a.r;}
 
     // shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
       timeline: {p: {paused:true, repeat:0, tweens:[]},
                  actors:{
-                   'i2d:zoom_plane':[{dur:a.d, p:{'rotation':this.angle,
+                   'i2d:zoom_plane':[{dur:a.d, p:{'rotation':c2d.angle,
                       svgOrigin:'0% 0%', immediateRender:false}}]
                  }
                 }//tl
                 }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
   rollflyBy(a) {  
-    if(a.r !== undefined){this.angle += a.r;}
+    if(a.r !== undefined){c2d.angle += a.r;}
 
     // shot
-    this.shot = {delta: {
+    c2d.shot = {delta: {
       timeline: {p: {paused:true, repeat:0, tweens:[]},
                  actors:{
-                   'i2d:zoom_plane':[{dur:a.d, p:{'rotation':this.angle,
+                   'i2d:zoom_plane':[{dur:a.d, p:{'rotation':c2d.angle,
                       svgOrigin:'0% 0%', immediateRender:false}}]
                  }
                 }//tl
                 }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
 
 
@@ -598,78 +604,78 @@ export class Camera2d {
   // DOLLY<br>
   // cut - no animation
   dollycutTo(a) { 
-    if(a.x !== undefined){this.x = a.x;}
-    if(a.y !== undefined){this.y = a.y;}
+    if(a.x !== undefined){c2d.x = a.x;}
+    if(a.y !== undefined){c2d.y = a.y;}
 
     // shot<br>
     // y-coords are webgl - svg translateY must be negated!
-    this.shot = {delta: {
+    c2d.shot = {delta: {
       timeline: {p: {paused:true, repeat:0, tweens:[]},
                  actors:{
                    'i2d:plane':[{dur:0, 
-                                 p:{'x': this.x, 'y': -this.y,
+                                 p:{'x': c2d.x, 'y': -c2d.y,
                                    immediateRender:false}}]
                  }
                 }//tl
                 }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
   dollycutBy(a) { 
-    if(a.x !== undefined){this.x += a.x;}
-    if(a.y !== undefined){this.y += a.y;}
+    if(a.x !== undefined){c2d.x += a.x;}
+    if(a.y !== undefined){c2d.y += a.y;}
 
     // shot<br>
     // y-coords are webgl - svg translateY must be negated!
-    this.shot = {delta: {
+    c2d.shot = {delta: {
       timeline: {p: {paused:true, repeat:0, tweens:[]},
                  actors:{
                    'i2d:plane':[{dur:0, 
-                                 p:{'x': this.x, 'y': -this.y,
+                                 p:{'x': c2d.x, 'y': -c2d.y,
                                    immediateRender:false}}]
                  }
                 }//tl
                 }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
 
   // fly - animate
   dollyflyTo(a) { 
-    if(a.x !== undefined){this.x = a.x;}
-    if(a.y !== undefined){this.y = a.y;}
+    if(a.x !== undefined){c2d.x = a.x;}
+    if(a.y !== undefined){c2d.y = a.y;}
 
     // shot<br>
     // y-coords are webgl - svg translateY must be negated!
-    this.shot = {delta: {
+    c2d.shot = {delta: {
       timeline: {p: {paused:true, repeat:0, tweens:[]},
                  actors:{
                    'i2d:plane':[{dur:a.d, 
-                                 p:{'x': this.x, 'y': -this.y,
+                                 p:{'x': c2d.x, 'y': -c2d.y,
                                    immediateRender:false}}]
                  }
                 }//tl
                 }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
   dollyflyBy(a) { 
-    if(a.x !== undefined){this.x += a.x;}
-    if(a.y !== undefined){this.y += a.y;}
+    if(a.x !== undefined){c2d.x += a.x;}
+    if(a.y !== undefined){c2d.y += a.y;}
 
     // shot<br>
     // y-coords are webgl - svg translateY must be negated!
-    this.shot = {delta: {
+    c2d.shot = {delta: {
       timeline: {p: {paused:true, repeat:0, tweens:[]},
                  actors:{
                    'i2d:plane':[{dur:a.d, 
-                                 p:{'x': this.x, 'y': -this.y,
+                                 p:{'x': c2d.x, 'y': -c2d.y,
                                    immediateRender:false}}]
                  }
                 }//tl
                 }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
 
   // random 2d-bezier camera nav<br> 
@@ -717,7 +723,7 @@ export class Camera2d {
 
     // shot<br>
     // y-coords are webgl - svg translateY must be negated!
-    this.shot = {delta: {
+    c2d.shot = {delta: {
       timeline: {p: {paused:true, repeat:0, tweens:[]},
                  actors:{
                    'i2d:c':[{dur:a.d, p:bezier}]
@@ -725,7 +731,7 @@ export class Camera2d {
                 }//tl
                 }//delta
     };//shot
-    this.narrative.setShot(this.shot);
+    c2d.narrative.setShot(c2d.shot);
   }
 }//Camera2D
 

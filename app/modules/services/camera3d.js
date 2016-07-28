@@ -14,7 +14,7 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
         return function (target, key) { decorator(target, key, paramIndex); }
     };
     var core_1, _config_1, mediator_1, scenes_1, cameras_1, transform3d_1;
-    var c3d, record_shots, matrixa, matrixb, scene, actors, billboards, csphere, camera, key, fill, back, lights, set_light, initializeCamerasphere, report_camera_world, report_camera, examine_matrix, Camera3d;
+    var c3d, record_shots, matrixa, matrixb, scene, actors, billboards, timeline, csphere, camera, key, fill, back, set_light, initializeCamerasphere, report_camera_world, report_camera, examine_matrix, Camera3d;
     return {
         setters:[
             function (core_1_1) {
@@ -43,10 +43,10 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
             record_shots = false;
             // tmp matrices used in diagnostics transforms and diagnostics
             matrixa = new THREE.Matrix4(), matrixb = new THREE.Matrix4();
-            // scene, actors, billboards
+            // scene, actors, billboards, timeline (for shot/animations)
             scene = new THREE.Scene(), actors = {}, billboards = {};
             // permanent default csphere, and possibly transient camera and lights
-            key = new THREE.PointLight(0xffffff), fill = new THREE.PointLight(0xffffff), back = new THREE.PointLight(0xffffff), lights = { key: key, fill: fill, back: back };
+            key = new THREE.PointLight(0xffffff), fill = new THREE.PointLight(0xffffff), back = new THREE.PointLight(0xffffff);
             // init lights
             set_light = (name, _l = {}) => {
                 var type = _l['type'] || 'pointlight';
@@ -55,30 +55,72 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                 console.dir(_l);
                 console.log(`_l['color'] = ${_l['color']}`);
                 // create light type (pointlight/spotlight)
-                if (type === 'spotlight') {
-                    lights[name] = new THREE.SpotLight(_l['color']);
-                }
-                else {
-                    console.log(`${name} set to new PL(${_l['color']}`);
-                    lights[name] = new THREE.PointLight(_l['color']);
-                    console.log(`lights[${name}].color.r = ${lights[name].color.r}`);
-                    console.log(`lights[${name}].color.g = ${lights[name].color.g}`);
-                    console.log(`lights[${name}].color.b = ${lights[name].color.b}`);
-                }
-                // set light properties
-                for (let p in _l) {
-                    let val = _l[p];
-                    console.log(`#################  p = ${p} val = ${val}`);
-                    if ((p !== 'type') && (p !== 'position')) {
-                        if (p !== 'color') {
-                            lights[name][p] = val;
+                switch (name) {
+                    case 'key':
+                        if (type === 'spotlight') {
+                            key = new THREE.SpotLight(_l['color']);
                         }
-                    }
-                    else {
-                        if (p === 'position') {
-                            lights[name].position.fromArray(val);
+                        else {
+                            key = new THREE.PointLight(_l['color']);
                         }
-                    }
+                        for (let p in _l) {
+                            let val = _l[p];
+                            if ((p !== 'type') && (p !== 'position')) {
+                                if (p !== 'color') {
+                                    key[p] = val;
+                                }
+                            }
+                            else {
+                                if (p === 'position') {
+                                    key.position.fromArray(val);
+                                }
+                            }
+                        }
+                        break;
+                    case 'fill':
+                        if (type === 'spotlight') {
+                            fill = new THREE.SpotLight(_l['color']);
+                        }
+                        else {
+                            fill = new THREE.PointLight(_l['color']);
+                        }
+                        for (let p in _l) {
+                            let val = _l[p];
+                            if ((p !== 'type') && (p !== 'position')) {
+                                if (p !== 'color') {
+                                    fill[p] = val;
+                                }
+                            }
+                            else {
+                                if (p === 'position') {
+                                    fill.position.fromArray(val);
+                                }
+                            }
+                        }
+                        break;
+                    case 'back':
+                        if (type === 'spotlight') {
+                            back = new THREE.SpotLight(_l['color']);
+                        }
+                        else {
+                            back = new THREE.PointLight(_l['color']);
+                        }
+                        for (let p in _l) {
+                            let val = _l[p];
+                            if ((p !== 'type') && (p !== 'position')) {
+                                if (p !== 'color') {
+                                    back[p] = val;
+                                }
+                            }
+                            else {
+                                if (p === 'position') {
+                                    back.position.fromArray(val);
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        console.log(`name ${name} is unrecognized`);
                 }
                 if (name === 'key') {
                     console.log(`key.color.r = ${key.color.r}`);
@@ -297,6 +339,7 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                                     }
                                     else {
                                         c3d.billboardsFaceCamera();
+                                        console.log('\n\n\n BILLBOARDS FACE CAMERA \n\n\n');
                                         //log({t:'camera3d', f:'billboardsFaceCamera'});
                                         if (record_shots) {
                                             c3d.mediator.record({ t: 'camera3d', f: 'billboardsFaceCamera' });
@@ -974,6 +1017,9 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                 set_narrative(narrative) {
                     c3d.narrative = narrative;
                 }
+                set_timeline(tl) {
+                    timeline = tl;
+                }
                 // initialize scene - 'place' camera in scene
                 place(i3dtemplatename, i3dmodel) {
                     var sd = i3dmodel['scene'], // scene-descriptor 'options' object
@@ -981,11 +1027,23 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                     // diagnostics
                     console.dir(i3dmodel);
                     // clear actors and billboards associated with previous scene
+                    // turn off animation and seek to time=0
                     if (scene) {
                         console.log(`\n\n\n^^^^^^ breaking down scene ${scene.name}`);
                         actors = {};
                         billboards = {};
-                        console.log(`after: c3d.reportActors = ${c3d.reportActors()}`);
+                        console.log(`after cleaning: c3d.reportActors = ${c3d.reportActors()}`);
+                        if (timeline !== undefined) {
+                            console.log(`before pause(0) timeline.pause = ${timeline.pause}`);
+                            timeline.pause(0);
+                            console.log(`after pause(0) timeline paused = ${timeline.paused()}`);
+                        }
+                        else {
+                            console.log(`before pause(0) timeline is UNDEFINED!!`);
+                        }
+                        csphere.material.visible = false;
+                        c3d.removeActorFromScene('csphere');
+                        c3d.removeActorFromScene(scene.name);
                     }
                     // set scene to procedural 'i3dscene' or to new empty scene
                     if (sd['name']) {
@@ -1039,15 +1097,20 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                     console.log(`new scene ${scene.name} actors = ${c3d.reportActors()}`);
                     report_camera();
                     // begin camera control animation - in sync with GSAP animation
-                    // later replace c3d line by TweenMax.ticker line below
-                    c3d.animate();
-                    //TweenMax.ticker.addEventListener('tick', c3d.render);
+                    // later add TweenMax.ticker line below before c3d.animate
+                    TweenMax.ticker.addEventListener('tick', c3d.render);
+                    setTimeout(() => {
+                        c3d.animate();
+                    }, 500);
                 } //place
                 // start rendering cycle
                 animate() {
                     // diagnostics
-                    if (c3d.count++ < 2) {
-                    }
+                    //if(c3d.count++ < 2){
+                    //console.log(`\nstart animate: c3d.count === ${c3d.count}`);
+                    //console.log(`this === ${this}`);
+                    //console.log(`c3d === ${c3d}`);
+                    //}
                     // animation update for directives registering update function via f=id
                     //    if(scene['animations']){
                     //      for(let f of Object.keys(scene['animations'])){
@@ -1061,17 +1124,26 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                 // render scene using camera<br>
                 // possibly orient billboards to face (lookAt) camera
                 render() {
-                    //    if(billboardsFace){
-                    //      billboardsTarget.addVectors(csphere.position, camera.position);
-                    //      billboardsTarget.z *= zoom;  // world camera.pos.z follows the radius
-                    //                                   // of csphere which corresponds to z*zoom
+                    // diagnostics - billboards lookAt camera
+                    //    if(c3d.count++%1000 === 0){
+                    //      console.log(`\nbillboardsFace = ${c3d.billboardsFace}`);
+                    //      console.log(`billboardsTarget.x = ${c3d.billboardsTarget.x}`);
+                    //      console.log(`billboardsTarget.y = ${c3d.billboardsTarget.y}`);
+                    //      console.log(`billboardsTarget.z = ${c3d.billboardsTarget.z}`);
                     //      Object.keys(billboards).forEach(function(id){
-                    //        billboards[id].lookAt(billboardsTarget);
+                    //        console.log(`bb[${id}] = ${billboards[id]}`);
+                    //        console.log(`bb[${id}].rotation.x = ${billboards[id].rotation.x}`);
+                    //        console.log(`bb[${id}].rotation.y = ${billboards[id].rotation.y}`);
+                    //        console.log(`bb[${id}].rotation.z = ${billboards[id].rotation.z}`);
                     //      });
                     //    }
-                    //    if(c3d.stats){
-                    //      c3d.stats.update();
-                    //    }
+                    if (c3d.billboardsFace) {
+                        camera.updateMatrixWorld();
+                        camera.getWorldPosition(c3d.billboardsTarget); //wr cam.wpos to bbTarget
+                        Object.keys(billboards).forEach(function (id) {
+                            billboards[id].lookAt(c3d.billboardsTarget);
+                        });
+                    }
                     if (c3d.stats) {
                         c3d.stats.update();
                     }
@@ -1189,7 +1261,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = 'shot-anim:' + JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                     // camera
                     camera.position.x = 0.0;
@@ -1206,6 +1277,47 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                     }
                     // dynamic trackers
                     c3d.zoom = 1.0;
+                    c3d.roll = 0.0;
+                    c3d.pan = 0.0;
+                    c3d.tilt = 0.0;
+                    c3d.yaw = 0.0;
+                    c3d.pitch = 0.0;
+                }
+                // camera keybd-functions
+                // normalize position orientation of csphere and camera - but NOT zoom
+                center(a) {
+                    a.d = a.d || 0.0;
+                    //shot
+                    c3d.shot = { delta: {
+                            timeline: { p: { paused: true, repeat: 0 },
+                                actors: {
+                                    'i3d:camera:rotation': [{ dur: a.d,
+                                            p: { 'x': 0.0, 'y': 0.0, 'z': 0.0,
+                                                immediateRender: false } }],
+                                    'i3d:csphere:position': [{ dur: a.d,
+                                            p: { 'x': 0.0, 'y': 0.0, 'z': 0.0,
+                                                immediateRender: false } }],
+                                    'i3d:csphere:rotation': [{ dur: a.d,
+                                            p: { 'x': 0.0, 'y': 0.0, 'z': 0.0,
+                                                immediateRender: false } }],
+                                    'i2d:plane': [{ dur: a.d,
+                                            p: { 'x': 0.0, 'y': 0.0, immediateRender: false } }]
+                                }
+                            } //tl
+                        } //delta
+                    }; //shot
+                    c3d.narrative.setShot(c3d.shot);
+                    // camera
+                    camera.position.x = 0.0;
+                    camera.position.y = 0.0;
+                    camera.up.x = 0.0;
+                    camera.up.y = 1.0;
+                    camera.up.z = 0.0;
+                    if (camera.fov !== c3d.fov) {
+                        camera.fov = c3d.fov;
+                        camera.updateProjectionMatrix();
+                    }
+                    // dynamic trackers
                     c3d.roll = 0.0;
                     c3d.pan = 0.0;
                     c3d.tilt = 0.0;
@@ -1230,7 +1342,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = 'shot-anim:' + JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 zoomcutBy(a) {
@@ -1245,7 +1356,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // fly - animate
@@ -1261,7 +1371,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 zoomflyBy(a) {
@@ -1276,7 +1385,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // ROLL<br>
@@ -1294,7 +1402,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 rollcutBy(a) {
@@ -1309,7 +1416,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // fly - animate
@@ -1325,7 +1431,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 rollflyBy(a) {
@@ -1340,7 +1445,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // PAN/TILT<br>
@@ -1357,7 +1461,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 panflyBy(a) {
@@ -1372,7 +1475,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 tiltflyTo(a) {
@@ -1387,7 +1489,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 tiltflyBy(a) {
@@ -1402,7 +1503,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // EXAMINE-YAW<br>
@@ -1421,7 +1521,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 yawcutBy(a) {
@@ -1436,7 +1535,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // fly - animate
@@ -1452,7 +1550,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 yawflyBy(a) {
@@ -1467,7 +1564,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // EXAMINE-PITCH<br>
@@ -1486,7 +1582,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 pitchcutBy(a) {
@@ -1501,7 +1596,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // fly - animate
@@ -1517,7 +1611,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 pitchflyBy(a) {
@@ -1532,7 +1625,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // camera shot implementations
@@ -1617,7 +1709,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    console.log(`dollycutBy: c3d.shot = ${JSON.stringify(c3d.shot)}`);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // random 2d-bezier camera nav<br> 
@@ -1690,7 +1781,6 @@ System.register(['@angular/core', '../configs/@config', './mediator', './scenes'
                             } //tl
                         } //delta
                     }; //shot
-                    c3d.shot = JSON.stringify(c3d.shot);
                     c3d.narrative.setShot(c3d.shot);
                 }
                 // camera change with NO Substate change !!! - for studio usage only!

@@ -37,7 +37,7 @@ System.register(['@angular/core', '@angular/common', '../../services/templatecac
                     i3d.templates = templates;
                     i3d.models = models;
                 }
-                static changeState(substate, narrative, init_scene) {
+                static changeState(substate, narrative) {
                     var templatename = substate['t'], modelname = substate['m'], tp = substate['tp'], // previous templatename
                     mp = substate['mp'], // previous modelname
                     componentref, // component = componentref.instance;
@@ -48,8 +48,7 @@ System.register(['@angular/core', '@angular/common', '../../services/templatecac
                         return Promise.resolve('i3d');
                     }
                     else {
-                        console.log(`I3d.changeState: templatename = ${templatename} init_scene =
-                  ${init_scene}`);
+                        console.log(`I3d.changeState: templatename = ${templatename}`);
                         return new Promise((resolve, reject) => {
                             // note: modelname might be '' but then models['i3d'] object returned
                             i3dmodel = i3d.models.get(['i3d', templatename, modelname]);

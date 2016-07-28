@@ -44,12 +44,13 @@ export var Modelhead={scene: {
                       actors: [
                         { id:'head',
                           form:{type:'jsonmodel',
-                                phong: false,
+                                phong: true,
                                 color: 0xffffff,
                                 emissive_color: 0x000000,
                                 emissiveIntensity: 1,
                                 specular_color: 0xffa500, //orange
                                 reflectivity: 1,
+                                fog:true,
                                 shininess: 3.0,
                                 jsonmodel:{head:
                                  './webgl/models/teapot/teapot.json'}}, 

@@ -34,9 +34,10 @@ System.register(['@angular/core', '@angular/common', '../../services/models', '.
                     shot.models = models;
                     shot.animation = animation;
                 }
-                static changeState(substate) {
+                static changeState(substate, reverse) {
                     var templatename = substate['t'], _model = substate['m'], // modelname
                     model;
+                    console.log('\n\n\n\n ###########################################');
                     console.log(`Shot.changeState: templatename = ${templatename}`);
                     console.log(`Shot.changeState: _model = ${_model}`);
                     console.log(`Shot.changeState: _model[0] = ${_model[0]}`);
@@ -53,7 +54,10 @@ System.register(['@angular/core', '@angular/common', '../../services/models', '.
                         ;
                         model = shot.models.get(['shot', templatename, _model]);
                     }
-                    shot.animation.perform(model);
+                    console.log(`reverse = ${reverse} shot is:`);
+                    console.dir(model);
+                    console.log('###########################################');
+                    shot.animation.perform(model, reverse);
                 }
             };
             Shot = __decorate([

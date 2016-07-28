@@ -41,6 +41,11 @@ import template from './narrative.html';
 
 
 
+// singleton closure variable
+var narrative:Narrative;
+
+
+
 @Component({
   selector: 'dome-narrative',
   //templateUrl: './app/modules-ts/components/narrative.html', 
@@ -83,6 +88,9 @@ export class Narrative {
   // show/hide substates by display:block/display:none or visible:t/f-on/off
   display:Object={};
 
+  // determine if back-button or broswer.back()
+  previous_path:string;
+
   // state -> previous state
   current_scene:string;
   current_path:string;
@@ -100,6 +108,7 @@ export class Narrative {
   camera2d:Camera2d;
   animation:Animation;
   speech:Speech;
+  textures:Textures;
 
   // display fps stats
   stats:Stats;
@@ -121,58 +130,64 @@ export class Narrative {
               transform3d:Transform3d,
               camera2d:Camera2d,
               animation:Animation,
+              textures:Textures,
               speech:Speech) {
 
     // config
-    this.config = cfg || {};
-    this.controls = config.controls;
-    this.controlstates = config.controlstates;
-    this.scenepaths = config.scenepaths;
-    this.scenestates = config.scenestates;
-    this.substates = config.substates;
+    narrative = this;
+    narrative.config = cfg || {};
+    narrative.controls = config.controls;
+    narrative.controlstates = config.controlstates;
+    narrative.scenepaths = config.scenepaths;
+    narrative.scenestates = config.scenestates;
+    narrative.substates = config.substates;
     Narrative.provider_overrides = config.provider_overrides || []; 
-    this.targets = config.targets;
-    this.targets['narrative'] = this;
-    this.targets['camera3d'] = camera3d;
-    this.targets['camera2d'] = camera2d;
-    this.targets['mediator'] = mediator;
-    this.targets['animation'] = animation;
-    this.targets['models'] = models;
-    this.targets['scenes'] = scenes;
-    this.targets['templatecache'] = templatecache;
+    narrative.targets = {};
+    narrative.targets['narrative'] = narrative;
+    narrative.targets['camera3d'] = camera3d ;
+    narrative.targets['camera2d'] = camera2d;
+    narrative.targets['mediator'] = mediator;
+    narrative.targets['animation'] = animation;
+    narrative.targets['models'] = models;
+    narrative.targets['scenes'] = scenes;
+    narrative.targets['textures'] = textures;
+    narrative.targets['speech'] = speech;
+    narrative.targets['templatecache'] = templatecache;
 
     // display
-    this.display['ui'] = (this.controlstates['ui'] ? 'block' : 'none');
-    this.display['i2d'] = (this.controlstates['i2d'] ? 'block' : 'none');
-    this.display['i3d'] = (this.controlstates['i3d'] ? 'block' : 'none');
-    this.display['base'] = (this.controlstates['base'] ? 'block' : 'none');
-    this.display['fps'] = (this.controlstates['fps'] ? 'block' : 'none');
-    this.display['csphere'] = (this.controlstates['csphere'] ? 'on' : 'off');
-    this.display['key'] = (this.controlstates['key'] ? 'on' : 'off');
-    this.display['fill'] = (this.controlstates['fill'] ? 'on' : 'off');
-    this.display['back'] = (this.controlstates['back'] ? 'on' : 'off');
+    narrative.display['ui'] = (narrative.controlstates['ui'] ? 'block' : 'none');
+    narrative.display['i2d'] = (narrative.controlstates['i2d'] ? 'block' : 'none');
+    narrative.display['i3d'] = (narrative.controlstates['i3d'] ? 'block' : 'none');
+    narrative.display['base'] = (narrative.controlstates['base'] ? 'block' : 'none');
+    narrative.display['fps'] = (narrative.controlstates['fps'] ? 'block' : 'none');
+    narrative.display['csphere'] = (narrative.controlstates['csphere'] ? 'on' : 'off');
+    narrative.display['key'] = (narrative.controlstates['key'] ? 'on' : 'off');
+    narrative.display['fill'] = (narrative.controlstates['fill'] ? 'on' : 'off');
+    narrative.display['back'] = (narrative.controlstates['back'] ? 'on' : 'off');
 
     // state
-    this.current_scene = config.opening_scene;
-    this.current_path = config.scenepaths[config.opening_scene];
+    narrative.previous_path = config.scenepaths[config.opening_scene];
+    narrative.current_scene = config.opening_scene;
+    narrative.current_path = config.scenepaths[config.opening_scene];
     
     // services
-    this.camera3d = camera3d;
-    this.models = models;
-    this.scenes = scenes; 
-    this.mediator = mediator; 
-    this.transform3d = transform3d; 
-    this.camera2d = camera2d; 
-    this.animation = animation; 
-    this.speech = speech; 
-    this.state = state;
-    this.current_state = this.state.parse(this.current_path); 
+    narrative.camera3d = camera3d;
+    narrative.models = models;
+    narrative.scenes = scenes; 
+    narrative.mediator = mediator; 
+    narrative.transform3d = transform3d; 
+    narrative.camera2d = camera2d; 
+    narrative.animation = animation; 
+    narrative.speech = speech; 
+    narrative.state = state;
+    narrative.current_state = narrative.state.parse(narrative.current_path); 
 
     // give Narrative ref to Mediator, Camera3d, Camera2d to call 
     // N.exec(action) if action has become executable by timestamp > present
-    this.mediator.set_narrative(this);
-    this.camera3d.set_narrative(this);
-    this.camera2d.set_narrative(this);
+    narrative.mediator.set_narrative(narrative);
+    narrative.camera3d.set_narrative(narrative);
+    narrative.camera2d.set_narrative(narrative);
+    narrative.animation.set_narrative(narrative);
 
 
     // fwd/back
@@ -190,8 +205,8 @@ export class Narrative {
       // model.visibility settings - exp. model.visibility['fill'] is 'on' 
       // Thus back/fwd return to their initial scene states, despite the state
       // of the controls in the 'previous' scene.
-      if(path !== this.config.scenepaths['opening']){
-        this.changeState(path, false);
+      if(path !== narrative.config.scenepaths['opening']){
+        narrative.changeState(path, false);
       }else{
         window.history.go(1);
       }
@@ -206,8 +221,8 @@ export class Narrative {
 
     // ignore change on non-existent control
     console.log(`narrative.changeControl(${control}) val = ${val}`);
-    console.log(`controlstates[${control}] = ${this.controlstates[control]}`);
-    if(this.controlstates[control] === undefined){
+    console.log(`controlstates[${control}] = ${narrative.controlstates[control]}`);
+    if(narrative.controlstates[control] === undefined){
       console.log(`controlstates[${control}] is undefined!`);
       return;
     }
@@ -219,9 +234,9 @@ export class Narrative {
     // [2] no val => checkbox toggle => toggle controlstates[control'] boolean 
     if(val){
       // set checkbox ('on' => checked(true),  'off' => unchecked(false))
-      this.controlstates[control] = (val === 'on' ? true : false);
+      narrative.controlstates[control] = (val === 'on' ? true : false);
     }else{
-      this.controlstates[control] = !this.controlstates[control];
+      narrative.controlstates[control] = !narrative.controlstates[control];
     }
 
 
@@ -233,24 +248,24 @@ export class Narrative {
       case 'i2d':
       case 'base':
       case 'fps':
-        console.log(`before: display[${control}] = ${this.display[control]}`);
-        this.display[control] = (this.controlstates[control] ? 'block':'none');
-        console.log(`after: display[${control}] = ${this.display[control]}`);
+        console.log(`before: display[${control}] = ${narrative.display[control]}`);
+        narrative.display[control] = (narrative.controlstates[control] ? 'block':'none');
+        console.log(`after: display[${control}] = ${narrative.display[control]}`);
         break;
 
       case 'csphere':
       case 'key':
       case 'fill':
       case 'back':
-        actor = this.camera3d.actor(control);
-        console.log(`\nbefore: display[${control}] = ${this.display[control]}`);
-        console.log(`reportActors = ${this.camera3d.reportActors()}`);
-        this.display[control] = (this.controlstates[control] ? 'on' : 'off');
-        console.log(`after: display[${control}] = ${this.display[control]}`);
+        actor = narrative.camera3d.actor(control);
+        console.log(`\nbefore: display[${control}] = ${narrative.display[control]}`);
+        console.log(`reportActors = ${narrative.camera3d.reportActors()}`);
+        narrative.display[control] = (narrative.controlstates[control] ? 'on' : 'off');
+        console.log(`after: display[${control}] = ${narrative.display[control]}`);
         if(control === 'csphere'){
-          actor.material.visible = this.controlstates['csphere'];
+          actor.material.visible = narrative.controlstates['csphere'];
         }else{
-          actor.visible = this.controlstates[control];
+          actor.visible = narrative.controlstates[control];
         }
         console.dir(actor);
         break;
@@ -268,7 +283,7 @@ export class Narrative {
   // is capable of driving a GSAP animation.
   // The path formed to represent the statechange is absolute - i.e. fully
   // specify each substate of the state (scene, i3d, i2d, base, ui, shot)
-  // The absolute path is sent to this.changeState(path) which compares each
+  // The absolute path is sent to narrative.changeState(path) which compares each
   // substate to the previous substate and, if there is a change on a 
   // particular substate, invokes changeState on the corresponding substate 
   // component (Scene, I3d, I2d, Base, UI, Shot)
@@ -277,13 +292,13 @@ export class Narrative {
         pa:string[];
 
     // create an absolute path representing the new shot    
-    path = this.current_path;    // create substates array 
-    pa = this.current_path.split('/'); // remove previous shot substate     
+    path = narrative.current_path;    // create substates array 
+    pa = narrative.current_path.split('/'); // remove previous shot substate     
     pa.pop();
-    path = pa.join('/') + `/shot${this.shotindex++}:` + JSON.stringify(shot);
+    path = pa.join('/') + `/shot${narrative.shotindex++}:` + JSON.stringify(shot);
     console.log(`setShot: new absolute path = ${path}`);
     // changeState(new-path, change-location, init-scene)
-    this.changeState(path, true, false);
+    narrative.changeState(path, true, false);
   }
 
 
@@ -302,7 +317,7 @@ export class Narrative {
   // is either a 't:m' or 't:' name if to be changed, or '' if no change 
   setSubstates(delta_path:string) {
     var dpa:string[] = delta_path.split('/'),
-        cpa:string[] = this.current_path.split('/'),
+        cpa:string[] = narrative.current_path.split('/'),
         path:string,
         i:number;
 
@@ -315,7 +330,7 @@ export class Narrative {
     path = dpa.join(':');
     console.log('setSubstates: changing state to absolute-path = ${path}');
     // changeState(new-path, change-location, init-scene)
-    this.changeState(path, true, false);
+    narrative.changeState(path, true, false);
   }
 
 
@@ -329,34 +344,51 @@ export class Narrative {
               init_scene:boolean = true) {
 
     var pstate:Object = {},     // previous state
-        substates:Object = {}; // substate current&prev templatename modelname
+        substates:Object = {}, // substate current&prev templatename modelname
+        reverse:boolean = false;
+                                    
 
+    // set previous_path and determine reverse
+    // NOTE: reverse=true if back-button, but also if choosing scene sequence
+    // such as: (1) sceneA, (2) sceneB, (3) sceneA => reverse=true
+    if(path === narrative.previous_path){
+      reverse = true;
+    }else{
+      narrative.previous_path = narrative.current_path;
+    }
 
     console.log(`\n\n\nchangeState! change_location = ${change_location} init_scene = ${init_scene}`);
     console.log(`new path = ${path}`);
-    console.log(`current_path = ${this.current_path}`);
+    console.log(`previous_path = ${narrative.previous_path}`);
+    //console.log(`current_path = ${narrative.current_path}`);
+    console.log(`reverse = ${reverse}`);
+    console.log('******************************************* ');
+    console.log('******************************************* ');
+    console.log('******************************************* ');
+    console.log('******************************************* \n\n\n\n');
 
 
     // check substate changes only if path change => >=1 substate change
-    if(path !== this.current_path){
-      this.speech.deutsch("ein neuer zustand aufgetreten");
+    if(path !== narrative.current_path){
+      narrative.speech.deutsch("ein neuer zustand aufgetreten");
 
       // save current state as previous - pstate
-      pstate = this.current_state; 
+      pstate = narrative.current_state; 
       
       // update state and path
-      this.current_state = this.state.parse(path);           // new state
-      this.current_path = path;                               // new path
+      narrative.current_state = narrative.state.parse(path);           // new state
+      narrative.current_path = path;                               // new path
+      console.log(`###### current_path changed to ${narrative.current_path}`);
 
       // update scene for scene ui
-      if(this.current_state['scene']['t'].length > 0){
-        this.current_scene = this.current_state['scene']['t'];    
+      if(narrative.current_state['scene']['t'].length > 0){
+        narrative.current_scene = narrative.current_state['scene']['t'];    
 
         // sync ui scene checkboxes
-        for(let s of Object.keys(this.scenestates)){
-          this.scenestates[s] = false;
+        for(let s of Object.keys(narrative.scenestates)){
+          narrative.scenestates[s] = false;
         }
-        this.scenestates[this.current_scene] = true;
+        narrative.scenestates[narrative.current_scene] = true;
       }
 
       // sync ui control if 'init_scene' is true (default), in the case of
@@ -365,16 +397,16 @@ export class Narrative {
       // css display = 'block'/'none'
       if(init_scene === true){
         let val:string;
-        for(let c of Object.keys(this.config.controlstates)){
+        for(let c of Object.keys(narrative.config.controlstates)){
           switch(c){
             case 'ui':
             case 'i3d':
             case 'i2d':
             case 'base':
             case 'fps':
-              val = this.config.controlstates[c] ? 'on' : 'off';
+              val = narrative.config.controlstates[c] ? 'on' : 'off';
               console.log(`${c} display = ${val}`);
-              this.changeControl(c, val);
+              narrative.changeControl(c, val);
               break;
  
             // skip csphere, key, fill, back also in config.controlstates
@@ -400,15 +432,15 @@ export class Narrative {
       // history,pushState(null,path,'')
       if(change_location){
         console.log(`$$$$$$$ state.go(${path})`);
-        this.state.go(path);
+        narrative.state.go(path);
       }
 
 
       // prepare substates objects
-      for(let s of this.substates){
+      for(let s of narrative.substates){
         substates[s] = {};
-        substates[s]['t'] = this.current_state[s]['t'];
-        substates[s]['m'] = this.current_state[s]['m'];
+        substates[s]['t'] = narrative.current_state[s]['t'];
+        substates[s]['m'] = narrative.current_state[s]['m'];
         substates[s]['tp'] = pstate[s]['t'];
         substates[s]['mp'] = pstate[s]['m'];
       }
@@ -417,13 +449,13 @@ export class Narrative {
       // Each substate changeState function returns a Promise
       Promise.all([
         Scene.changeState(substates['scene']),
-        I3d.changeState(substates['i3d'], this, init_scene),
-        I2d.changeState(substates['i2d'], this),
+        I3d.changeState(substates['i3d'], narrative),
+        I2d.changeState(substates['i2d'], narrative),
         Base.changeState(substates['base']),
         Ui.changeState(substates['ui'])
       ]).then((results) => {
         console.log(`${results.join(':')} ready - begin shot/animation`);
-        Shot.changeState(substates['shot']);
+        Shot.changeState(substates['shot'], reverse);
       }).catch((e) => {
         console.log(`error!: ${e}`);
       });
@@ -442,24 +474,26 @@ export class Narrative {
   // if id is simple such as id: 'cube0' then i3d is assumed
   // and the target is Camera3d.actor(action.id)
   exec(_action:Object){
+    console.log(`[exec] narrative.targets = ${narrative.targets}`);
 
     var tuple,
         actor,   // Camera3d.actor(action.id) or doc.getElById(action.id)
         target,  // actor or mediator[action.t]
         f,       // target[action.f]
         execute = (action) => {
+          console.log(`[execute] narrative.targets = ${narrative.targets}`);
 
           // action has 'id' or 't' target giving the execution context 
-          // Camera3d.actor(action.id).f or this.target[action.t].f
+          // Camera3d.actor(action.id).f or narrative.target[action.t].f
           if(action.id){             // @@@ id
             tuple = action.id.split(':');
             // i3d is default - get Camera3d.actor
             // otherwise use document.getElementById
             if(tuple.length === 1){
-              actor = this.camera3d.actor(action.id);
+              actor = narrative.camera3d.actor(action.id);
             }else{
               if((tuple[0] === 'i3d') || (tuple[0].length === 0)){
-                actor = this.camera3d.actor(tuple[1]);
+                actor = narrative.camera3d.actor(tuple[1]);
               }else{
                 if(tuple[1]){
                   actor = document.getElementById(tuple[1]);
@@ -483,15 +517,17 @@ export class Narrative {
             console.log(`action.t = ${action.t}`);
             console.log(`action.f = ${action.f}`);
             console.log(`action.a = ${action.a}`);
-            console.log(`this.targets[action.t] = ${this.targets[action.t]}`);
-            console.log(`this.targets[action.t][action.f] = ${this.targets[action.t][action.f]}`);
-            console.assert(this.targets[action.t] !== undefined, 
+            console.log(`narrative = ${narrative}`);
+            console.log(`narrative.targets = ${narrative.targets}`);
+            console.log(`narrative.targets[action.t] = ${narrative.targets[action.t]}`);
+            console.log(`narrative.targets[action.t][action.f] = ${narrative.targets[action.t][action.f]}`);
+            console.assert(narrative.targets[action.t] !== undefined, 
               "action.t UNDEFINED!");
-            console.assert(this.targets[action.t][action.f] !== undefined, 
-              "this.targets[action.t][action.f] UNDEFINED!");
-            if(this.targets[action.t]){
-              if(this.targets[action.t][action.f]){
-                target = this.targets[action.t];      // target
+            console.assert(narrative.targets[action.t][action.f] !== undefined, 
+              "narrative.targets[action.t][action.f] UNDEFINED!");
+            if(narrative.targets[action.t]){
+              if(narrative.targets[action.t][action.f]){
+                target = narrative.targets[action.t];      // target
                 f = target[action.f];
               }else{
                 throw new Error(`${action.t}.${action.f} is not defined!`);
@@ -507,7 +543,7 @@ export class Narrative {
               // action.a is an array of args
               switch(action.a.length){
                 case 1:
-                  //f(action.a[0]) => 'this' UNDEFINED in target
+                  //f(action.a[0]) => 'narrative' UNDEFINED in target
                   if(config.unit_test){
                     return {a0: action.a[0]};
                   }else{
@@ -516,7 +552,7 @@ export class Narrative {
                   break;
     
                 case 2:
-                  //f(action.a[0], action.a[1]) => 'this' UNDEFINED in target
+                  //f(action.a[0], action.a[1]) => 'narrative' UNDEFINED in target
                   if(config.unit_test){
                     return {b0: action.a[0], b1:action.a[1]};
                   }else{
@@ -525,7 +561,7 @@ export class Narrative {
                   break;
     
                 case 3:
-                  //f(action.a[0], [1], [2]) => 'this' UNDEFINED in target
+                  //f(action.a[0], [1], [2]) => 'narrative' UNDEFINED in target
                   if(config.unit_test){
                     return {c0: action.a[0], c1:action.a[1], c2:action.a[2]};
                   }else{
@@ -534,7 +570,7 @@ export class Narrative {
                   break;
     
                 case 4:
-                  //f(action.a[0], [1], [2], [3]) => 'this' UNDEFINED in target
+                  //f(action.a[0], [1], [2], [3]) => 'narrative' UNDEFINED in target
                   if(config.unit_test){
                     return {d0: action.a[0], d1:action.a[1], d2:action.a[2],
                       d3:action.a[3]};
@@ -544,7 +580,7 @@ export class Narrative {
                   break;
     
                 default:
-                  //f(action.a) => 'this' UNDEFINED in target
+                  //f(action.a) => 'narrative' UNDEFINED in target
                   if(config.unit_test){
                     return action.a;
                   }else{
@@ -559,7 +595,7 @@ export class Narrative {
               }else{
                 console.log('############## executing single action !!!!!!!');
                 console.log(`target = ${target}`);
-                console.log(`target === c3d is ${target === this.camera3d}`);
+                console.log(`target === c3d is ${target === narrative.camera3d}`);
                 console.log(`action.f = ${action.f}`);
                 console.log(`action.a = ${action.a}`);
                 target[action.f](action.a); 
@@ -614,18 +650,18 @@ export class Narrative {
 //    for(let p in Narrative.provider_overrides[0]){
 //      console.log(`Narrative.provider_overrides[0] has property ${p} with val ${Narrative.provider_overrides[0][p]}`); 
 //    }
-//    for(let s of Object.keys(this.scenestates)){
-//      console.log(`narrative ctor: this.scenestates[${s}] = ${this.scenestates[s]}`);
+//    for(let s of Object.keys(narrative.scenestates)){
+//      console.log(`narrative ctor: narrative.scenestates[${s}] = ${narrative.scenestates[s]}`);
 //    }
 
-    this.stats = new Stats();
-    this.stats.setMode(0); // 0:fps 1:ms, etc.
-    document.getElementById('stats').appendChild(this.stats.domElement);
-    this.camera3d.set_stats(this.stats);
+    narrative.stats = new Stats();
+    narrative.stats.setMode(0); // 0:fps 1:ms, etc.
+    document.getElementById('stats').appendChild(narrative.stats.domElement);
+    narrative.camera3d.set_stats(narrative.stats);
 
     // initial address bar url (differs from application http url
     // to prevent http fetch on back 
-    this.state.go(this.current_path);
+    narrative.state.go(narrative.current_path);
   }
 
 //  ngDoCheck() { console.log(`narrative ngDoCheck`); }

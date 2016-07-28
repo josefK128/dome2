@@ -16,6 +16,10 @@ import {Transform3d} from '../../../services/transform3d';
 import {Textures} from '../../../services/textures';
 
 
+//instance
+var sphere;
+
+
 
 @Component({
   selector: 'sphere',
@@ -40,6 +44,13 @@ export class Sphere {
   opacity: number;
   transparent: boolean; 
   wireframe: boolean;
+  phong:boolean;
+  emissive_color:number;
+  emissiveIntensity:number;
+  specular_color:number;
+  shininess:number;
+  reflectivity:number;
+  fog:boolean;
   transform: Object;
   material: THREE.Material;
   geometry: THREE.Geometry;
@@ -47,26 +58,39 @@ export class Sphere {
 
 
   constructor(camera3d: Camera3d, transform3d:Transform3d, textures:Textures) {
-    this.camera3d = camera3d;
-    this.transform3d = transform3d;
-    this.textures = textures;
+    sphere = this;
+    sphere.camera3d = camera3d;
+    sphere.transform3d = transform3d;
+    sphere.textures = textures;
   }
 
 
   mesh_geometry(){
     console.log('Sphere mesh_geometry()');
-    this.geometry = new THREE.SphereGeometry(this.radius, this.widthSegments,
-                                            this.heightSegments);
+    sphere.geometry = new THREE.SphereGeometry(sphere.radius, sphere.widthSegments,
+                                            sphere.heightSegments);
   }
 
 
   basic_material() {
     console.log('Sphere basic_material()');
-    this.material = new THREE.MeshBasicMaterial({
-      color: this.color, 
-      transparent: this.transparent, 
-      opacity: this.opacity, 
-      wireframe:this.wireframe});
+
+    if(sphere.phong){
+      sphere.material = new THREE.MeshPhongMaterial( { 
+        specular: sphere.specular_color,
+        emissive: sphere.emissive_color,
+        emissiveIntensity: sphere.emissiveIntensity,
+        shininess: sphere.shininess,
+        reflectivity: sphere.reflectivity,
+        fog: sphere.fog,
+        shading: THREE.FlatShading } );
+    }else{
+      sphere.material = new THREE.MeshBasicMaterial({
+        color: sphere.color, 
+        transparent: sphere.transparent, 
+        opacity: sphere.opacity, 
+        wireframe:sphere.wireframe});
+    }
 
     // three.js blending<br>
     // * NOTE! - brightening of opaque image intersections 
@@ -75,14 +99,14 @@ export class Sphere {
     //   sphereMaterial.blendDst = THREE.OneMinusSrcAlphaFactor;
     // * NOTE! brightening does occur with:<br>
     //   sphereMaterial.blendDst = THREE.DstAlphaFactor;
-    this.material.depthTest = false;
-    this.material.blending = THREE.CustomBlending;
-    this.material.blendSrc = THREE.SrcAlphaFactor;
-    //this.material.blendDst = THREE.DstAlphaFactor;
-    this.material.blendDst = THREE.OneMinusSrcAlphaFactor;
-    this.material.blendEquation = THREE.AddEquation; // default
+    sphere.material.depthTest = false;
+    sphere.material.blending = THREE.CustomBlending;
+    sphere.material.blendSrc = THREE.SrcAlphaFactor;
+    //sphere.material.blendDst = THREE.DstAlphaFactor;
+    sphere.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+    sphere.material.blendEquation = THREE.AddEquation; // default
 
-    this.realize();
+    sphere.realize();
   }
 
 
@@ -91,9 +115,9 @@ export class Sphere {
         path = texture[name];
         
     console.log('Sphere texture_material()');
-    this.textures.get(name, path).then((material) => {
-      this.material = material;
-      this.realize();
+    sphere.textures.get(name, path).then((material) => {
+      sphere.material = material;
+      sphere.realize();
     });
   }
 
@@ -103,14 +127,14 @@ export class Sphere {
     console.log(`%%%% Sphere realize: writing sphere to scene`); 
 
     // create a webgl sphere-node
-    this.o3d = new THREE.Mesh(this.geometry, this.material);
-    this.o3d.material.side = THREE.DoubleSide;
+    sphere.o3d = new THREE.Mesh(sphere.geometry, sphere.material);
+    sphere.o3d.material.side = THREE.DoubleSide;
   
     // add the Object3d to the scene and store in Camera3d actors by id
-    this.camera3d.addActorToScene(this.id, this.o3d, this.pid);
+    sphere.camera3d.addActorToScene(sphere.id, sphere.o3d, sphere.pid);
   
     // transform sphere - relative to parent in THREE.js scene !!!
-    this.transform3d.apply(this.transform, this.o3d);
+    sphere.transform3d.apply(sphere.transform, sphere.o3d);
   }
 
 
@@ -118,34 +142,41 @@ export class Sphere {
   // ngOnChanges() { console.log(`Sphere ngOnChanges`); }
   // calculate properties of sphere from model on node
   ngOnInit() { 
-    var form = this.node['form'];
+    var form = sphere.node['form'];
 
-    this.pid = this.parent['id'];
-    console.log(`%%%% ngOnInit - Sphere id=${this.id} pid=${this.pid}`); 
+    sphere.pid = sphere.parent['id'];
+    console.log(`%%%% ngOnInit - Sphere id=${sphere.id} pid=${sphere.pid}`); 
     console.log(`node.form.type = ${form['type']}`);
     console.log(`node.form.color = ${form['color']}`);
-    //console.log(`node = ${this.node}`);
-    //console.log(`parent = ${this.parent}`);
+    //console.log(`node = ${sphere.node}`);
+    //console.log(`parent = ${sphere.parent}`);
 
     // properties with defaults
-    this.radius = form['radius'] || 10;
-    this.widthSegments = form['widthSegments'] || 8;
-    this.heightSegments = form['heightSegments'] || 6;
-    this.texture = form['texture'];  // default undefined
-    this.color = form['color'] || 'red';
-    this.transparent = form['transparent'] || true;
-    this.opacity = form['opacity'] || 1.0;
-    this.wireframe = form['wireframe'] || false;
-    this.transform = this.node['transform'] || {};
+    sphere.radius = form['radius'] || 10;
+    sphere.widthSegments = form['widthSegments'] || 8;
+    sphere.heightSegments = form['heightSegments'] || 6;
+    sphere.texture = form['texture'];  // default undefined
+    sphere.color = form['color'] || 'red';
+    sphere.transparent = form['transparent'] || true;
+    sphere.opacity = form['opacity'] || 1.0;
+    sphere.wireframe = form['wireframe'] || false;
+    sphere.phong = form['phong'] || false;
+    sphere.emissive_color = form['emissive_color'] || 0x000000; // default undefined
+    sphere.emissiveIntensity = form['emissiveIntensity'] || 1;
+    sphere.specular_color = form['specular_color'] || 0xffffff; // default undefined
+    sphere.shininess = form['shininess'] || 30;
+    sphere.reflectivity = form['reflectivity'] || 1;
+    sphere.fog = (form['fog'] === undefined ? true : form['fog']);
+    sphere.transform = sphere.node['transform'] || {};
 
     // geometry
-    this.mesh_geometry();
+    sphere.mesh_geometry();
 
     // material
-    if(this.texture !== undefined){
-      this.texture_material(this.texture);
+    if(sphere.texture !== undefined){
+      sphere.texture_material(sphere.texture);
     }else{
-      this.basic_material();
+      sphere.basic_material();
     }
   }
   

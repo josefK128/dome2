@@ -17,6 +17,11 @@ import {Textures} from '../../../services/textures';
 
 
 
+// instance
+var bb;
+
+
+
 @Component({
   selector: 'billboard',
   template: ``    
@@ -42,6 +47,13 @@ export class Billboard {
   opacity: number;
   transparent: boolean; 
   wireframe: boolean;
+  phong:boolean;
+  emissive_color:number;
+  emissiveIntensity:number;
+  specular_color:number;
+  shininess:number;
+  reflectivity:number;
+  fog:boolean;
   transform: Object;
   material: THREE.Material;
   geometry: THREE.Geometry;
@@ -49,26 +61,39 @@ export class Billboard {
 
 
   constructor(camera3d: Camera3d, transform3d:Transform3d, textures:Textures) {
-    this.camera3d = camera3d;
-    this.transform3d = transform3d;
-    this.textures = textures;
+    bb = this;
+    bb.camera3d = camera3d;
+    bb.transform3d = transform3d;
+    bb.textures = textures;
   }
 
 
   mesh_geometry(){
     console.log('Billboard mesh_geometry()');
-    this.geometry = new THREE.BoxGeometry(this.width, this.height, 0.0, 
-             this.widthSegments, this.heightSegments, 1);
+    bb.geometry = new THREE.BoxGeometry(bb.width, bb.height, 0.0, 
+             bb.widthSegments, bb.heightSegments, 1);
   }
 
 
   basic_material() {
     console.log('Billboard basic_material()');
-    this.material = new THREE.MeshBasicMaterial({
-      color: this.color, 
-      transparent: this.transparent, 
-      opacity: this.opacity, 
-      wireframe:this.wireframe});
+
+    if(bb.phong){
+      bb.material = new THREE.MeshPhongMaterial( { 
+        specular: bb.specular_color,
+        emissive: bb.emissive_color,
+        emissiveIntensity: bb.emissiveIntensity,
+        shininess: bb.shininess,
+        reflectivity: bb.reflectivity,
+        fog: bb.fog,
+        shading: THREE.FlatShading } );
+    }else{
+      bb.material = new THREE.MeshBasicMaterial({
+        color: bb.color, 
+        transparent: bb.transparent, 
+        opacity: bb.opacity, 
+        wireframe:bb.wireframe});
+    }
 
     // three.js blending<br>
     // * NOTE! - brightening of opaque image intersections 
@@ -77,14 +102,14 @@ export class Billboard {
     //   sphereMaterial.blendDst = THREE.OneMinusSrcAlphaFactor;
     // * NOTE! brightening does occur with:<br>
     //   sphereMaterial.blendDst = THREE.DstAlphaFactor;
-    this.material.depthTest = false;
-    this.material.blending = THREE.CustomBlending;
-    this.material.blendSrc = THREE.SrcAlphaFactor;
-    //this.material.blendDst = THREE.DstAlphaFactor;
-    this.material.blendDst = THREE.OneMinusSrcAlphaFactor;
-    this.material.blendEquation = THREE.AddEquation; // default
+    bb.material.depthTest = false;
+    bb.material.blending = THREE.CustomBlending;
+    bb.material.blendSrc = THREE.SrcAlphaFactor;
+    //bb.material.blendDst = THREE.DstAlphaFactor;
+    bb.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+    bb.material.blendEquation = THREE.AddEquation; // default
 
-    this.realize();
+    bb.realize();
   }
 
 
@@ -93,9 +118,9 @@ export class Billboard {
         path = texture[name];
         
     console.log('Billboard texture_material()');
-    this.textures.get(name, path).then((material) => {
-      this.material = material;
-      this.realize();
+    bb.textures.get(name, path).then((material) => {
+      bb.material = material;
+      bb.realize();
     });
   }
 
@@ -105,14 +130,15 @@ export class Billboard {
     console.log(`%%%% Billboard realize: writing billboard to scene`); 
 
     // create a webgl sphere-node
-    this.o3d = new THREE.Mesh(this.geometry, this.material);
-    this.o3d.material.side = THREE.SingleSide;
+    bb.o3d = new THREE.Mesh(bb.geometry, bb.material);
+    bb.o3d.material.side = THREE.SingleSide;
   
     // add the Object3d to the scene and store in Camera3d actors by id
-    this.camera3d.addActorToScene(this.id, this.o3d, this.pid);
+    //bb.camera3d.addActorToScene(bb.id, bb.o3d, bb.pid);
+    bb.camera3d.addBillboardToScene(bb.id, bb.o3d, bb.pid);
   
     // transform sphere - relative to parent in THREE.js scene !!!
-    this.transform3d.apply(this.transform, this.o3d);
+    bb.transform3d.apply(bb.transform, bb.o3d);
   }
 
 
@@ -120,34 +146,41 @@ export class Billboard {
   // ordered sequence of component lifecycle phase-transitions:
   //ngOnChanges() { console.log(`Billboard ngOnChanges`); }
   ngOnInit() { 
-    var form = this.node['form'];
+    var form = bb.node['form'];
 
-    this.pid = this.parent['id'];
-    console.log(`%%%% ngOnInit - Billboard id=${this.id} pid=${this.pid}`); 
+    bb.pid = bb.parent['id'];
+    console.log(`%%%% ngOnInit - Billboard id=${bb.id} pid=${bb.pid}`); 
     console.log(`node.form.type = ${form['type']}`);
-    //console.log(`node = ${this.node}`);
-    //console.log(`parent = ${this.parent}`);
+    //console.log(`node = ${bb.node}`);
+    //console.log(`parent = ${bb.parent}`);
 
     // properties with defaults
-    this.width = form['width'] || 10;
-    this.height = form['height'] || 10;
-    this.widthSegments = form['widthSegments'] || 1;
-    this.heightSegments = form['heightSegments'] || 1;
-    this.color = form['color'] || 'red';
-    this.transparent = form['transparent'] || true;
-    this.opacity = form['opacity'] || 1.0;
-    this.wireframe = form['wireframe'] || false;
-    this.texture = form['texture'];  // default undefined
-    this.transform = this.node['transform'] || {};
+    bb.width = form['width'] || 10;
+    bb.height = form['height'] || 10;
+    bb.widthSegments = form['widthSegments'] || 1;
+    bb.heightSegments = form['heightSegments'] || 1;
+    bb.color = form['color'] || 'red';
+    bb.transparent = form['transparent'] || true;
+    bb.opacity = form['opacity'] || 1.0;
+    bb.wireframe = form['wireframe'] || false;
+    bb.texture = form['texture'];  // default undefined
+    bb.transform = bb.node['transform'] || {};
+    bb.phong = form['phong'] || false;
+    bb.emissive_color = form['emissive_color'] || 0x000000; // default undefined
+    bb.emissiveIntensity = form['emissiveIntensity'] || 1;
+    bb.specular_color = form['specular_color'] || 0xffffff; // default undefined
+    bb.shininess = form['shininess'] || 30;
+    bb.reflectivity = form['reflectivity'] || 1;
+    bb.fog = (form['fog'] === undefined ? true : form['fog']);
 
     // geometry
-    this.mesh_geometry();
+    bb.mesh_geometry();
 
     // material
-    if(this.texture !== undefined){
-      this.texture_material(this.texture);
+    if(bb.texture !== undefined){
+      bb.texture_material(bb.texture);
     }else{
-      this.basic_material();
+      bb.basic_material();
     }
   }
 

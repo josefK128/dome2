@@ -19,7 +19,7 @@ System.register(['@angular/core', '../../../services/camera3d', '../../../servic
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, camera3d_1, transform3d_1, textures_1;
-    var Cone;
+    var cone, Cone;
     return {
         setters:[
             function (core_1_1) {
@@ -35,23 +35,37 @@ System.register(['@angular/core', '../../../services/camera3d', '../../../servic
                 textures_1 = textures_1_1;
             }],
         execute: function() {
+            //instance
             let Cone = class Cone {
                 constructor(camera3d, transform3d, textures) {
-                    this.camera3d = camera3d;
-                    this.transform3d = transform3d;
-                    this.textures = textures;
+                    cone = this;
+                    cone.camera3d = camera3d;
+                    cone.transform3d = transform3d;
+                    cone.textures = textures;
                 }
                 mesh_geometry() {
                     console.log('Cone mesh_geometry()');
-                    this.geometry = new THREE.ConeGeometry(this.radius, this.height, this.radiusSegments, this.heightSegments, this.openEnded);
+                    cone.geometry = new THREE.ConeGeometry(cone.radius, cone.height, cone.radiusSegments, cone.heightSegments, cone.openEnded);
                 }
                 basic_material() {
                     console.log('Cone basic_material()');
-                    this.material = new THREE.MeshBasicMaterial({
-                        color: this.color,
-                        transparent: this.transparent,
-                        opacity: this.opacity,
-                        wireframe: this.wireframe });
+                    if (cone.phong) {
+                        cone.material = new THREE.MeshPhongMaterial({
+                            specular: cone.specular_color,
+                            emissive: cone.emissive_color,
+                            emissiveIntensity: cone.emissiveIntensity,
+                            shininess: cone.shininess,
+                            reflectivity: cone.reflectivity,
+                            fog: cone.fog,
+                            shading: THREE.FlatShading });
+                    }
+                    else {
+                        cone.material = new THREE.MeshBasicMaterial({
+                            color: cone.color,
+                            transparent: cone.transparent,
+                            opacity: cone.opacity,
+                            wireframe: cone.wireframe });
+                    }
                     // three.js blending<br>
                     // * NOTE! - brightening of opaque image intersections 
                     //   sometimes occurs (?!)<br>
@@ -59,62 +73,69 @@ System.register(['@angular/core', '../../../services/camera3d', '../../../servic
                     //   sphereMaterial.blendDst = THREE.OneMinusSrcAlphaFactor;
                     // * NOTE! brightening does occur with:<br>
                     //   sphereMaterial.blendDst = THREE.DstAlphaFactor;
-                    this.material.depthTest = false;
-                    this.material.blending = THREE.CustomBlending;
-                    this.material.blendSrc = THREE.SrcAlphaFactor;
-                    //this.material.blendDst = THREE.DstAlphaFactor;
-                    this.material.blendDst = THREE.OneMinusSrcAlphaFactor;
-                    this.material.blendEquation = THREE.AddEquation; // default
-                    this.realize();
+                    cone.material.depthTest = false;
+                    cone.material.blending = THREE.CustomBlending;
+                    cone.material.blendSrc = THREE.SrcAlphaFactor;
+                    //cone.material.blendDst = THREE.DstAlphaFactor;
+                    cone.material.blendDst = THREE.OneMinusSrcAlphaFactor;
+                    cone.material.blendEquation = THREE.AddEquation; // default
+                    cone.realize();
                 }
                 texture_material(texture) {
                     var name = Object.keys(texture)[0], path = texture[name];
                     console.log('Cone texture_material()');
-                    this.textures.get(name, path).then((material) => {
-                        this.material = material;
-                        this.realize();
+                    cone.textures.get(name, path).then((material) => {
+                        cone.material = material;
+                        cone.realize();
                     });
                 }
                 // write to THREE.js scene
                 realize() {
                     console.log(`%%%% Cone realize: writing cone to scene`);
                     // create a webgl sphere-node
-                    this.o3d = new THREE.Mesh(this.geometry, this.material);
-                    this.o3d.material.side = THREE.DoubleSide;
+                    cone.o3d = new THREE.Mesh(cone.geometry, cone.material);
+                    cone.o3d.material.side = THREE.DoubleSide;
                     // add the Object3d to the scene and store in Camera3d actors by id
-                    this.camera3d.addActorToScene(this.id, this.o3d, this.pid);
+                    cone.camera3d.addActorToScene(cone.id, cone.o3d, cone.pid);
                     // transform sphere - relative to parent in THREE.js scene !!!
-                    this.transform3d.apply(this.transform, this.o3d);
+                    cone.transform3d.apply(cone.transform, cone.o3d);
                 }
                 // ordered sequence of component lifecycle phase-transitions:
                 //ngOnChanges() { console.log(`Cone ngOnChanges`); }
                 ngOnInit() {
-                    var form = this.node['form'];
-                    this.pid = this.parent['id'];
-                    console.log(`%%%% ngOnInit - Cone id=${this.id} pid=${this.pid}`);
+                    var form = cone.node['form'];
+                    cone.pid = cone.parent['id'];
+                    console.log(`%%%% ngOnInit - Cone id=${cone.id} pid=${cone.pid}`);
                     console.log(`node.form.type = ${form['type']}`);
-                    //console.log(`node = ${this.node}`);
-                    //console.log(`parent = ${this.parent}`);
+                    //console.log(`node = ${cone.node}`);
+                    //console.log(`parent = ${cone.parent}`);
                     // properties with defaults
-                    this.radius = form['radius'] || 5;
-                    this.height = form['height'] || 10;
-                    this.radiusSegments = form['radiusSegments'] || 8;
-                    this.heightSegments = form['heightSegments'] || 1;
-                    this.openEnded = form['openEnded'] || false;
-                    this.color = form['color'] || 'red';
-                    this.transparent = form['transparent'] || true;
-                    this.opacity = form['opacity'] || 1.0;
-                    this.wireframe = form['wireframe'] || false;
-                    this.texture = form['texture']; // default undefined
-                    this.transform = this.node['transform'] || {};
+                    cone.radius = form['radius'] || 5;
+                    cone.height = form['height'] || 10;
+                    cone.radiusSegments = form['radiusSegments'] || 8;
+                    cone.heightSegments = form['heightSegments'] || 1;
+                    cone.openEnded = form['openEnded'] || false;
+                    cone.color = form['color'] || 'red';
+                    cone.transparent = form['transparent'] || true;
+                    cone.opacity = form['opacity'] || 1.0;
+                    cone.wireframe = form['wireframe'] || false;
+                    cone.phong = form['phong'] || false;
+                    cone.emissive_color = form['emissive_color'] || 0x000000; // default undefined
+                    cone.emissiveIntensity = form['emissiveIntensity'] || 1;
+                    cone.specular_color = form['specular_color'] || 0xffffff; // default undefined
+                    cone.shininess = form['shininess'] || 30;
+                    cone.reflectivity = form['reflectivity'] || 1;
+                    cone.fog = (form['fog'] === undefined ? true : form['fog']);
+                    cone.texture = form['texture']; // default undefined
+                    cone.transform = cone.node['transform'] || {};
                     // geometry
-                    this.mesh_geometry();
+                    cone.mesh_geometry();
                     // material
-                    if (this.texture !== undefined) {
-                        this.texture_material(this.texture);
+                    if (cone.texture !== undefined) {
+                        cone.texture_material(cone.texture);
                     }
                     else {
-                        this.basic_material();
+                        cone.basic_material();
                     }
                 }
                 ngAfterViewInit() { console.log(`Cone ngAfterViewInit`); }

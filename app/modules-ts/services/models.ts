@@ -14,6 +14,15 @@ import {Modelteapot} from '../models/i3d/space/modelteapot';
 // models - i2d
 import {ModelA} from '../models/i2d/stage2/modelA';
 
+// models - shot
+import {s0} from '../models/shot/camera/s0';
+import {yawflyByPIo3} from '../models/shot/camera/yawflyByPIo3';
+import {yawflyByNegPIo3} from '../models/shot/camera/yawflyByNegPIo3';
+import {yawflyByPIo6} from '../models/shot/camera/yawflyByPIo6';
+import {yawflyByNegPIo6} from '../models/shot/camera/yawflyByNegPIo6';
+import {yawcutByPIo3} from '../models/shot/camera/yawcutByPIo3';
+import {yawcutByNegPIo3} from '../models/shot/camera/yawcutByNegPIo3';
+
 
 
 @Injectable()
@@ -37,7 +46,17 @@ export class Models {
              bg2: {},
              bg3: {}},
       ui: {display: {},
-           display2: {}}
+           display2: {}},
+      shot: {
+        camera: {s0:s0,
+                 yawflyByPIo3:yawflyByPIo3,
+                 yawflyByNegPIo3:yawflyByNegPIo3,
+                 yawflyByPIo6:yawflyByPIo6,
+                 yawflyByNegPIo6:yawflyByNegPIo6,
+                 yawcutByPIo3:yawcutByPIo3,
+                 yawcutByNegPIo3:yawcutByNegPIo3
+        }//camera
+      }
     };
   }//ctor
 
